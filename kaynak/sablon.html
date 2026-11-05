@@ -212,6 +212,8 @@ function tarihGoster() {
   const mil = n.toLocaleDateString('tr-TR', { day: 'numeric', month: 'long', weekday: 'long' });
   let hic = '';
   try { hic = new Intl.DateTimeFormat('tr-TR-u-ca-islamic', { day: 'numeric', month: 'long', year: 'numeric' }).format(n); } catch {}
+  // Bazı tarayıcılar hicri takvimi bilmiyor ve miladi ay adı/MÖ yazıyor: o zaman gösterme (B adımında Diyanet verisi gelecek)
+  if (/MÖ|Ocak|Şubat|Mart|Nisan|Mayıs|Haziran|Temmuz|Ağustos|Eylül|Ekim|Kasım|Aralık/.test(hic)) hic = '';
   $('tarih').innerHTML = `<b>${mil}</b>${hic ? '<br>' + hic : ''}`;
 }
 

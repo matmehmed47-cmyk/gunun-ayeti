@@ -13,7 +13,7 @@
 <link rel="apple-touch-icon" href="simge/apple-touch-icon.png">
 <style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}[hidden]{display:none!important}</style>
 <title>Günün Ayeti</title>
-<!-- sürüm 15 -->
+<!-- sürüm 16 -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Literata:ital,opsz,wght@0,7..72,400;0,7..72,600;1,7..72,400&family=Figtree:wght@400;500;600&display=swap">
@@ -228,6 +228,8 @@ function tarihGoster() {
   const mil = n.toLocaleDateString('tr-TR', { day: 'numeric', month: 'long', weekday: 'long' });
   let hic = '';
   try { hic = new Intl.DateTimeFormat('tr-TR-u-ca-islamic', { day: 'numeric', month: 'long', year: 'numeric' }).format(n); } catch {}
+  // Bazı tarayıcılar hicri takvimi bilmiyor ve miladi ay adı/MÖ yazıyor: o zaman gösterme (B adımında Diyanet verisi gelecek)
+  if (/MÖ|Ocak|Şubat|Mart|Nisan|Mayıs|Haziran|Temmuz|Ağustos|Eylül|Ekim|Kasım|Aralık/.test(hic)) hic = '';
   $('tarih').innerHTML = `<b>${mil}</b>${hic ? '<br>' + hic : ''}`;
 }
 
