@@ -1,0 +1,261 @@
+<title>Günün Ayeti</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Literata:ital,opsz,wght@0,7..72,400;0,7..72,600;1,7..72,400&family=Figtree:wght@400;500;600&display=swap">
+<style>
+/* Düzen: tek sütun, ortada dar okuma alanı; üstte tarih şeridi, ortada ayet, altta sekmeler. İznik çinisi turkuazı + tezhip altını, sade. */
+:root {
+  --bg: #f3f6f5;
+  --kart: #ffffff;
+  --fg: #16272b;
+  --soluk: #5b6f73;
+  --cizgi: #d5e0de;
+  --turkuaz: #11706f;
+  --turkuaz-ac: #e1efed;
+  --altin: #a57a26;
+  --f-ayet: "Literata", Georgia, "Times New Roman", serif;
+  --f-arayuz: "Figtree", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --boy: 1.32rem;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0d1719; --kart: #132124; --fg: #e4ecea; --soluk: #93a7a9; --cizgi: #24383b;
+    --turkuaz: #5cc0b6; --turkuaz-ac: #173335; --altin: #d4a94f; color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0d1719; --kart: #132124; --fg: #e4ecea; --soluk: #93a7a9; --cizgi: #24383b;
+  --turkuaz: #5cc0b6; --turkuaz-ac: #173335; --altin: #d4a94f; color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body {
+  background: var(--bg); color: var(--fg); font-family: var(--f-arayuz); font-size: 1rem;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  padding-block: 20px 96px;
+}
+.sayfa { max-width: 36rem; margin: 0 auto; display: grid; gap: 20px; }
+header { display: flex; justify-content: space-between; align-items: flex-end; gap: 12px; flex-wrap: wrap; }
+h1 { font-family: var(--f-ayet); font-weight: 600; font-size: 1.6rem; margin: 0; letter-spacing: -0.01em; }
+.tarih { color: var(--soluk); font-size: .88rem; line-height: 1.4; text-align: right; }
+.tarih b { color: var(--fg); font-weight: 600; }
+.onizleme { font-size: .8rem; color: var(--altin); border: 1px dashed var(--altin); border-radius: 8px; padding: 8px 12px; line-height: 1.45; }
+
+.ayet { background: var(--kart); border: 1px solid var(--cizgi); border-radius: 14px; padding: 28px 24px 20px; display: grid; gap: 18px; }
+.ust { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+.gun { font-size: .78rem; letter-spacing: .08em; text-transform: uppercase; color: var(--soluk); font-variant-numeric: tabular-nums; }
+.konu { font-size: .78rem; color: var(--turkuaz); background: var(--turkuaz-ac); border-radius: 999px; padding: 3px 10px; }
+.metin { font-family: var(--f-ayet); font-size: var(--boy); line-height: 1.62; margin: 0; text-wrap: pretty; }
+.kaynak { display: flex; align-items: center; gap: 10px; color: var(--altin); font-size: .92rem; font-weight: 500; }
+.kaynak svg { flex: none; }
+.araclar { display: flex; gap: 8px; flex-wrap: wrap; border-top: 1px solid var(--cizgi); padding-top: 14px; }
+button { font: inherit; cursor: pointer; }
+.dugme { display: inline-flex; align-items: center; gap: 6px; background: transparent; color: var(--fg); border: 1px solid var(--cizgi); border-radius: 10px; padding: 9px 14px; font-size: .92rem; min-height: 42px; }
+.dugme:hover { border-color: var(--turkuaz); }
+.dugme:focus-visible, .sekme:focus-visible, .satir:focus-visible { outline: 2px solid var(--turkuaz); outline-offset: 2px; }
+.dugme.ana { background: var(--turkuaz); border-color: var(--turkuaz); color: var(--kart); }
+.dugme[aria-pressed="true"] { color: var(--turkuaz); border-color: var(--turkuaz); }
+.dugme[aria-pressed="true"] .kalp { fill: currentColor; }
+.boyut { margin-left: auto; display: inline-flex; gap: 4px; }
+.boyut .dugme { padding: 9px 12px; }
+
+.bildirim { display: flex; gap: 12px; align-items: center; justify-content: space-between; flex-wrap: wrap; background: var(--turkuaz-ac); border-radius: 12px; padding: 14px 16px; }
+.bildirim p { margin: 0; font-size: .92rem; line-height: 1.45; min-width: 0; flex: 1 1 14rem; }
+
+.sekmeler { display: flex; gap: 4px; border-bottom: 1px solid var(--cizgi); }
+.sekme { background: none; border: 0; border-bottom: 2px solid transparent; color: var(--soluk); padding: 10px 12px; font-size: .95rem; margin-bottom: -1px; }
+.sekme[aria-selected="true"] { color: var(--fg); border-bottom-color: var(--turkuaz); font-weight: 600; }
+.liste { display: grid; gap: 0; }
+.satir { display: grid; grid-template-columns: auto 1fr; gap: 4px 14px; text-align: left; background: none; border: 0; border-bottom: 1px solid var(--cizgi); color: var(--fg); padding: 14px 4px; }
+.satir .no { grid-row: span 2; font-variant-numeric: tabular-nums; color: var(--soluk); font-size: .85rem; padding-top: 2px; min-width: 3.2em; }
+.satir .on { font-family: var(--f-ayet); line-height: 1.5; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; min-width: 0; }
+.satir .alt { font-size: .82rem; color: var(--altin); }
+.bos { color: var(--soluk); font-size: .92rem; padding: 18px 4px; line-height: 1.5; }
+
+.perde { position: fixed; inset: 0; background: rgb(0 0 0 / .55); display: grid; place-items: center; padding: max(16px, env(safe-area-inset-top, 0px)) max(16px, env(safe-area-inset-right, 0px)) max(16px, env(safe-area-inset-bottom, 0px)) max(16px, env(safe-area-inset-left, 0px)); z-index: 20; }
+.pencere { background: var(--kart); border-radius: 14px; padding: 16px; max-width: 26rem; width: 100%; display: grid; gap: 12px; max-height: 100%; overflow: auto; }
+.pencere img { width: 100%; border-radius: 8px; display: block; }
+.pencere p { margin: 0; font-size: .9rem; color: var(--soluk); line-height: 1.45; }
+@media (prefers-reduced-motion: no-preference) { .metin { transition: font-size .15s ease; } }
+</style>
+
+<div class="sayfa">
+  <header>
+    <h1>Günün Ayeti</h1>
+    <div class="tarih" id="tarih"></div>
+  </header>
+  <div class="onizleme" id="onizleme">Önizleme: liste 1 Kasım'da başlamış gibi gösteriliyor, böylece "Önceki" sekmesi dolu görünüyor. Gerçek uygulamada 1. gün yayına girdiği gün olacak.</div>
+
+  <article class="ayet" aria-live="polite">
+    <div class="ust"><span class="gun" id="gun"></span><span class="konu" id="konu"></span></div>
+    <p class="metin" id="metin"></p>
+    <div class="kaynak">
+      <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="1.6"><rect x="5" y="5" width="14" height="14"/><rect x="5" y="5" width="14" height="14" transform="rotate(45 12 12)"/></g><circle cx="12" cy="12" r="2" fill="currentColor"/></svg>
+      <span id="ref"></span>
+    </div>
+    <div class="araclar">
+      <button class="dugme" id="fav" aria-pressed="false"><svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path class="kalp" fill="none" stroke="currentColor" stroke-width="1.8" d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z"/></svg><span>Favori</span></button>
+      <button class="dugme ana" id="paylas"><svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="1.8" d="M12 4v11M7 9l5-5 5 5M5 14v5h14v-5"/></svg>Paylaş</button>
+      <span class="boyut"><button class="dugme" id="kucult" aria-label="Yazıyı küçült">A−</button><button class="dugme" id="buyut" aria-label="Yazıyı büyüt">A+</button></span>
+    </div>
+  </article>
+
+  <div class="bildirim">
+    <p><b>Her sabah 07:00'de</b> günün ayeti kilit ekranına bildirim olarak gelsin.</p>
+    <button class="dugme" id="bildirim" disabled title="Bildirim 4. adımda eklenecek">Bildirimi aç (yakında)</button>
+  </div>
+
+  <nav class="sekmeler" role="tablist">
+    <button class="sekme" role="tab" id="t-once" aria-selected="true">Önceki ayetler</button>
+    <button class="sekme" role="tab" id="t-fav" aria-selected="false">Favoriler</button>
+  </nav>
+  <div class="liste" id="liste" role="tabpanel"></div>
+</div>
+
+<div class="perde" id="perde" hidden>
+  <div class="pencere" role="dialog" aria-label="Paylaşım kartı">
+    <img id="kartResim" alt="Ayet kartı">
+    <p id="kartNot">Resme parmağınla basılı tut, sonra "Kaydet" ya da "Paylaş"ı seç. Kurulu uygulamada bu düğme doğrudan WhatsApp'ı açacak.</p>
+    <button class="dugme" id="kapat">Kapat</button>
+  </div>
+</div>
+
+<script>
+const AYETLER = /*VERI*/[];
+const BASLANGIC = /*BASLANGIC*/"2026-11-01";
+const ONIZLEME = /*ONIZLEME*/true;
+
+const $ = id => document.getElementById(id);
+const oku = (k, v) => { try { const x = localStorage.getItem(k); return x === null ? v : JSON.parse(x); } catch { return v; } };
+const yaz = (k, v) => { try { localStorage.setItem(k, JSON.stringify(v)); } catch {} };
+
+const gunFarki = () => {
+  const [y, a, g] = BASLANGIC.split('-').map(Number);
+  const bas = Date.UTC(y, a - 1, g), n = new Date();
+  return Math.floor((Date.UTC(n.getFullYear(), n.getMonth(), n.getDate()) - bas) / 864e5);
+};
+const bugunNo = () => Math.max(0, gunFarki());                 // 0 tabanlı, takvime bağlı
+const kayit = i => AYETLER[((i % AYETLER.length) + AYETLER.length) % AYETLER.length];
+
+const refYazi = a => {
+  const [s, ay] = a.ref.split(':');
+  return `${a.sure} Suresi, ${ay}. ayet`;
+};
+
+let secili = bugunNo();
+let favs = oku('ga-fav', []);
+let boy = oku('ga-boy', 1.32);
+let sekme = oku('ga-sekme', 'once');
+
+function tarihGoster() {
+  const n = new Date();
+  const mil = n.toLocaleDateString('tr-TR', { day: 'numeric', month: 'long', weekday: 'long' });
+  let hic = '';
+  try { hic = new Intl.DateTimeFormat('tr-TR-u-ca-islamic', { day: 'numeric', month: 'long', year: 'numeric' }).format(n); } catch {}
+  $('tarih').innerHTML = `<b>${mil}</b>${hic ? '<br>' + hic : ''}`;
+}
+
+function ayetGoster(i) {
+  secili = i;
+  const a = kayit(i), tur = Math.floor(i / AYETLER.length);
+  $('gun').textContent = (i === bugunNo() ? 'Bugün · ' : '') + `${(i % AYETLER.length) + 1}. gün / ${AYETLER.length}` + (tur ? ` · ${tur + 1}. tur` : '');
+  $('konu').textContent = a.konu;
+  $('metin').textContent = a.meal;
+  $('ref').textContent = refYazi(a);
+  $('fav').setAttribute('aria-pressed', favs.includes(a.ref));
+  $('fav').querySelector('span').textContent = favs.includes(a.ref) ? 'Favorilerde' : 'Favori';
+}
+
+function satir(i, a, no) {
+  const b = document.createElement('button');
+  b.className = 'satir';
+  b.innerHTML = `<span class="no"></span><span class="on"></span><span class="alt"></span>`;
+  b.children[0].textContent = no;
+  b.children[1].textContent = a.meal;
+  b.children[2].textContent = refYazi(a);
+  b.onclick = () => { ayetGoster(i); window.scrollTo({ top: 0, behavior: 'smooth' }); };
+  return b;
+}
+
+function listeGoster() {
+  const L = $('liste'); L.replaceChildren();
+  $('t-once').setAttribute('aria-selected', sekme === 'once');
+  $('t-fav').setAttribute('aria-selected', sekme === 'fav');
+  const bg = bugunNo();
+  if (sekme === 'once') {
+    if (bg === 0) { L.innerHTML = '<div class="bos">Bugün ilk gün. Önceki ayetler yarından itibaren burada birikecek.</div>'; return; }
+    for (let i = bg - 1; i >= Math.max(0, bg - 60); i--) {
+      const d = new Date(); d.setDate(d.getDate() - (bg - i));
+      L.append(satir(i, kayit(i), d.toLocaleDateString('tr-TR', { day: 'numeric', month: 'short' })));
+    }
+  } else {
+    const f = favs.map(r => [AYETLER.findIndex(a => a.ref === r), r]).filter(x => x[0] >= 0);
+    if (!f.length) { L.innerHTML = '<div class="bos">Henüz favori yok. Sevdiğin ayette "Favori" düğmesine bas, burada saklansın.</div>'; return; }
+    f.reverse().forEach(([i]) => L.append(satir(i, AYETLER[i], '♥')));
+  }
+}
+
+function boyutAyarla(d) {
+  boy = Math.min(2.1, Math.max(1.05, +(boy + d).toFixed(2)));
+  document.documentElement.style.setProperty('--boy', boy + 'rem');
+  yaz('ga-boy', boy);
+}
+
+/* Paylaşım kartı: 1080x1350 resim */
+function satirlaraBol(ctx, metin, gen) {
+  const kel = metin.split(' '), out = []; let s = '';
+  for (const k of kel) { const t = s ? s + ' ' + k : k; if (ctx.measureText(t).width > gen && s) { out.push(s); s = k; } else s = t; }
+  if (s) out.push(s); return out;
+}
+async function kartCiz(a) {
+  const W = 1080, H = 1350, c = document.createElement('canvas'); c.width = W; c.height = H;
+  const x = c.getContext('2d');
+  try { await document.fonts.load('400 48px Literata'); await document.fonts.load('600 40px Figtree'); } catch {}
+  x.fillStyle = '#0f2a2c'; x.fillRect(0, 0, W, H);
+  x.strokeStyle = '#c9a24e'; x.lineWidth = 3; x.strokeRect(48, 48, W - 96, H - 96);
+  x.lineWidth = 1.5; x.strokeRect(62, 62, W - 124, H - 124);
+  const yildiz = (cx, cy, r) => { x.save(); x.translate(cx, cy); for (const d of [0, Math.PI / 4]) { x.save(); x.rotate(d); x.strokeRect(-r, -r, 2 * r, 2 * r); x.restore(); } x.restore(); };
+  x.strokeStyle = '#c9a24e'; x.lineWidth = 3; yildiz(W / 2, 170, 30);
+  x.fillStyle = '#c9a24e'; x.textAlign = 'center'; x.font = '600 34px Figtree, sans-serif';
+  x.fillText('GÜNÜN AYETİ', W / 2, 270);
+  let fs = 54, sat;
+  for (; fs >= 30; fs -= 2) { x.font = `400 ${fs}px Literata, Georgia, serif`; sat = satirlaraBol(x, a.meal, W - 240); if (sat.length * fs * 1.5 < 760) break; }
+  const lh = fs * 1.5, y0 = 330 + (800 - sat.length * lh) / 2 + fs;
+  x.fillStyle = '#f2efe6';
+  sat.forEach((s, i) => x.fillText(s, W / 2, y0 + i * lh));
+  x.fillStyle = '#c9a24e'; x.font = '500 38px Figtree, sans-serif';
+  x.fillText(refYazi(a), W / 2, H - 170);
+  x.fillStyle = 'rgba(242,239,230,.55)'; x.font = '400 28px Figtree, sans-serif';
+  x.fillText('Elmalılı Hamdi Yazır meali', W / 2, H - 118);
+  return c;
+}
+async function paylas() {
+  const a = kayit(secili), c = await kartCiz(a);
+  const blob = await new Promise(r => c.toBlob(r, 'image/png'));
+  const dosya = new File([blob], 'gunun-ayeti.png', { type: 'image/png' });
+  if (!ONIZLEME && navigator.canShare && navigator.canShare({ files: [dosya] })) {
+    try { await navigator.share({ files: [dosya], text: `${a.meal}\n— ${refYazi(a)}` }); return; } catch (e) { if (e.name === 'AbortError') return; }
+  }
+  $('kartResim').src = URL.createObjectURL(blob);
+  $('perde').hidden = false; $('kapat').focus();
+}
+
+$('fav').onclick = () => {
+  const r = kayit(secili).ref;
+  favs = favs.includes(r) ? favs.filter(x => x !== r) : [...favs, r];
+  yaz('ga-fav', favs); ayetGoster(secili); if (sekme === 'fav') listeGoster();
+};
+$('paylas').onclick = paylas;
+$('kapat').onclick = () => { $('perde').hidden = true; };
+$('perde').onclick = e => { if (e.target === $('perde')) $('perde').hidden = true; };
+$('buyut').onclick = () => boyutAyarla(0.12);
+$('kucult').onclick = () => boyutAyarla(-0.12);
+$('t-once').onclick = () => { sekme = 'once'; yaz('ga-sekme', sekme); listeGoster(); };
+$('t-fav').onclick = () => { sekme = 'fav'; yaz('ga-sekme', sekme); listeGoster(); };
+document.addEventListener('keydown', e => { if (e.key === 'Escape') $('perde').hidden = true; });
+
+$('onizleme').hidden = !ONIZLEME;
+document.documentElement.style.setProperty('--boy', boy + 'rem');
+tarihGoster(); ayetGoster(bugunNo()); listeGoster();
+</script>
