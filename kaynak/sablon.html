@@ -139,7 +139,8 @@ select.dugme { max-width: 100%; color: var(--fg); }
         <button class="dugme" id="kilitKaydet">Galeriye kaydet</button>
       </div>
       <div class="kilit-araclar">
-        <select id="sehir" class="dugme" aria-label="Namaz vakti için şehir"><option value="">Namaz vakti: şehir seç</option></select>
+        <select id="sehir" class="dugme" aria-label="Namaz vakti için il"><option value="">Namaz vakti: il seç</option></select>
+        <select id="ilce" class="dugme" aria-label="İlçe" hidden></select>
       </div>
       <div class="kilit-araclar" id="otoSatir" hidden>
         <button class="dugme" id="oto" aria-pressed="false">Her sabah otomatik: Kapalı</button>
@@ -356,24 +357,42 @@ async function vakitIndir(id) {
   const v = await r.json(); vakit = v; yaz('ga-vakit', v);
   if (ANDROID) window.Android.vakitKaydet(JSON.stringify(v));
 }
+let iller = [];
+function ilceDoldur(il, secili) {
+  const c = $('ilce'); c.replaceChildren();
+  if (!il || !il.ilceler) { c.hidden = true; return; }
+  c.append(new Option('Merkez', il.id));
+  il.ilceler.filter(x => x.id !== il.id).forEach(x => c.append(new Option(x.ad, x.id)));
+  c.value = secili && [...c.options].some(o => o.value === secili) ? secili : il.id;
+  c.hidden = false;
+}
+async function vakitSec(id) {
+  $('kilitNot').textContent = 'Vakitler indiriliyor…';
+  try { await vakitIndir(id); const sv = siradakiVakit(); $('kilitNot').textContent = `Tamam. Kilit ekranında sıradaki vakit yazacak${sv ? ` (şu an: ${sv[0]} ${sv[1]})` : ''}.`; }
+  catch { $('kilitNot').textContent = 'Vakitler indirilemedi. İnternet bağlantını kontrol edip tekrar seç.'; }
+  kilitOnizle();
+}
 async function sehirKur() {
   const s = $('sehir');
   try {
     const r = await fetch(VAKIT_URL + 'iller.json', { cache: 'no-cache' });
-    (await r.json()).forEach(il => s.append(new Option(il.ad, il.id)));
-  } catch { if (vakit) s.append(new Option(vakit.ad || vakit.il, vakit.id)); }
+    iller = await r.json();
+    iller.forEach((il, i) => s.append(new Option(il.ad, String(i))));
+  } catch { if (vakit) { iller = [{ ad: vakit.il || vakit.ad, id: vakit.id, ilceler: [] }]; s.append(new Option(iller[0].ad, '0')); } }
   s.append(new Option('Vakit gösterme', 'yok'));
-  if (vakit) s.value = vakit.id;
+  if (vakit) {
+    const i = iller.findIndex(il => il.id === vakit.id || (il.ilceler || []).some(x => x.id === vakit.id));
+    if (i >= 0) { s.value = String(i); ilceDoldur(iller[i], vakit.id); }
+  }
   s.onchange = async () => {
     if (!s.value || s.value === 'yok') {
+      $('ilce').hidden = true;
       vakit = null; yaz('ga-vakit', null); if (ANDROID) window.Android.vakitKaydet('');
       $('kilitNot').textContent = 'Namaz vakti kilit ekranında gösterilmeyecek.'; kilitOnizle(); return;
     }
-    $('kilitNot').textContent = 'Vakitler indiriliyor…';
-    try { await vakitIndir(s.value); const sv = siradakiVakit(); $('kilitNot').textContent = `Tamam. Kilit ekranında sıradaki vakit yazacak${sv ? ` (şu an: ${sv[0]} ${sv[1]})` : ''}.`; }
-    catch { $('kilitNot').textContent = 'Vakitler indirilemedi. İnternet bağlantını kontrol edip tekrar seç.'; }
-    kilitOnizle();
+    const il = iller[+s.value]; ilceDoldur(il); vakitSec(il.id);
   };
+  $('ilce').onchange = () => vakitSec($('ilce').value);
   // birkaç günlük veri kaldıysa sessizce yenile
   const ileri = new Date(); ileri.setDate(ileri.getDate() + 5);
   if (vakit && !(vakit.gunler || {})[tarihAnahtar(ileri)]) vakitIndir(vakit.id).then(kilitOnizle).catch(() => {});

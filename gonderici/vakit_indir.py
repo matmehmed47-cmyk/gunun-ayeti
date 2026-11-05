@@ -1,4 +1,4 @@
-# 81 ilin Diyanet namaz vakitlerini indirir: vakitler/<ilçeID>.json + vakitler/iller.json
+# 81 il + tüm ilçelerin Diyanet namaz vakitlerini indirir: vakitler/<ilçeID>.json + vakitler/iller.json
 # Kaynak: ezanvakti.emushaf.net (Diyanet verisinin aynası). Doğrulama: 3 il Diyanet'in kendi sitesiyle karşılaştırılır.
 import json, os, re, sys, time, urllib.request
 from datetime import date, datetime, timedelta, timezone
@@ -21,22 +21,29 @@ def baslik(s):  # ANKARA -> Ankara, İZMİR -> İzmir, AĞRI -> Ağrı
     s = s.replace('I', 'ı').replace('İ', 'i').lower()
     return ' '.join(k[:1].replace('i', 'İ').replace('ı', 'I').upper() + k[1:] for k in s.split())
 
-liste, hatali = [], []
-for il in iller:
-    id_ = il['merkez']
+liste, hatali, toplam = [], [], 0
+def kaydet(id_, il_adi, ilce_adi):
+    global toplam
+    toplam += 1
     try:
         ham = json.loads(al(f'https://ezanvakti.emushaf.net/vakitler/{id_}'))
-    except Exception as e:
-        hatali.append(il['il']); continue
+    except Exception:
+        hatali.append(ilce_adi); return
     yol = os.path.join(cikti, f'{id_}.json')
     eski = json.load(open(yol, encoding='utf-8'))['gunler'] if os.path.exists(yol) else {}
     for g in ham:
         gun, ay, yil = g['MiladiTarihKisa'].split('.')
         eski[f'{yil}-{ay}-{gun}'] = [g['Imsak'], g['Gunes'], g['Ogle'], g['Ikindi'], g['Aksam'], g['Yatsi']]
     gunler = {k: v for k, v in sorted(eski.items()) if k >= (bugun - timedelta(days=1)).isoformat()}
-    json.dump({'id': id_, 'il': il['il'], 'ad': baslik(il['il']), 'gunler': gunler}, open(yol, 'w', encoding='utf-8'), ensure_ascii=False, separators=(',', ':'))
-    liste.append({'ad': baslik(il['il']), 'id': id_})
-    time.sleep(0.5)
+    json.dump({'id': id_, 'il': baslik(il_adi), 'ad': baslik(ilce_adi), 'gunler': gunler}, open(yol, 'w', encoding='utf-8'), ensure_ascii=False, separators=(',', ':'))
+    time.sleep(0.25)
+
+sira = lambda s: s.replace('Ç', 'Cz').replace('Ş', 'Sz').replace('İ', 'Iz').replace('Ö', 'Oz').replace('Ü', 'Uz').replace('Ğ', 'Gz')
+for il in iller:
+    for c in il['ilceler']:
+        kaydet(c['id'], il['il'], c['ad'])
+    ilceler = sorted(({'ad': baslik(c['ad']), 'id': c['id']} for c in il['ilceler']), key=lambda x: sira(x['ad']))
+    liste.append({'ad': baslik(il['il']), 'id': il['merkez'], 'ilceler': ilceler})
 
 # Doğrulama: Diyanet'in kendi sitesi
 for id_, ad in [('9206', 'ankara'), ('9541', 'istanbul'), ('9560', 'izmir')]:
@@ -49,7 +56,7 @@ for id_, ad in [('9206', 'ankara'), ('9541', 'istanbul'), ('9560', 'izmir')]:
     if resmi and bizim != resmi:
         print('UYUMSUZ: yayınlanmıyor'); sys.exit(1)
 
-json.dump(sorted(liste, key=lambda x: x['ad'].replace('Ç', 'Cz').replace('Ş', 'Sz').replace('İ', 'Iz').replace('Ö', 'Oz').replace('Ü', 'Uz')),
+json.dump(sorted(liste, key=lambda x: sira(x['ad'])),
           open(os.path.join(cikti, 'iller.json'), 'w', encoding='utf-8'), ensure_ascii=False, separators=(',', ':'))
-print('il sayısı', len(liste), 'hatalı', hatali)
-if len(liste) < 81: sys.exit(1)
+print('il', len(liste), 'ilçe', toplam, 'hatalı', len(hatali), hatali[:20])
+if len(liste) < 81 or len(hatali) > toplam * 0.05: sys.exit(1)
