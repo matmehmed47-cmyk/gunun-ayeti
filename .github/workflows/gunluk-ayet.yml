@@ -1,0 +1,22 @@
+name: Günlük ayet bildirimi
+
+on:
+  schedule:
+    - cron: '30 2 * * *'   # 02:30 UTC = 05:30 Türkiye; bildirim OneSignal'da 07:00'ye zamanlanır
+  workflow_dispatch:
+    inputs:
+      hemen:
+        description: 'Hemen gönder (deneme)'
+        type: boolean
+        default: true
+
+jobs:
+  gonder:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Ayeti gönder
+        env:
+          ONESIGNAL_KEY: ${{ secrets.ONESIGNAL_KEY }}
+          HEMEN: ${{ github.event_name == 'workflow_dispatch' && inputs.hemen && '1' || '0' }}
+        run: python3 gonderici/gonder.py
