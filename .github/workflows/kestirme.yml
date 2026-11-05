@@ -1,10 +1,8 @@
 # iPhone kestirmesini üretir, HubSign ile imzalar ve indirme linkine koyar.
 name: iPhone kestirmesi
 
+# Not: HubSign, GitHub sunucularından gelen isteği reddedebiliyor; o zaman tablette imzalanıp elle yüklenir.
 on:
-  push:
-    branches: [main]
-    paths: ['iphone_kestirme/**', '.github/workflows/kestirme.yml']
   workflow_dispatch:
 
 permissions:
