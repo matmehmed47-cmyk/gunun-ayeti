@@ -5,6 +5,7 @@ from datetime import date, datetime, timedelta, timezone
 
 kok = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 iller = json.load(open(os.path.join(kok, 'veri', 'iller.json'), encoding='utf-8'))
+ek_ilce = json.load(open(os.path.join(kok, 'veri', 'ek_ilceler.json'), encoding='utf-8'))['ilceler']
 cikti = os.path.join(kok, 'vakitler'); os.makedirs(cikti, exist_ok=True)
 bugun = datetime.now(timezone(timedelta(hours=3))).date()
 UA = {'User-Agent': 'gunun-ayeti/1.0 (+https://github.com/matmehmed47-cmyk/gunun-ayeti)'}
@@ -17,7 +18,8 @@ def al(url):
             hata = e; time.sleep(3 * (i + 1))
     raise hata
 
-def baslik(s):  # ANKARA -> Ankara, İZMİR -> İzmir, AĞRI -> Ağrı
+def baslik(s):  # ANKARA -> Ankara, İZMİR -> İzmir, AĞRI -> Ağrı; 'KEMER (B)' -> Kemer
+    s = re.sub(r'\s*\([A-ZÇĞİÖŞÜ]\)$', '', s.strip())
     s = s.replace('I', 'ı').replace('İ', 'i').lower()
     return ' '.join(k[:1].replace('i', 'İ').replace('ı', 'I').upper() + k[1:] for k in s.split())
 
@@ -42,7 +44,10 @@ sira = lambda s: s.replace('Ç', 'Cz').replace('Ş', 'Sz').replace('İ', 'Iz').r
 for il in iller:
     for c in il['ilceler']:
         kaydet(c['id'], il['il'], c['ad'])
-    ilceler = sorted(({'ad': baslik(c['ad']), 'id': c['id']} for c in il['ilceler']), key=lambda x: sira(x['ad']))
+    ilceler = [{'ad': baslik(c['ad']), 'id': c['id']} for c in il['ilceler']]
+    var = {x['ad'] for x in ilceler}
+    ilceler += [{'ad': a, 'id': il['merkez']} for a in ek_ilce.get(baslik(il['il']), []) if a not in var]  # Diyanet'te ayrı yok → il merkezi
+    ilceler.sort(key=lambda x: sira(x['ad']))
     liste.append({'ad': baslik(il['il']), 'id': il['merkez'], 'ilceler': ilceler})
 
 # Doğrulama: Diyanet'in kendi sitesi

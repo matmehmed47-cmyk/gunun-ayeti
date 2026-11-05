@@ -1,0 +1,228 @@
+{
+ "aciklama": "Diyanet'in ayrı vakit yayınlamadığı ilçeler: il merkezinin vakti kullanılır. Kaynak: turkiyeapi 2025 ilçe listesi (973) ile Diyanet listesinin farkı (5 Kasım 2026).",
+ "ilceler": {
+  "Adana": [
+   "Sarıçam",
+   "Seyhan",
+   "Yüreğir",
+   "Çukurova"
+  ],
+  "Ankara": [
+   "Altındağ",
+   "Etimesgut",
+   "Gölbaşı",
+   "Keçiören",
+   "Mamak",
+   "Pursaklar",
+   "Sincan",
+   "Yenimahalle",
+   "Çankaya"
+  ],
+  "Antalya": [
+   "Döşemealtı",
+   "Kepez",
+   "Konyaaltı",
+   "Muratpaşa"
+  ],
+  "Aydın": [
+   "Efeler"
+  ],
+  "Ağrı": [
+   "Hamur"
+  ],
+  "Balıkesir": [
+   "Altıeylül",
+   "Karesi"
+  ],
+  "Bartın": [
+   "Amasra"
+  ],
+  "Bingöl": [
+   "Genç"
+  ],
+  "Bursa": [
+   "Gürsu",
+   "Nilüfer",
+   "Osmangazi",
+   "Yıldırım"
+  ],
+  "Denizli": [
+   "Merkezefendi",
+   "Pamukkale"
+  ],
+  "Diyarbakır": [
+   "Bağlar",
+   "Kayapınar",
+   "Sur",
+   "Yenişehir"
+  ],
+  "Erzurum": [
+   "Palandöken",
+   "Yakutiye"
+  ],
+  "Eskişehir": [
+   "Odunpazarı",
+   "Tepebaşı"
+  ],
+  "Gaziantep": [
+   "Şahinbey",
+   "Şehitkamil"
+  ],
+  "Hatay": [
+   "Antakya",
+   "Defne"
+  ],
+  "Kahramanmaraş": [
+   "Dulkadiroğlu",
+   "Onikişubat"
+  ],
+  "Karabük": [
+   "Safranbolu"
+  ],
+  "Kayseri": [
+   "Hacılar",
+   "Kocasinan",
+   "Melikgazi",
+   "Talas"
+  ],
+  "Kocaeli": [
+   "Başiskele",
+   "Derince",
+   "Gölcük",
+   "İzmit"
+  ],
+  "Kırklareli": [
+   "Kofçaz"
+  ],
+  "Kırıkkale": [
+   "Bahşılı",
+   "Yahşihan"
+  ],
+  "Kırşehir": [
+   "Boztepe"
+  ],
+  "Malatya": [
+   "Battalgazi"
+  ],
+  "Manisa": [
+   "Yunusemre",
+   "Şehzadeler"
+  ],
+  "Mardin": [
+   "Artuklu",
+   "Yeşilli"
+  ],
+  "Mersin": [
+   "Akdeniz",
+   "Mezitli",
+   "Toroslar",
+   "Yenişehir"
+  ],
+  "Muğla": [
+   "Kavaklıdere",
+   "Menteşe"
+  ],
+  "Nevşehir": [
+   "Derinkuyu",
+   "Gülşehir"
+  ],
+  "Ordu": [
+   "Kabadüz",
+   "Perşembe",
+   "Ulubey"
+  ],
+  "Rize": [
+   "Derepazarı",
+   "Güneysu",
+   "Kalkandere"
+  ],
+  "Sakarya": [
+   "Adapazarı",
+   "Arifiye",
+   "Erenler",
+   "Ferizli",
+   "Karapürçek",
+   "Sapanca",
+   "Serdivan",
+   "Söğütlü"
+  ],
+  "Samsun": [
+   "Canik",
+   "İlkadım"
+  ],
+  "Siirt": [
+   "Tillo"
+  ],
+  "Tekirdağ": [
+   "Marmaraereğlisi",
+   "Muratlı",
+   "Süleymanpaşa"
+  ],
+  "Trabzon": [
+   "Maçka",
+   "Ortahisar"
+  ],
+  "Tunceli": [
+   "Mazgirt"
+  ],
+  "Van": [
+   "Saray",
+   "Tuşba",
+   "İpekyolu"
+  ],
+  "Yalova": [
+   "Çiftlikköy"
+  ],
+  "Zonguldak": [
+   "Kilimli",
+   "Kozlu"
+  ],
+  "Çanakkale": [
+   "Eceabat"
+  ],
+  "Çankırı": [
+   "Eldivan",
+   "Korgun"
+  ],
+  "İstanbul": [
+   "Adalar",
+   "Ataşehir",
+   "Bahçelievler",
+   "Bakırköy",
+   "Bayrampaşa",
+   "Bağcılar",
+   "Beykoz",
+   "Beyoğlu",
+   "Beşiktaş",
+   "Esenler",
+   "Eyüpsultan",
+   "Fatih",
+   "Gaziosmanpaşa",
+   "Güngören",
+   "Kadıköy",
+   "Kağıthane",
+   "Sarıyer",
+   "Zeytinburnu",
+   "Ümraniye",
+   "Üsküdar",
+   "Şişli"
+  ],
+  "İzmir": [
+   "Balçova",
+   "Bayraklı",
+   "Bornova",
+   "Buca",
+   "Gaziemir",
+   "Karabağlar",
+   "Karşıyaka",
+   "Konak",
+   "Narlıdere",
+   "Çiğli"
+  ],
+  "Şanlıurfa": [
+   "Eyyübiye",
+   "Haliliye",
+   "Karaköprü"
+  ]
+ }
+}
