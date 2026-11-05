@@ -40,7 +40,7 @@ def kaydet(id_, il_adi, ilce_adi):
     json.dump({'id': id_, 'il': baslik(il_adi), 'ad': baslik(ilce_adi), 'gunler': gunler}, open(yol, 'w', encoding='utf-8'), ensure_ascii=False, separators=(',', ':'))
     time.sleep(0.25)
 
-sira = lambda s: s.replace('Ç', 'Cz').replace('Ş', 'Sz').replace('İ', 'Iz').replace('Ö', 'Oz').replace('Ü', 'Uz').replace('Ğ', 'Gz')
+sira = lambda s: s.lower().replace('ç', 'cz').replace('ğ', 'gz').replace('ı', 'hz').replace('i̇', 'i').replace('ö', 'oz').replace('ş', 'sz').replace('ü', 'uz')  # Türkçe alfabe sırası
 for il in iller:
     for c in il['ilceler']:
         kaydet(c['id'], il['il'], c['ad'])
