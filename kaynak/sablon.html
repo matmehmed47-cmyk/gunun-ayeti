@@ -108,7 +108,7 @@ button { font: inherit; cursor: pointer; }
 
   <div class="bildirim">
     <p><b>Her sabah 07:00'de</b> günün ayeti kilit ekranına bildirim olarak gelsin.</p>
-    <button class="dugme" id="bildirim" disabled title="Bildirim 4. adımda eklenecek">Bildirimi aç (yakında)</button>
+    <button class="dugme" id="bildirim" disabled>Bildirimi aç (yakında)</button>
   </div>
 
   <nav class="sekmeler" role="tablist">
@@ -272,7 +272,45 @@ if (!ONIZLEME) {
   addEventListener('beforeinstallprompt', e => { e.preventDefault(); istem = e; if (!kurulu) { $('kur').hidden = false; $('kurDugme').hidden = false; } });
   $('kurDugme').onclick = async () => { if (!istem) return; istem.prompt(); await istem.userChoice; istem = null; $('kur').hidden = true; };
   addEventListener('appinstalled', () => { $('kur').hidden = true; });
-  if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js').catch(() => {});
+  bildirimKur(kurulu, ios);
+}
+
+/* Bildirim (OneSignal). Arka plan dosyası: OneSignalSDKWorker.js (çevrimdışı önbellek de onda) */
+function bildirimKur(kurulu, ios) {
+  const d = $('bildirim'), yazi = $('bildirim').previousElementSibling;
+  const durum = (metin, acik) => { d.textContent = metin; d.disabled = !acik; };
+  if (ios && !kurulu) { durum('Önce ana ekrana ekle', false); return; }
+  if (!('Notification' in window) || !('serviceWorker' in navigator)) { durum('Bu tarayıcı desteklemiyor', false); return; }
+  durum('Yükleniyor…', false);
+  window.OneSignalDeferred = window.OneSignalDeferred || [];
+  const s = document.createElement('script');
+  s.src = 'https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js'; s.defer = true;
+  s.onerror = () => durum('Bağlantı yok, sonra dene', false);
+  document.head.append(s);
+  OneSignalDeferred.push(async OneSignal => {
+    await OneSignal.init({
+      appId: 'bbccad47-3dde-4d34-9477-e1150081ba92',
+      safari_web_id: 'web.onesignal.auto.5e2915a8-1095-4900-b2af-7b25bf2970dd',
+      serviceWorkerPath: 'gunun-ayeti/OneSignalSDKWorker.js',
+      serviceWorkerParam: { scope: '/gunun-ayeti/' },
+      notifyButton: { enable: false },
+      promptOptions: { slidedown: { prompts: [] } },
+    });
+    const guncelle = () => {
+      const izin = OneSignal.Notifications.permission, abone = OneSignal.User.PushSubscription.optedIn;
+      if (Notification.permission === 'denied') { durum('İzin kapalı', false); yazi.innerHTML = 'Bildirim izni kapatılmış. Telefon <b>Ayarlar → Uygulamalar → Bildirimler</b>\'den açabilirsin.'; }
+      else if (izin && abone) { durum('Bildirim açık ✓', false); yazi.innerHTML = '<b>Her sabah 07:00\'de</b> günün ayeti kilit ekranına gelecek.'; }
+      else durum('Bildirimi aç', true);
+    };
+    d.onclick = async () => {
+      durum('Bekleniyor…', false);
+      try { if (!OneSignal.Notifications.permission) await OneSignal.Notifications.requestPermission(); else await OneSignal.User.PushSubscription.optIn(); } catch {}
+      guncelle();
+    };
+    OneSignal.Notifications.addEventListener('permissionChange', guncelle);
+    OneSignal.User.PushSubscription.addEventListener('change', guncelle);
+    guncelle();
+  });
 }
 
 $('onizleme').hidden = !ONIZLEME;
