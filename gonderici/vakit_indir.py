@@ -40,6 +40,7 @@ def kaydet(id_, il_adi, ilce_adi):
     json.dump({'id': id_, 'il': baslik(il_adi), 'ad': baslik(ilce_adi), 'gunler': gunler}, open(yol, 'w', encoding='utf-8'), ensure_ascii=False, separators=(',', ':'))
     time.sleep(0.25)
 
+TAKMA = {'Doğubeyazıt': 'Doğubayazıt', 'Karadeniz Ereğli': 'Ereğli', 'Ordu': 'Altınordu'}
 sira = lambda s: s.lower().replace('ç', 'cz').replace('ğ', 'gz').replace('ı', 'hz').replace('i̇', 'i').replace('ö', 'oz').replace('ş', 'sz').replace('ü', 'uz')  # Türkçe alfabe sırası
 for il in iller:
     for c in il['ilceler']:
@@ -47,6 +48,9 @@ for il in iller:
     ilceler = [{'ad': baslik(c['ad']), 'id': c['id']} for c in il['ilceler']]
     var = {x['ad'] for x in ilceler}
     ilceler += [{'ad': a, 'id': il['merkez']} for a in ek_ilce.get(baslik(il['il']), []) if a not in var]  # Diyanet'te ayrı yok → il merkezi
+    for diy, resmi in TAKMA.items():  # Diyanet adı farklı yazılmış ilçeler: resmi adıyla da göster
+        for x in list(ilceler):
+            if x['ad'] == diy and resmi not in var: ilceler.append({'ad': resmi, 'id': x['id']})
     ilceler.sort(key=lambda x: sira(x['ad']))
     liste.append({'ad': baslik(il['il']), 'id': il['merkez'], 'ilceler': ilceler})
 
