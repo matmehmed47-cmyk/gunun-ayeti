@@ -1,0 +1,41 @@
+# Siteyi yayınlar. Her gece 00:05 (Türkiye) iPhone için bugünün ayet ve vakit resimlerini de üretir.
+# Vakitler Diyanet sitesiyle tutmazsa yayın yapılmaz (eski doğru sürüm kalır).
+name: Site yayını
+
+on:
+  push:
+    branches: [main]
+  schedule:
+    - cron: '5 21 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  yayin:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.dagit.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Vakitleri Diyanet ile karşılaştır
+        run: python3 gonderici/dogrula.py
+      - name: iPhone resimlerini üret
+        run: |
+          pip install -q pillow
+          curl -sfL -o /tmp/literata.ttf "https://github.com/google/fonts/raw/main/ofl/literata/Literata%5Bopsz,wght%5D.ttf"
+          mkdir -p _site
+          rsync -a --exclude .git --exclude .github --exclude android --exclude _site ./ _site/
+          python3 gonderici/iphone_resim.py /tmp/literata.ttf _site
+      - uses: actions/upload-pages-artifact@v3
+        with: { path: _site }
+      - id: dagit
+        uses: actions/deploy-pages@v4

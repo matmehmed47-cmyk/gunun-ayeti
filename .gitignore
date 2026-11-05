@@ -3,3 +3,5 @@ android/app/src/main/assets/
 android/.gradle/
 android/app/build/
 android/build/
+iphone/
+_site/

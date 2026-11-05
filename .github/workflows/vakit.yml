@@ -8,6 +8,7 @@ on:
 
 permissions:
   contents: write
+  actions: write
 
 jobs:
   vakit:
@@ -22,3 +23,6 @@ jobs:
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add vakitler
           git diff --cached --quiet || { git commit -m "Namaz vakitleri güncellendi"; git pull --rebase -q; git push; }
+      - name: Siteyi yeniden yayınla
+        env: { GH_TOKEN: '${{ github.token }}' }
+        run: gh workflow run site.yml -R ${{ github.repository }}
