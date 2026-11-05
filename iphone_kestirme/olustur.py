@@ -56,7 +56,7 @@ eylemler = [
           WFFileDestinationPath=FOTO, WFSaveFileOverwrite=True),
     eylem('is.workflow.actions.conditional', GroupingIdentifier=grup, WFControlFlowMode=2),
     eylem('is.workflow.actions.documentpicker.open', UUID=dosya2, WFGetFilePath=FOTO, WFFileErrorIfNotFound=True, WFShowFilePicker=False),
-    eylem('is.workflow.actions.image.resize', UUID=boyut, WFImage=cikti(dosya2, 'Dosya'), WFImageResizeWidth='1290'),
+    eylem('is.workflow.actions.image.resize', UUID=boyut, WFImage=cikti(dosya2, 'Dosya'), WFImageResizeKey='Width', WFImageResizeWidth='', WFImageResizeHeight='2796'),  # boyuna göre: ekranı tam doldurur
     eylem('is.workflow.actions.image.crop', UUID=kirp, WFInput=cikti(boyut, 'Yeniden Boyutlandırılmış Görüntü'),
           WFImageCropPosition='Center', WFImageCropWidth='1290', WFImageCropHeight='2796'),
     eylem('is.workflow.actions.downloadurl', UUID=ayet, WFURL=SITE + 'bugun-alt.png'),
