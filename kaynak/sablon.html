@@ -154,6 +154,11 @@ select.dugme { max-width: 100%; color: var(--fg); }
         <button class="dugme" id="indirIphone">iPhone için indir</button>
       </div>
       <p class="kilit-not" id="indirNot"></p>
+      <div class="kilit-araclar" id="iphoneAyar" hidden>
+        <button class="dugme" id="ipIlce">📍 İlçemi değiştir</button>
+        <button class="dugme" id="ipFoto">🖼️ Fotoğrafımı değiştir</button>
+        <button class="dugme" id="ipYenile">🔄 Şimdi yenile</button>
+      </div>
     </div>
   </section>
 
@@ -481,11 +486,15 @@ if (ANDROID) {
     if (ac) window.Android.simdiUygula();
   };
 }
+const KESTIRME = ad => `shortcuts://run-shortcut?name=Gunun-Ayeti&input=text&text=${ad}`;
 function iphoneNot() {
-  const kod = vakit ? vakit.id : '9206';
-  $('indirNot').innerHTML = `<b>iPhone kurulumu (bir kez):</b><br>1. Açılan sayfada <b>İndir</b>'e, sonra indirilen dosyaya dokun → <b>Kestirme Ekle</b>.<br>2. Kestirmeler'de <b>Günün Ayeti</b>'ne bir kez dokun. <b>İlini</b> ve <b>ilçeni</b> listeden seç.<br>3. Sonra <b>fotoğrafını</b> seç. Kilit ekranına bak.<br>4. Kestirmeler → <b>Otomasyon</b> → <b>+</b> → <b>Günün Saati</b> 01:00, Her Gün → <b>Hemen Çalıştır</b> → <b>Gunun-Ayeti</b>. Aynısını <b>07:00</b> için de ekle (gece internet yoksa sabah yeniler).<br>Sonradan ilçeyi ya da fotoğrafı değiştirmek için gündüz <b>Günün Ayeti</b>'ne dokun, menüden seç.`;
+  $('indirNot').innerHTML = `<b>iPhone kurulumu (bir kez):</b><br>1. Açılan sayfada <b>İndir</b>'e, sonra indirilen dosyaya dokun → <b>Kestirme Ekle</b>.<br>2. Kestirmeler'de <b>Gunun-Ayeti</b>'ne bir kez dokun. <b>İlini</b>, <b>ilçeni</b> ve <b>fotoğrafını</b> seç. Kilit ekranına bak.<br>3. Kestirmeler → <b>Otomasyon</b> → <b>+</b> ile üç otomasyon ekle, hepsinde <b>Hemen Çalıştır</b> → <b>Gunun-Ayeti</b>:<br>&nbsp;• <b>Günün Saati</b> 01:00, Her Gün<br>&nbsp;• <b>Günün Saati</b> 07:00, Her Gün<br>&nbsp;• <b>Wi-Fi</b> → Herhangi bir ağa <b>katıldığında</b><br>Gün içinde tekrar tekrar çalışsa da günde bir kez yeniler.`;
+  $('iphoneAyar').hidden = false;
 }
 $('indirIphone').onclick = () => { iphoneNot(); location.href = IPHONE_KESTIRME; };
+$('ipIlce').onclick = () => { location.href = KESTIRME('ilce'); };
+$('ipFoto').onclick = () => { location.href = KESTIRME('foto'); };
+$('ipYenile').onclick = () => { location.href = KESTIRME('yenile'); };
 if (IOS) iphoneNot();
 $('kilitKoy').onclick = async () => {
   if (ANDROID) {
