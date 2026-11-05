@@ -29,7 +29,7 @@ object Ayar {
     private fun p(c: Context) = c.getSharedPreferences("ga", Context.MODE_PRIVATE)
     fun otomatik(c: Context) = p(c).getBoolean("otomatik", false)
     fun otomatikKoy(c: Context, v: Boolean) = p(c).edit().putBoolean("otomatik", v).apply()
-    fun yer(c: Context) = p(c).getString("yer", "orta") ?: "orta"
+    fun yer(c: Context) = p(c).getString("yer", "alt") ?: "alt"
     fun yerKoy(c: Context, v: String) = p(c).edit().putString("yer", v).apply()
 }
 
@@ -77,30 +77,31 @@ object KilitCizici {
         val (meal, ref) = bugunkuAyet(c)
         val gen = (W * 0.8f).toInt()
         val tp = TextPaint(Paint.ANTI_ALIAS_FLAG).apply {
-            color = Color.WHITE; typeface = Typeface.SERIF
-            setShadowLayer(W * 0.012f, 0f, 0f, Color.argb(150, 0, 0, 0))
+            color = Color.WHITE; typeface = Typeface.create(Typeface.SERIF, Typeface.BOLD)
+            setShadowLayer(W * 0.016f, 0f, 0f, Color.argb(215, 0, 0, 0))
         }
-        var fs = W * 0.056f
+        var fs = W * 0.044f
         var dz: StaticLayout
         while (true) {
             tp.textSize = fs
             dz = StaticLayout.Builder.obtain(meal, 0, meal.length, tp, gen)
                 .setAlignment(Layout.Alignment.ALIGN_CENTER).setLineSpacing(0f, 1.25f).build()
-            if (dz.height < H * 0.3f || fs < W * 0.03f) break
+            if (dz.height < H * 0.22f || fs < W * 0.028f) break
             fs *= 0.94f
         }
         val rp = TextPaint(Paint.ANTI_ALIAS_FLAG).apply {
-            color = Color.rgb(236, 208, 143); textSize = fs * 0.72f; textAlign = Paint.Align.CENTER
+            color = Color.rgb(241, 214, 153); textSize = fs * 0.72f; textAlign = Paint.Align.CENTER
             typeface = Typeface.create(Typeface.SANS_SERIF, Typeface.BOLD)
             setShadowLayer(W * 0.012f, 0f, 0f, Color.argb(150, 0, 0, 0))
         }
         val blok = dz.height + rp.textSize * 2.2f
-        val merkez = if (Ayar.yer(c) == "alt") H * 0.70f else H * 0.52f
-        val ust = merkez - blok / 2; val pay = fs * 2.2f
+        val merkez = if (Ayar.yer(c) == "alt") H * 0.78f else H * 0.52f
+        var ust = merkez - blok / 2; val pay = fs * 2.2f
+        if (ust + blok > H * 0.86f) ust = H * 0.86f - blok
         val bant = Paint().apply {
             shader = LinearGradient(0f, ust - pay, 0f, ust + blok + pay,
-                intArrayOf(Color.argb(0, 0, 0, 0), Color.argb(128, 0, 0, 0), Color.argb(128, 0, 0, 0), Color.argb(0, 0, 0, 0)),
-                floatArrayOf(0f, .25f, .75f, 1f), Shader.TileMode.CLAMP)
+                intArrayOf(Color.argb(0, 0, 0, 0), Color.argb(174, 0, 0, 0), Color.argb(174, 0, 0, 0), Color.argb(0, 0, 0, 0)),
+                floatArrayOf(0f, .22f, .78f, 1f), Shader.TileMode.CLAMP)
         }
         cv.drawRect(0f, ust - pay, W.toFloat(), ust + blok + pay, bant)
         cv.save(); cv.translate((W - gen) / 2f, ust); dz.draw(cv); cv.restore()

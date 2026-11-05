@@ -24,19 +24,23 @@ def sar(d, metin, f, gen):
 
 def ciz(yer):
     im = Image.new('RGBA', (W, H), (0, 0, 0, 0)); d = ImageDraw.Draw(im)
-    gen, fs = W * 0.8, int(W * 0.056)
+    gen, fs = W * 0.8, int(W * 0.044)
     while True:
-        f = ImageFont.truetype(font, fs); sat = sar(d, a['meal'], f, gen)
-        if len(sat) * fs * 1.45 < H * 0.3 or fs < W * 0.03: break
+        f = ImageFont.truetype(font, fs)
+        try: f.set_variation_by_name('SemiBold')
+        except Exception: pass
+        sat = sar(d, a['meal'], f, gen)
+        if len(sat) * fs * 1.45 < H * 0.22 or fs < W * 0.028: break
         fs = int(fs * 0.94)
     lh, rfs = fs * 1.45, int(fs * 0.72)
     blok = len(sat) * lh + rfs * 2.2
-    merkez = H * (0.70 if yer == 'alt' else 0.52)
+    merkez = H * (0.78 if yer == 'alt' else 0.52)
     ust, pay = merkez - blok / 2, fs * 2.2
+    if ust + blok > H * 0.86: ust = H * 0.86 - blok
     bant = Image.new('L', (1, 256))
     for y in range(256):
         t = y / 255
-        bant.putpixel((0, y), int(128 * (t / .25 if t < .25 else (1 - t) / .25 if t > .75 else 1)))
+        bant.putpixel((0, y), int(174 * (t / .22 if t < .22 else (1 - t) / .22 if t > .78 else 1)))
     bant = bant.resize((W, int(blok + 2 * pay)))
     golge = Image.new('RGBA', bant.size, (0, 0, 0, 0)); golge.putalpha(bant)
     im.alpha_composite(golge, (0, int(ust - pay)))
@@ -44,8 +48,8 @@ def ciz(yer):
     rf = ImageFont.truetype(font, rfs)
     for i, s in enumerate(sat):
         yd.text((W / 2, ust + fs + i * lh), s, font=f, fill='white', anchor='ms')
-    yd.text((W / 2, ust + len(sat) * lh + rfs * 1.6), ref, font=rf, fill=(236, 208, 143, 255), anchor='ms')
-    g = yazi.split()[3].filter(ImageFilter.GaussianBlur(fs * 0.25)).point(lambda v: int(v * .6))
+    yd.text((W / 2, ust + len(sat) * lh + rfs * 1.6), ref, font=rf, fill=(241, 214, 153, 255), anchor='ms')
+    g = yazi.split()[3].filter(ImageFilter.GaussianBlur(fs * 0.3)).point(lambda v: int(v * .85))
     sh = Image.new('RGBA', (W, H), (0, 0, 0, 0)); sh.putalpha(g)
     im.alpha_composite(sh); im.alpha_composite(yazi)
     return im
