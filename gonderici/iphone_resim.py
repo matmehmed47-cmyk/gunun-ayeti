@@ -97,7 +97,7 @@ os.makedirs(os.path.join(ip, 'ilce'), exist_ok=True)
 open(os.path.join(ip, 'iller.txt'), 'w', encoding='utf-8').write('\n'.join(i['ad'] for i in il_listesi))
 json.dump({i['ad']: kisa(i['ad']) for i in il_listesi}, open(os.path.join(ip, 'iller.json'), 'w', encoding='utf-8'), ensure_ascii=False)
 for i in il_listesi:
-    sec = [('Merkez', i['id'])] + [(c['ad'], c['id']) for c in i.get('ilceler', []) if c['id'] != i['id']]
+    sec = [('Merkez', i['id'])] + [(c['ad'], c['id']) for c in i.get('ilceler', []) if c['ad'] != i['ad']]
     open(os.path.join(ip, 'ilce', kisa(i['ad']) + '.txt'), 'w', encoding='utf-8').write('\n'.join(a for a, _ in sec))
     json.dump(dict(sec), open(os.path.join(ip, 'ilce', kisa(i['ad']) + '.json'), 'w', encoding='utf-8'), ensure_ascii=False)
 print('il/ilçe listeleri', len(il_listesi))

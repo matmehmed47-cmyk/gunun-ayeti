@@ -366,7 +366,7 @@ function ilceDoldur(il, secili) {
   const c = $('ilce'); c.replaceChildren();
   if (!il || !il.ilceler) { c.hidden = true; return; }
   c.append(new Option('Merkez', il.id));
-  il.ilceler.filter(x => x.id !== il.id).forEach(x => c.append(new Option(x.ad, x.id)));
+  il.ilceler.filter(x => x.ad !== il.ad).forEach(x => c.append(new Option(x.ad, x.id)));
   c.value = secili && [...c.options].some(o => o.value === secili) ? secili : il.id;
   c.hidden = false;
 }

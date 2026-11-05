@@ -13,7 +13,7 @@
 <link rel="apple-touch-icon" href="simge/apple-touch-icon.png">
 <style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}[hidden]{display:none!important}</style>
 <title>Günün Ayeti</title>
-<!-- sürüm 17 -->
+<!-- sürüm 18 -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Literata:ital,opsz,wght@0,7..72,400;0,7..72,600;1,7..72,400&family=Figtree:wght@400;500;600&display=swap">
@@ -382,7 +382,7 @@ function ilceDoldur(il, secili) {
   const c = $('ilce'); c.replaceChildren();
   if (!il || !il.ilceler) { c.hidden = true; return; }
   c.append(new Option('Merkez', il.id));
-  il.ilceler.filter(x => x.id !== il.id).forEach(x => c.append(new Option(x.ad, x.id)));
+  il.ilceler.filter(x => x.ad !== il.ad).forEach(x => c.append(new Option(x.ad, x.id)));
   c.value = secili && [...c.options].some(o => o.value === secili) ? secili : il.id;
   c.hidden = false;
 }
