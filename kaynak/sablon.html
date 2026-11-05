@@ -179,7 +179,7 @@ const ONIZLEME = /*ONIZLEME*/true;
 
 const $ = id => document.getElementById(id);
 const ANDROID = !!(window.Android && window.Android.var_mi);
-const IPHONE_KESTIRME = ''; // iCloud kestirme linki hazır olunca buraya
+const IPHONE_KESTIRME = 'https://github.com/matmehmed47-cmyk/gunun-ayeti/releases/download/iphone/Gunun-Ayeti.shortcut';
 const b64 = b => new Promise(r => { const f = new FileReader(); f.onload = () => r(String(f.result).split(',')[1]); f.readAsDataURL(b); });
 const oku = (k, v) => { try { const x = localStorage.getItem(k); return x === null ? v : JSON.parse(x); } catch { return v; } };
 const yaz = (k, v) => { try { localStorage.setItem(k, JSON.stringify(v)); } catch {} };
@@ -368,7 +368,7 @@ function ilceDoldur(il, secili) {
 }
 async function vakitSec(id) {
   $('kilitNot').textContent = 'Vakitler indiriliyor…';
-  try { await vakitIndir(id); const sv = siradakiVakit(); $('kilitNot').textContent = `Tamam. Kilit ekranında sıradaki vakit yazacak${sv ? ` (şu an: ${sv[0]} ${sv[1]})` : ''}.`; }
+  try { await vakitIndir(id); if (IOS) iphoneNot(); const sv = siradakiVakit(); $('kilitNot').textContent = `Tamam. Kilit ekranında sıradaki vakit yazacak${sv ? ` (şu an: ${sv[0]} ${sv[1]})` : ''}.`; }
   catch { $('kilitNot').textContent = 'Vakitler indirilemedi. İnternet bağlantını kontrol edip tekrar seç.'; }
   kilitOnizle();
 }
@@ -480,10 +480,12 @@ if (ANDROID) {
     if (ac) window.Android.simdiUygula();
   };
 }
-$('indirIphone').onclick = () => {
-  if (IPHONE_KESTIRME) { location.href = IPHONE_KESTIRME; return; }
-  $('indirNot').textContent = 'iPhone kurulumu hazırlanıyor. Şimdilik "Kilit ekranıma koy" düğmesiyle her sabah elle koyabilirsin.';
-};
+function iphoneNot() {
+  const kod = vakit ? vakit.id : '9206';
+  $('indirNot').innerHTML = `<b>iPhone kurulumu (bir kez):</b><br>1. Açılan sayfada <b>İndir</b>'e, sonra indirilen dosyaya dokun → <b>Kestirme Ekle</b>.<br>2. İlçe kodu sorulunca <b>${kod}</b> yaz${vakit ? ` (${vakit.il}${vakit.ad !== vakit.il ? ' / ' + vakit.ad : ''})` : ' (Ankara; önce yukarıdan ilini seçersen kodun burada yazar)'}.<br>3. Kestirmeyi bir kez çalıştır, fotoğrafını seç.<br>4. Kestirmeler → <b>Otomasyon</b> → <b>+</b> → <b>Günün Saati</b> 01:00, Her Gün → <b>Hemen Çalıştır</b> → <b>Günün Ayeti</b>.`;
+}
+$('indirIphone').onclick = () => { iphoneNot(); location.href = IPHONE_KESTIRME; };
+if (IOS) iphoneNot();
 $('kilitKoy').onclick = async () => {
   if (ANDROID) {
     const s = window.Android.simdiUygula();

@@ -1,4 +1,4 @@
-# iPhone kestirmesini GitHub'ın Mac'inde imzalar ve indirme linkine koyar.
+# iPhone kestirmesini üretir, HubSign ile imzalar ve indirme linkine koyar.
 name: iPhone kestirmesi
 
 on:
@@ -12,13 +12,13 @@ permissions:
 
 jobs:
   imzala:
-    runs-on: macos-latest
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - name: Kestirmeyi üret ve imzala
         run: |
           python3 iphone_kestirme/olustur.py imzasiz.shortcut
-          shortcuts sign --mode anyone --input imzasiz.shortcut --output "Gunun-Ayeti.shortcut"
+          python3 iphone_kestirme/imzala.py imzasiz.shortcut Gunun-Ayeti.shortcut
           ls -la Gunun-Ayeti.shortcut
       - name: İndirme linkine koy
         env: { GH_TOKEN: '${{ github.token }}' }
