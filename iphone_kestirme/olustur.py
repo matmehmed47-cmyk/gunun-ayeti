@@ -25,6 +25,7 @@ def eylem(kimlik, **p):
 
 ilce, dosya1, sec, kaydet, dosya2, boyut, kirp, ayet, bindir1, vakit, bindir2 = (U() for _ in range(11))
 grup = U()
+jpg = U()
 idosya1, isor, ikaydet, idosya2 = (U() for _ in range(4)); igrup = U()
 u1, b1, s1, u2, k1, u3, b2, s2, u4, kodmetin = (U() for _ in range(10))
 eylemler = [
@@ -50,7 +51,8 @@ eylemler = [
     eylem('is.workflow.actions.documentpicker.open', UUID=dosya1, WFGetFilePath=FOTO, WFFileErrorIfNotFound=False, WFShowFilePicker=False),
     eylem('is.workflow.actions.conditional', GroupingIdentifier=grup, WFControlFlowMode=0, WFCondition=101, WFInput={'Type': 'Variable', 'Variable': cikti(dosya1, 'Dosya')}),
     eylem('is.workflow.actions.selectphoto', UUID=sec),
-    eylem('is.workflow.actions.documentpicker.save', UUID=kaydet, WFInput=cikti(sec, 'Fotoğraflar'), WFAskWhereToSave=False,
+    eylem('is.workflow.actions.image.convert', UUID=jpg, WFInput=cikti(sec, 'Fotoğraflar'), WFImageFormat='JPEG', WFImageCompressionQuality=0.9, WFImagePreserveMetadata=False),
+    eylem('is.workflow.actions.documentpicker.save', UUID=kaydet, WFInput=cikti(jpg, 'Dönüştürülmüş Görüntü'), WFAskWhereToSave=False,
           WFFileDestinationPath=FOTO, WFSaveFileOverwrite=True),
     eylem('is.workflow.actions.conditional', GroupingIdentifier=grup, WFControlFlowMode=2),
     eylem('is.workflow.actions.documentpicker.open', UUID=dosya2, WFGetFilePath=FOTO, WFFileErrorIfNotFound=True, WFShowFilePicker=False),
