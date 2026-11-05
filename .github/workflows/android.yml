@@ -1,3 +1,4 @@
+# Günün Ayeti Android uygulamasını üretir ve indirme linkine koyar.
 name: Android APK
 
 on:
