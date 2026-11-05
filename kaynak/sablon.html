@@ -101,6 +101,11 @@ button { font: inherit; cursor: pointer; }
     </div>
   </article>
 
+  <div class="bildirim" id="kur" hidden>
+    <p id="kurYazi">Uygulamayı ana ekrana ekle, her gün tek dokunuşla aç.</p>
+    <button class="dugme ana" id="kurDugme" hidden>Uygulamayı yükle</button>
+  </div>
+
   <div class="bildirim">
     <p><b>Her sabah 07:00'de</b> günün ayeti kilit ekranına bildirim olarak gelsin.</p>
     <button class="dugme" id="bildirim" disabled title="Bildirim 4. adımda eklenecek">Bildirimi aç (yakında)</button>
@@ -254,6 +259,21 @@ $('kucult').onclick = () => boyutAyarla(-0.12);
 $('t-once').onclick = () => { sekme = 'once'; yaz('ga-sekme', sekme); listeGoster(); };
 $('t-fav').onclick = () => { sekme = 'fav'; yaz('ga-sekme', sekme); listeGoster(); };
 document.addEventListener('keydown', e => { if (e.key === 'Escape') $('perde').hidden = true; });
+
+/* Ana ekrana ekleme yardımı (yalnız gerçek uygulamada) */
+if (!ONIZLEME) {
+  const kurulu = matchMedia('(display-mode: standalone)').matches || navigator.standalone === true;
+  const ios = /iPad|iPhone|iPod/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+  let istem = null;
+  if (!kurulu && ios) {
+    $('kurYazi').innerHTML = 'Ana ekrana eklemek için Safari\'de alttaki <b>Paylaş</b> düğmesine, sonra <b>Ana Ekrana Ekle</b>\'ye dokun. Bildirimler iPhone\'da ancak böyle çalışır.';
+    $('kur').hidden = false;
+  }
+  addEventListener('beforeinstallprompt', e => { e.preventDefault(); istem = e; if (!kurulu) { $('kur').hidden = false; $('kurDugme').hidden = false; } });
+  $('kurDugme').onclick = async () => { if (!istem) return; istem.prompt(); await istem.userChoice; istem = null; $('kur').hidden = true; };
+  addEventListener('appinstalled', () => { $('kur').hidden = true; });
+  if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js').catch(() => {});
+}
 
 $('onizleme').hidden = !ONIZLEME;
 document.documentElement.style.setProperty('--boy', boy + 'rem');

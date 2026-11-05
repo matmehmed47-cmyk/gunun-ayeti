@@ -1,0 +1,30 @@
+{
+ "id": "./gunun-ayeti",
+ "name": "Günün Ayeti",
+ "short_name": "Günün Ayeti",
+ "description": "Her gün sıradaki ayetin Elmalılı Hamdi Yazır meali.",
+ "lang": "tr",
+ "start_url": "./",
+ "scope": "./",
+ "display": "standalone",
+ "background_color": "#0f2a2c",
+ "theme_color": "#11706f",
+ "icons": [
+  {
+   "src": "simge/simge-192.png",
+   "sizes": "192x192",
+   "type": "image/png"
+  },
+  {
+   "src": "simge/simge-512.png",
+   "sizes": "512x512",
+   "type": "image/png"
+  },
+  {
+   "src": "simge/simge-maskeli-512.png",
+   "sizes": "512x512",
+   "type": "image/png",
+   "purpose": "maskable"
+  }
+ ]
+}
