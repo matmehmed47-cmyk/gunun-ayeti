@@ -29,7 +29,42 @@ jpg = U()
 gen, yuk, carp, bol, yuvar = (U() for _ in range(5))
 idosya1, isor, ikaydet, idosya2 = (U() for _ in range(4)); igrup = U()
 u1, b1, s1, u2, k1, u3, b2, s2, u4, kodmetin = (U() for _ in range(10))
-eylemler = [
+
+# Gündüz elle açılınca menü (gece otomasyonda saat < 6 olduğu için sorulmaz)
+def menu_blogu():
+    tarih, saat, eg, mg = U(), U(), U(), U()
+    u1, b1, s1, u2, k1, u3, b2, s2, u4, kod, km, sec, jpg = (U() for _ in range(13))
+    S = ['🔄 Kilit ekranını yenile', '📍 İlçeyi değiştir', '🖼️ Fotoğrafı değiştir']
+    return [
+        eylem('is.workflow.actions.date', UUID=tarih, WFDateActionMode='Current Date'),
+        eylem('is.workflow.actions.format.date', UUID=saat, WFDate=cikti(tarih, 'Tarih'), WFDateFormatStyle='Custom', WFDateFormat='H'),
+        eylem('is.workflow.actions.conditional', GroupingIdentifier=eg, WFControlFlowMode=0, WFCondition=3, WFNumberValue='6',
+              WFInput={'Type': 'Variable', 'Variable': cikti(saat, 'Biçimlendirilmiş Tarih')}),
+        eylem('is.workflow.actions.choosefrommenu', GroupingIdentifier=mg, WFControlFlowMode=0, WFMenuPrompt='Günün Ayeti',
+              WFMenuItems=[{'WFItemType': 0, 'WFValue': s} for s in S]),
+        eylem('is.workflow.actions.choosefrommenu', GroupingIdentifier=mg, WFControlFlowMode=1, WFMenuItemAttributedTitle=S[0], WFMenuItemTitle=S[0]),
+        eylem('is.workflow.actions.choosefrommenu', GroupingIdentifier=mg, WFControlFlowMode=1, WFMenuItemAttributedTitle=S[1], WFMenuItemTitle=S[1]),
+        eylem('is.workflow.actions.downloadurl', UUID=u1, WFURL=SITE + 'iller.txt'),
+        eylem('is.workflow.actions.text.split', UUID=b1, text=cikti(u1, 'URL İçeriği'), WFTextSeparator='New Lines'),
+        eylem('is.workflow.actions.choosefromlist', UUID=s1, WFInput=cikti(b1, 'Bölünmüş Metin'), WFChooseFromListActionPrompt='İlini seç'),
+        eylem('is.workflow.actions.downloadurl', UUID=u2, WFURL=SITE + 'iller.json'),
+        eylem('is.workflow.actions.getvalueforkey', UUID=k1, WFInput=cikti(u2, 'URL İçeriği'), WFGetDictionaryValueType='Value', WFDictionaryKey=metin([(s1, 'Seçilen Öge')])),
+        eylem('is.workflow.actions.downloadurl', UUID=u3, WFURL=metin([SITE + 'ilce/', (k1, 'Sözlük Değeri'), '.txt'])),
+        eylem('is.workflow.actions.text.split', UUID=b2, text=cikti(u3, 'URL İçeriği'), WFTextSeparator='New Lines'),
+        eylem('is.workflow.actions.choosefromlist', UUID=s2, WFInput=cikti(b2, 'Bölünmüş Metin'), WFChooseFromListActionPrompt='İlçeni seç'),
+        eylem('is.workflow.actions.downloadurl', UUID=u4, WFURL=metin([SITE + 'ilce/', (k1, 'Sözlük Değeri'), '.json'])),
+        eylem('is.workflow.actions.getvalueforkey', UUID=kod, WFInput=cikti(u4, 'URL İçeriği'), WFGetDictionaryValueType='Value', WFDictionaryKey=metin([(s2, 'Seçilen Öge')])),
+        eylem('is.workflow.actions.gettext', UUID=km, WFTextActionText=metin([(kod, 'Sözlük Değeri')])),
+        eylem('is.workflow.actions.documentpicker.save', WFInput=cikti(km, 'Metin'), WFAskWhereToSave=False, WFFileDestinationPath=ILCE, WFSaveFileOverwrite=True),
+        eylem('is.workflow.actions.choosefrommenu', GroupingIdentifier=mg, WFControlFlowMode=1, WFMenuItemAttributedTitle=S[2], WFMenuItemTitle=S[2]),
+        eylem('is.workflow.actions.selectphoto', UUID=sec, WFPhotoPickerTypes=['Images']),
+        eylem('is.workflow.actions.image.convert', UUID=jpg, WFInput=cikti(sec, 'Fotoğraflar'), WFImageFormat='JPEG', WFImageCompressionQuality=0.92, WFImagePreserveMetadata=True),
+        eylem('is.workflow.actions.documentpicker.save', WFInput=cikti(jpg, 'Dönüştürülmüş Görüntü'), WFAskWhereToSave=False, WFFileDestinationPath=FOTO, WFSaveFileOverwrite=True),
+        eylem('is.workflow.actions.choosefrommenu', GroupingIdentifier=mg, WFControlFlowMode=2, UUID=U()),
+        eylem('is.workflow.actions.conditional', GroupingIdentifier=eg, WFControlFlowMode=2),
+    ]
+
+eylemler = menu_blogu() + [
     # İlçe kodu: ilk çalışmada sorulur, Kestirmeler klasörüne kaydedilir
     eylem('is.workflow.actions.documentpicker.open', UUID=idosya1, WFGetFilePath=ILCE, WFFileErrorIfNotFound=False, WFShowFilePicker=False),
     eylem('is.workflow.actions.conditional', GroupingIdentifier=igrup, WFControlFlowMode=0, WFCondition=101, WFInput={'Type': 'Variable', 'Variable': cikti(idosya1, 'Dosya')}),
