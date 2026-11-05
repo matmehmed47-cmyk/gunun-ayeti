@@ -13,7 +13,7 @@
 <link rel="apple-touch-icon" href="simge/apple-touch-icon.png">
 <style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}[hidden]{display:none!important}</style>
 <title>Günün Ayeti</title>
-<!-- sürüm 2 -->
+<!-- sürüm 3 -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Literata:ital,opsz,wght@0,7..72,400;0,7..72,600;1,7..72,400&family=Figtree:wght@400;500;600&display=swap">
@@ -77,6 +77,18 @@ button { font: inherit; cursor: pointer; }
 .bildirim { display: flex; gap: 12px; align-items: center; justify-content: space-between; flex-wrap: wrap; background: var(--turkuaz-ac); border-radius: 12px; padding: 14px 16px; }
 .bildirim p { margin: 0; font-size: .92rem; line-height: 1.45; min-width: 0; flex: 1 1 14rem; }
 
+.kilit { display: grid; grid-template-columns: 104px 1fr; gap: 14px 16px; align-items: start; background: var(--turkuaz-ac); border-radius: 14px; padding: 16px; }
+.kilit-on { width: 104px; aspect-ratio: 9 / 19.5; object-fit: cover; border-radius: 12px; border: 3px solid var(--fg); background: var(--kart); max-width: 100%; }
+.kilit-sag { display: grid; gap: 10px; min-width: 0; }
+.kilit h2 { margin: 0; font-family: var(--f-ayet); font-size: 1.15rem; font-weight: 600; }
+.kilit p { margin: 0; font-size: .9rem; line-height: 1.45; }
+.kilit-araclar { display: flex; gap: 8px; flex-wrap: wrap; }
+.kilit .dugme { background: var(--kart); }
+.kilit .dugme.ana { background: var(--turkuaz); }
+.yer { display: inline-flex; gap: 4px; }
+.kilit-not { grid-column: 1 / -1; color: var(--soluk); font-size: .85rem !important; }
+.kilit-not:empty { display: none; }
+@media (max-width: 360px) { .kilit { grid-template-columns: 1fr; } .kilit-on { width: 120px; } }
 .sekmeler { display: flex; gap: 4px; border-bottom: 1px solid var(--cizgi); }
 .sekme { background: none; border: 0; border-bottom: 2px solid transparent; color: var(--soluk); padding: 10px 12px; font-size: .95rem; margin-bottom: -1px; }
 .sekme[aria-selected="true"] { color: var(--fg); border-bottom-color: var(--turkuaz); font-weight: 600; }
@@ -122,10 +134,26 @@ button { font: inherit; cursor: pointer; }
     <button class="dugme ana" id="kurDugme" hidden>Uygulamayı yükle</button>
   </div>
 
-  <div class="bildirim">
-    <p><b>Her sabah 07:00'de</b> günün ayeti kilit ekranına bildirim olarak gelsin.</p>
-    <button class="dugme" id="bildirim" disabled>Bildirimi aç (yakında)</button>
-  </div>
+  <section class="kilit" aria-labelledby="kilitBaslik">
+    <img id="kilitOn" class="kilit-on" alt="Kilit ekranı önizlemesi">
+    <div class="kilit-sag">
+      <h2 id="kilitBaslik">Kilit ekranı</h2>
+      <p id="kilitDurum">Kendi fotoğrafını seç. Ayet, fotoğrafının üstüne yazılır; fotoğrafın aynen kalır.</p>
+      <div class="kilit-araclar">
+        <label class="dugme" for="foto">Fotoğrafımı seç</label>
+        <input type="file" id="foto" accept="image/*" hidden>
+        <span class="yer" role="group" aria-label="Yazının yeri">
+          <button class="dugme" id="yerOrta" aria-pressed="true">Orta</button>
+          <button class="dugme" id="yerAlt" aria-pressed="false">Alt</button>
+        </span>
+      </div>
+      <div class="kilit-araclar">
+        <button class="dugme ana" id="kilitKoy">Kilit ekranıma koy</button>
+        <button class="dugme" id="kilitKaydet">Galeriye kaydet</button>
+      </div>
+    </div>
+    <p class="kilit-not" id="kilitNot"></p>
+  </section>
 
   <nav class="sekmeler" role="tablist">
     <button class="sekme" role="tab" id="t-once" aria-selected="true">Önceki ayetler</button>
@@ -288,46 +316,90 @@ if (!ONIZLEME) {
   addEventListener('beforeinstallprompt', e => { e.preventDefault(); istem = e; if (!kurulu) { $('kur').hidden = false; $('kurDugme').hidden = false; } });
   $('kurDugme').onclick = async () => { if (!istem) return; istem.prompt(); await istem.userChoice; istem = null; $('kur').hidden = true; };
   addEventListener('appinstalled', () => { $('kur').hidden = true; });
-  bildirimKur(kurulu, ios);
+  if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js').catch(() => {});
 }
 
-/* Bildirim (OneSignal). Arka plan dosyası: OneSignalSDKWorker.js (çevrimdışı önbellek de onda) */
-function bildirimKur(kurulu, ios) {
-  const d = $('bildirim'), yazi = $('bildirim').previousElementSibling;
-  const durum = (metin, acik) => { d.textContent = metin; d.disabled = !acik; };
-  if (ios && !kurulu) { durum('Önce ana ekrana ekle', false); return; }
-  if (!('Notification' in window) || !('serviceWorker' in navigator)) { durum('Bu tarayıcı desteklemiyor', false); return; }
-  durum('Yükleniyor…', false);
-  window.OneSignalDeferred = window.OneSignalDeferred || [];
-  const s = document.createElement('script');
-  s.src = 'https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js'; s.defer = true;
-  s.onerror = () => durum('Bağlantı yok, sonra dene', false);
-  document.head.append(s);
-  OneSignalDeferred.push(async OneSignal => {
-    await OneSignal.init({
-      appId: 'bbccad47-3dde-4d34-9477-e1150081ba92',
-      safari_web_id: 'web.onesignal.auto.5e2915a8-1095-4900-b2af-7b25bf2970dd',
-      serviceWorkerPath: 'gunun-ayeti/OneSignalSDKWorker.js',
-      serviceWorkerParam: { scope: '/gunun-ayeti/' },
-      notifyButton: { enable: false },
-      promptOptions: { slidedown: { prompts: [] } },
-    });
-    const guncelle = () => {
-      const izin = OneSignal.Notifications.permission, abone = OneSignal.User.PushSubscription.optedIn;
-      if (Notification.permission === 'denied') { durum('İzin kapalı', false); yazi.innerHTML = 'Bildirim izni kapatılmış. Telefon <b>Ayarlar → Uygulamalar → Bildirimler</b>\'den açabilirsin.'; }
-      else if (izin && abone) { durum('Bildirim açık ✓', false); yazi.innerHTML = '<b>Her sabah 07:00\'de</b> günün ayeti kilit ekranına gelecek.'; }
-      else durum('Bildirimi aç', true);
-    };
-    d.onclick = async () => {
-      durum('Bekleniyor…', false);
-      try { if (!OneSignal.Notifications.permission) await OneSignal.Notifications.requestPermission(); else await OneSignal.User.PushSubscription.optIn(); } catch {}
-      guncelle();
-    };
-    OneSignal.Notifications.addEventListener('permissionChange', guncelle);
-    OneSignal.User.PushSubscription.addEventListener('change', guncelle);
-    guncelle();
-  });
+/* ---- Kilit ekranı: kullanıcının fotoğrafı + günün ayeti. Fotoğraf yalnız bu cihazda (IndexedDB) ---- */
+const IOS = /iPad|iPhone|iPod/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+const vt = () => new Promise((ok, no) => { const r = indexedDB.open('gunun-ayeti', 1); r.onupgradeneeded = () => r.result.createObjectStore('d'); r.onsuccess = () => ok(r.result); r.onerror = () => no(r.error); });
+async function vtAl(k) { try { const d = await vt(); return await new Promise(ok => { const q = d.transaction('d').objectStore('d').get(k); q.onsuccess = () => ok(q.result || null); q.onerror = () => ok(null); }); } catch { return null; } }
+async function vtKoy(k, v) { try { const d = await vt(); await new Promise(ok => { const t = d.transaction('d', 'readwrite'); t.objectStore('d').put(v, k); t.oncomplete = ok; t.onerror = ok; }); } catch {} }
+
+let foto = null, yer = oku('ga-yer', 'orta'), onizlemeUrl = null;
+
+async function kilitCiz(a) {
+  const dpr = Math.min(devicePixelRatio || 2, 3);
+  let W = Math.round(Math.min(screen.width, screen.height) * dpr), H = Math.round(Math.max(screen.width, screen.height) * dpr);
+  if (W > 1440) { H = Math.round(H * 1440 / W); W = 1440; }
+  if (!W || !H) { W = 1080; H = 2340; }
+  const c = document.createElement('canvas'); c.width = W; c.height = H;
+  const x = c.getContext('2d');
+  if (foto) {
+    const im = await createImageBitmap(foto);
+    const o = Math.max(W / im.width, H / im.height), w = im.width * o, h = im.height * o;
+    x.drawImage(im, (W - w) / 2, (H - h) / 2, w, h);
+  } else {
+    const g = x.createLinearGradient(0, 0, 0, H); g.addColorStop(0, '#0f2a2c'); g.addColorStop(1, '#16403f');
+    x.fillStyle = g; x.fillRect(0, 0, W, H);
+  }
+  try { await document.fonts.load(`400 ${Math.round(W * .05)}px Literata`); } catch {}
+  const gen = W * 0.8;
+  let fs = W * 0.056, sat;
+  for (; fs > W * 0.03; fs *= 0.94) { x.font = `400 ${fs}px Literata, Georgia, serif`; sat = satirlaraBol(x, a.meal, gen); if (sat.length * fs * 1.45 < H * 0.3) break; }
+  const lh = fs * 1.45, rfs = fs * 0.72, blok = sat.length * lh + rfs * 2.2;
+  const merkez = yer === 'alt' ? H * 0.70 : H * 0.52;
+  const ust = merkez - blok / 2, pay = fs * 2.2;
+  const g = x.createLinearGradient(0, ust - pay, 0, ust + blok + pay);
+  g.addColorStop(0, 'rgba(0,0,0,0)'); g.addColorStop(.25, 'rgba(0,0,0,.5)'); g.addColorStop(.75, 'rgba(0,0,0,.5)'); g.addColorStop(1, 'rgba(0,0,0,0)');
+  x.fillStyle = g; x.fillRect(0, ust - pay, W, blok + 2 * pay);
+  x.textAlign = 'center'; x.textBaseline = 'alphabetic';
+  x.shadowColor = 'rgba(0,0,0,.6)'; x.shadowBlur = fs * 0.3;
+  x.fillStyle = '#ffffff'; x.font = `400 ${fs}px Literata, Georgia, serif`;
+  sat.forEach((s, i) => x.fillText(s, W / 2, ust + fs + i * lh));
+  x.fillStyle = '#ecd08f'; x.font = `500 ${rfs}px Figtree, sans-serif`;
+  x.fillText(refYazi(a), W / 2, ust + sat.length * lh + rfs * 1.6);
+  return c;
 }
+const kilitBlob = async () => { const c = await kilitCiz(kayit(bugunNo())); return new Promise(r => c.toBlob(r, 'image/jpeg', 0.92)); };
+
+async function kilitOnizle() {
+  const b = await kilitBlob(); if (!b) return;
+  if (onizlemeUrl) URL.revokeObjectURL(onizlemeUrl);
+  onizlemeUrl = URL.createObjectURL(b); $('kilitOn').src = onizlemeUrl;
+  $('kilitDurum').textContent = foto ? 'Fotoğrafın kayıtlı. Her sabah "Kilit ekranıma koy"a bas, bugünün ayeti fotoğrafının üstüne yazılsın.' : 'Kendi fotoğrafını seç. Ayet, fotoğrafının üstüne yazılır; fotoğrafın aynen kalır.';
+  $('yerOrta').setAttribute('aria-pressed', yer === 'orta'); $('yerAlt').setAttribute('aria-pressed', yer === 'alt');
+}
+function kilitKaydet(b) {
+  const a = document.createElement('a'); a.href = URL.createObjectURL(b); a.download = `gunun-ayeti-${new Date().toISOString().slice(0, 10)}.jpg`;
+  document.body.append(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(a.href), 4000);
+  $('kilitNot').textContent = IOS
+    ? 'Resim kaydedildi. Fotoğraflar\'da aç → Paylaş → "Duvar Kağıdı Olarak Kullan" → kilit ekranı.'
+    : 'Resim kaydedildi. Galeri\'de aç → ⋮ menü → "Duvar kağıdı olarak ayarla" → "Kilit ekranı".';
+}
+$('foto').onchange = async e => {
+  const f = e.target.files[0]; if (!f) return;
+  foto = f; await vtKoy('foto', f); kilitOnizle();
+};
+$('yerOrta').onclick = () => { yer = 'orta'; yaz('ga-yer', yer); kilitOnizle(); };
+$('yerAlt').onclick = () => { yer = 'alt'; yaz('ga-yer', yer); kilitOnizle(); };
+$('kilitKoy').onclick = async () => {
+  const b = await kilitBlob(); if (!b) return;
+  const f = new File([b], 'gunun-ayeti-kilit.jpg', { type: 'image/jpeg' });
+  if (!ONIZLEME && navigator.canShare && navigator.canShare({ files: [f] })) {
+    $('kilitNot').textContent = IOS
+      ? 'Açılan menüde "Görüntüyü Kaydet"i seç. Sonra Fotoğraflar\'da aç → Paylaş → "Duvar Kağıdı Olarak Kullan".'
+      : 'Açılan menüde "Duvar kağıdı olarak ayarla" (ya da Galeri / Fotoğraflar) seç → "Kilit ekranı". Menüde yoksa "Galeriye kaydet"e bas.';
+    try { await navigator.share({ files: [f] }); return; } catch (e) { if (e.name === 'AbortError') return; }
+  }
+  if (ONIZLEME) { $('kartResim').src = URL.createObjectURL(b); $('kartNot').textContent = 'Önizlemede resim burada gösterilir. Kurulu uygulamada düğme, telefonun "Duvar kağıdı olarak ayarla" menüsünü açar.'; $('perde').hidden = false; return; }
+  kilitKaydet(b);
+};
+$('kilitKaydet').onclick = async () => {
+  const b = await kilitBlob(); if (!b) return;
+  if (ONIZLEME) { $('kartResim').src = URL.createObjectURL(b); $('kartNot').textContent = 'Önizlemede kaydetme kapalı; kurulu uygulamada resim galeriye iner.'; $('perde').hidden = false; return; }
+  kilitKaydet(b);
+};
+(async () => { foto = await vtAl('foto'); kilitOnizle(); })();
 
 $('onizleme').hidden = !ONIZLEME;
 document.documentElement.style.setProperty('--boy', boy + 'rem');

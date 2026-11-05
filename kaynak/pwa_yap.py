@@ -46,9 +46,8 @@ json.dump({
     ]
 }, open(kok + '/manifest.webmanifest', 'w', encoding='utf-8'), ensure_ascii=False, indent=1)
 
-if os.path.exists(kok + '/sw.js'): os.remove(kok + '/sw.js')
-open(kok + '/OneSignalSDKWorker.js', 'w', encoding='utf-8').write(f"""// Günün Ayeti — sürüm {surum}. Bildirim (OneSignal) + çevrimdışı önbellek. Çevrimiçi: en yeni sürüm; çevrimdışı: kayıtlı kopya.
-importScripts('https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.sw.js');
+if os.path.exists(kok + '/OneSignalSDKWorker.js'): os.remove(kok + '/OneSignalSDKWorker.js')  # bildirim kaldırıldı (6 Kasım 2026)
+open(kok + '/sw.js', 'w', encoding='utf-8').write(f"""// Günün Ayeti — sürüm {surum}. Çevrimiçi: en yeni sürüm; çevrimdışı: kayıtlı kopya.
 const AD = 'ga-{surum}';
 const DOSYALAR = ['./', 'index.html', 'manifest.webmanifest', 'simge/simge-192.png', 'simge/simge-512.png', 'simge/apple-touch-icon.png'];
 self.addEventListener('install', e => {{ e.waitUntil(caches.open(AD).then(c => c.addAll(DOSYALAR))); self.skipWaiting(); }});
