@@ -13,7 +13,7 @@
 <link rel="apple-touch-icon" href="simge/apple-touch-icon.png">
 <style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}[hidden]{display:none!important}</style>
 <title>Günün Ayeti</title>
-<!-- sürüm 9 -->
+<!-- sürüm 10 -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Literata:ital,opsz,wght@0,7..72,400;0,7..72,600;1,7..72,400&family=Figtree:wght@400;500;600&display=swap">
@@ -498,7 +498,7 @@ if (ANDROID) {
 }
 function iphoneNot() {
   const kod = vakit ? vakit.id : '9206';
-  $('indirNot').innerHTML = `<b>iPhone kurulumu (bir kez):</b><br>1. Açılan sayfada <b>İndir</b>'e, sonra indirilen dosyaya dokun → <b>Kestirme Ekle</b>.<br>2. Kestirmeler'de <b>Günün Ayeti</b>'ne bir kez dokun. İlçe kodunu sorunca <b>${kod}</b> yaz${vakit ? ` (${vakit.il}${vakit.ad !== vakit.il ? ' / ' + vakit.ad : ''})` : ' (Ankara merkez; başka yerdeysen önce yukarıdan il ve ilçeni seç, kodun burada yazar)'}.<br>3. Sonra fotoğrafını seç. Kilit ekranına bak.<br>4. Kestirmeler → <b>Otomasyon</b> → <b>+</b> → <b>Günün Saati</b> 01:00, Her Gün → <b>Hemen Çalıştır</b> → <b>Günün Ayeti</b>.`;
+  $('indirNot').innerHTML = `<b>iPhone kurulumu (bir kez):</b><br>1. Açılan sayfada <b>İndir</b>'e, sonra indirilen dosyaya dokun → <b>Kestirme Ekle</b>.<br>2. Kestirmeler'de <b>Günün Ayeti</b>'ne bir kez dokun. <b>İlini</b> ve <b>ilçeni</b> listeden seç.<br>3. Sonra <b>fotoğrafını</b> seç. Kilit ekranına bak.<br>4. Kestirmeler → <b>Otomasyon</b> → <b>+</b> → <b>Günün Saati</b> 01:00, Her Gün → <b>Hemen Çalıştır</b> → <b>Günün Ayeti</b>.`;
 }
 $('indirIphone').onclick = () => { iphoneNot(); location.href = IPHONE_KESTIRME; };
 if (IOS) iphoneNot();
