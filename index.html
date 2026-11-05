@@ -13,7 +13,7 @@
 <link rel="apple-touch-icon" href="simge/apple-touch-icon.png">
 <style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}[hidden]{display:none!important}</style>
 <title>Günün Ayeti</title>
-<!-- sürüm 5 -->
+<!-- sürüm 6 -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Literata:ital,opsz,wght@0,7..72,400;0,7..72,600;1,7..72,400&family=Figtree:wght@400;500;600&display=swap">
@@ -90,6 +90,7 @@ button { font: inherit; cursor: pointer; }
 .kilit-not:empty { display: none; }
 .indir { grid-column: 1 / -1; display: grid; gap: 10px; border-top: 1px solid var(--cizgi); padding-top: 14px; }
 a.dugme { text-decoration: none; }
+select.dugme { max-width: 100%; color: var(--fg); }
 @media (max-width: 360px) { .kilit { grid-template-columns: 1fr; } .kilit-on { width: 120px; } }
 .sekmeler { display: flex; gap: 4px; border-bottom: 1px solid var(--cizgi); }
 .sekme { background: none; border: 0; border-bottom: 2px solid transparent; color: var(--soluk); padding: 10px 12px; font-size: .95rem; margin-bottom: -1px; }
@@ -152,6 +153,9 @@ a.dugme { text-decoration: none; }
       <div class="kilit-araclar">
         <button class="dugme ana" id="kilitKoy">Kilit ekranıma koy</button>
         <button class="dugme" id="kilitKaydet">Galeriye kaydet</button>
+      </div>
+      <div class="kilit-araclar">
+        <select id="sehir" class="dugme" aria-label="Namaz vakti için şehir"><option value="">Namaz vakti: şehir seç</option></select>
       </div>
       <div class="kilit-araclar" id="otoSatir" hidden>
         <button class="dugme" id="oto" aria-pressed="false">Her sabah otomatik: Kapalı</button>
@@ -344,6 +348,54 @@ async function vtKoy(k, v) { try { const d = await vt(); await new Promise(ok =>
 
 let foto = null, yer = oku('ga-yer', 'alt'), onizlemeUrl = null;
 
+/* ---- Namaz vakti (Diyanet). Veri: vakitler/<id>.json, GitHub her hafta yeniler ---- */
+const VAKIT_URL = 'https://matmehmed47-cmyk.github.io/gunun-ayeti/vakitler/';
+const VAKIT_AD = ['İmsak', 'Güneş', 'Öğle', 'İkindi', 'Akşam', 'Yatsı'];
+let vakit = oku('ga-vakit', null);
+const tarihAnahtar = d => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+function siradakiVakit() {
+  if (!vakit || !vakit.gunler) return null;
+  const n = new Date();
+  for (let ek = 0; ek < 2; ek++) {
+    const g = new Date(n); g.setDate(g.getDate() + ek);
+    const dz = vakit.gunler[tarihAnahtar(g)]; if (!dz) continue;
+    for (let i = 0; i < 6; i++) {
+      const [s, d] = dz[i].split(':').map(Number), t = new Date(g); t.setHours(s, d, 0, 0);
+      if (t > n) return [VAKIT_AD[i], dz[i]];
+    }
+  }
+  return null;
+}
+async function vakitIndir(id) {
+  const r = await fetch(VAKIT_URL + id + '.json', { cache: 'no-cache' });
+  if (!r.ok) throw new Error(r.status);
+  const v = await r.json(); vakit = v; yaz('ga-vakit', v);
+  if (ANDROID) window.Android.vakitKaydet(JSON.stringify(v));
+}
+async function sehirKur() {
+  const s = $('sehir');
+  try {
+    const r = await fetch(VAKIT_URL + 'iller.json', { cache: 'no-cache' });
+    (await r.json()).forEach(il => s.append(new Option(il.ad, il.id)));
+  } catch { if (vakit) s.append(new Option(vakit.ad || vakit.il, vakit.id)); }
+  s.append(new Option('Vakit gösterme', 'yok'));
+  if (vakit) s.value = vakit.id;
+  s.onchange = async () => {
+    if (!s.value || s.value === 'yok') {
+      vakit = null; yaz('ga-vakit', null); if (ANDROID) window.Android.vakitKaydet('');
+      $('kilitNot').textContent = 'Namaz vakti kilit ekranında gösterilmeyecek.'; kilitOnizle(); return;
+    }
+    $('kilitNot').textContent = 'Vakitler indiriliyor…';
+    try { await vakitIndir(s.value); const sv = siradakiVakit(); $('kilitNot').textContent = `Tamam. Kilit ekranında sıradaki vakit yazacak${sv ? ` (şu an: ${sv[0]} ${sv[1]})` : ''}.`; }
+    catch { $('kilitNot').textContent = 'Vakitler indirilemedi. İnternet bağlantını kontrol edip tekrar seç.'; }
+    kilitOnizle();
+  };
+  // birkaç günlük veri kaldıysa sessizce yenile
+  const ileri = new Date(); ileri.setDate(ileri.getDate() + 5);
+  if (vakit && !(vakit.gunler || {})[tarihAnahtar(ileri)]) vakitIndir(vakit.id).then(kilitOnizle).catch(() => {});
+}
+sehirKur();
+
 async function kilitCiz(a) {
   const dpr = Math.min(devicePixelRatio || 2, 3);
   let W = Math.round(Math.min(screen.width, screen.height) * dpr), H = Math.round(Math.max(screen.width, screen.height) * dpr);
@@ -363,7 +415,8 @@ async function kilitCiz(a) {
   const gen = W * 0.8;
   let fs = W * 0.044, sat;
   for (; fs > W * 0.028; fs *= 0.94) { x.font = `600 ${fs}px Literata, Georgia, serif`; sat = satirlaraBol(x, a.meal, gen); if (sat.length * fs * 1.45 < H * 0.22) break; }
-  const lh = fs * 1.45, rfs = fs * 0.72, blok = sat.length * lh + rfs * 2.2;
+  const sv = siradakiVakit(), vakitYazi = sv ? `${sv[0]} ${sv[1]}` : '';
+  const lh = fs * 1.45, rfs = fs * 0.72, vfs = rfs * 0.92, blok = sat.length * lh + rfs * 2.2 + (sv ? vfs * 1.5 : 0);
   const merkez = yer === 'alt' ? H * 0.78 : H * 0.52;
   let ust = merkez - blok / 2; const pay = fs * 2.2;
   if (ust + blok > H * 0.86) ust = H * 0.86 - blok;
@@ -376,6 +429,7 @@ async function kilitCiz(a) {
   sat.forEach((s, i) => x.fillText(s, W / 2, ust + fs + i * lh));
   x.fillStyle = '#f1d699'; x.font = `600 ${rfs}px Figtree, sans-serif`;
   x.fillText(refYazi(a), W / 2, ust + sat.length * lh + rfs * 1.6);
+  if (sv) { x.font = `400 ${vfs}px Figtree, sans-serif`; x.fillText(vakitYazi, W / 2, ust + sat.length * lh + rfs * 1.6 + vfs * 1.5); }
   return c;
 }
 const kilitBlob = async () => { const c = await kilitCiz(kayit(bugunNo())); return new Promise(r => c.toBlob(r, 'image/jpeg', 0.92)); };

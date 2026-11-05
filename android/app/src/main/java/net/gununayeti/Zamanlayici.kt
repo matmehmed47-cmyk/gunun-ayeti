@@ -14,7 +14,9 @@ import java.util.concurrent.TimeUnit
 /** Her sabah 07:00'de kilit ekranını yeniler. */
 class KilitIsci(c: Context, p: WorkerParameters) : Worker(c, p) {
     override fun doWork(): Result = try {
+        Vakit.gerekirseIndir(applicationContext)
         if (Ayar.otomatik(applicationContext)) KilitCizici.uygula(applicationContext)
+        Vakit.alarmKur(applicationContext)
         Result.success()
     } catch (e: Exception) { Result.retry() }
 }

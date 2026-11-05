@@ -94,7 +94,9 @@ object KilitCizici {
             typeface = Typeface.create(Typeface.SANS_SERIF, Typeface.BOLD)
             setShadowLayer(W * 0.012f, 0f, 0f, Color.argb(150, 0, 0, 0))
         }
-        val blok = dz.height + rp.textSize * 2.2f
+        val vakit = Vakit.siradaki(c)?.let { "${it.first} ${it.second}" }
+        val vp = TextPaint(rp).apply { textSize = rp.textSize * 0.92f; typeface = Typeface.create(Typeface.SANS_SERIF, Typeface.NORMAL) }
+        val blok = dz.height + rp.textSize * 2.2f + (if (vakit != null) vp.textSize * 1.5f else 0f)
         val merkez = if (Ayar.yer(c) == "alt") H * 0.78f else H * 0.52f
         var ust = merkez - blok / 2; val pay = fs * 2.2f
         if (ust + blok > H * 0.86f) ust = H * 0.86f - blok
@@ -106,6 +108,7 @@ object KilitCizici {
         cv.drawRect(0f, ust - pay, W.toFloat(), ust + blok + pay, bant)
         cv.save(); cv.translate((W - gen) / 2f, ust); dz.draw(cv); cv.restore()
         cv.drawText(ref, W / 2f, ust + dz.height + rp.textSize * 1.6f, rp)
+        if (vakit != null) cv.drawText(vakit, W / 2f, ust + dz.height + rp.textSize * 1.6f + vp.textSize * 1.5f, vp)
         return bmp
     }
 

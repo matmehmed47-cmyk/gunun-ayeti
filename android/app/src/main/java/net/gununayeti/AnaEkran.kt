@@ -59,6 +59,7 @@ class AnaEkran : Activity() {
         if (savedInstanceState != null) web.restoreState(savedInstanceState)
         else web.loadUrl("https://appassets.androidplatform.net/assets/www/index.html")
         Zamanlayici.kur(this) // açıksa yarın sabahı tekrar planla
+        Thread { Vakit.gerekirseIndir(this); Vakit.alarmKur(this) }.start()
     }
 
     override fun onSaveInstanceState(outState: Bundle) { super.onSaveInstanceState(outState); web.saveState(outState) }
@@ -88,10 +89,16 @@ class AnaEkran : Activity() {
             f.writeBytes(Base64.decode(b64, Base64.DEFAULT))
         }
         @JavascriptInterface fun yerAyarla(yer: String) = Ayar.yerKoy(this@AnaEkran, yer)
+        /** Şehrin vakit verisi (vakitler/<id>.json içeriği). Boş = şehir kaldırıldı. */
+        @JavascriptInterface fun vakitKaydet(json: String) {
+            Vakit.kaydet(this@AnaEkran, json); Vakit.alarmKur(this@AnaEkran)
+            if (Ayar.otomatik(this@AnaEkran)) try { KilitCizici.uygula(this@AnaEkran) } catch (_: Exception) {}
+        }
         @JavascriptInterface fun otomatik(): Boolean = Ayar.otomatik(this@AnaEkran)
         @JavascriptInterface fun otomatikAyarla(acik: Boolean) {
             Ayar.otomatikKoy(this@AnaEkran, acik)
             Zamanlayici.kur(this@AnaEkran)
+            Vakit.alarmKur(this@AnaEkran)
         }
         /** Hemen kilit ekranına uygular; sonucu metin döner. */
         @JavascriptInterface fun simdiUygula(): String = try {
