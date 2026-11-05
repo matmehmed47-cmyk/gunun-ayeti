@@ -1,0 +1,439 @@
+# Günün Ayeti - ayet listesi (400 kayıt)
+# Biçim: sure:ayet | Sure | Konu | Kısa içerik
+# BÖLÜM A (1-200): numaralar henüz kaynaktan DOĞRULANMADI (kontrol bekliyor)
+# BÖLÜM B (201-400): numaralar alquran.cloud (tr.diyanet + en.sahih) ile doğrulandı
+# Sıralama (karışık / konulu) henüz belirlenmedi. Meal metni henüz eklenmedi.
+
+## BÖLÜM A
+
+### İman, tevhid, esma
+1:2-4 | Fatiha | İman | Hamd âlemlerin Rabbi Allah'a
+2:255 | Bakara | İman | Ayetel Kürsi, Allah'ın kudreti
+112:1-4 | İhlas | İman | Allah birdir, doğurmamış doğmamış
+59:22-24 | Haşr | İman | Allah'ın güzel isimleri
+2:163 | Bakara | İman | İlahınız tek ilahtır
+2:115 | Bakara | İman | Nereye dönseniz Allah oradadır
+2:285 | Bakara | İman | Amenerrasulü, peygamberler arasında ayrım yok
+3:18 | Âl-i İmrân | İman | Allah'tan başka ilah olmadığına şahitlik
+3:26 | Âl-i İmrân | İman | Mülkün sahibi Allah, hayır O'nun elinde
+6:59 | En'âm | İman | Düşen her yaprağı bilir
+6:103 | En'âm | İman | Gözler O'nu idrak edemez
+21:22 | Enbiyâ | İman | Birden çok ilah olsa düzen bozulurdu
+42:11 | Şûrâ | İman | O'nun benzeri hiçbir şey yoktur
+50:16 | Kâf | İman | Şah damarından daha yakın
+57:3 | Hadîd | İman | O Evvel'dir, Âhir'dir, Zâhir'dir, Bâtın'dır
+67:1-2 | Mülk | İman | Ölümü ve hayatı imtihan için yarattı
+3:190-191 | Âl-i İmrân | İman | Göklerin yaratılışını düşünen akıl sahipleri
+30:22 | Rûm | İman | Dil ve renk farklılığı O'nun ayetleri
+36:82 | Yâsîn | İman | "Ol" der, oluverir
+41:53 | Fussilet | İman | Ayetlerimizi ufuklarda ve nefislerde göstereceğiz
+55:26-27 | Rahmân | İman | Her şey fani, Rabbinin yüzü baki
+39:62 | Zümer | İman | Allah her şeyin yaratıcısıdır
+18:109 | Kehf | İman | Deniz mürekkep olsa Rabbimin sözleri tükenmez
+2:256 | Bakara | İman | Dinde zorlama yoktur
+49:15 | Hucurât | İman | Gerçek müminler şüpheye düşmez
+8:2 | Enfâl | İman | Allah anılınca kalpleri titreyenler
+35:15 | Fâtır | İman | Siz Allah'a muhtaçsınız, O ganidir
+7:180 | A'râf | İman | En güzel isimler Allah'ındır, onlarla dua edin
+20:8 | Tâhâ | İman | Allah'tan başka ilah yok, güzel isimler O'nun
+
+### Dua ayetleri
+1:5-7 | Fatiha | Dua | Yalnız sana ibadet eder, doğru yola ilet
+2:186 | Bakara | Dua | Ben yakınım, duaya karşılık veririm
+40:60 | Mü'min | Dua | Bana dua edin, karşılık vereyim
+2:201 | Bakara | Dua | Rabbena âtinâ, dünya ve ahiret iyiliği
+3:8 | Âl-i İmrân | Dua | Hidayetten sonra kalplerimizi kaydırma
+14:40-41 | İbrâhîm | Dua | Beni namaz kılan yap, anne babamı bağışla
+17:24 | İsrâ | Dua | Rabbim, anne babama merhamet et
+20:25-26 | Tâhâ | Dua | Göğsümü genişlet, işimi kolaylaştır
+20:114 | Tâhâ | Dua | Rabbim, ilmimi artır
+21:87-88 | Enbiyâ | Dua | Yunus'un duası, kederden kurtuluş
+21:83 | Enbiyâ | Dua | Eyyub'un duası, merhametlilerin merhametlisi
+21:89 | Enbiyâ | Dua | Zekeriya: beni yalnız bırakma
+23:118 | Mü'minûn | Dua | Rabbim bağışla, merhamet et
+25:74 | Furkân | Dua | Eş ve çocuklardan göz aydınlığı
+25:65-66 | Furkân | Dua | Cehennem azabını bizden uzaklaştır
+7:23 | A'râf | Dua | Âdem: Rabbimiz, kendimize zulmettik
+28:24 | Kasas | Dua | Musa: indireceğin her hayra muhtacım
+26:83-85 | Şuarâ | Dua | İbrahim: hikmet ver, salihlere kat
+27:19 | Neml | Dua | Süleyman: nimetine şükretmeyi nasip et
+3:16 | Âl-i İmrân | Dua | İman ettik, günahlarımızı bağışla
+59:10 | Haşr | Dua | Bizi ve önceki mümin kardeşlerimizi bağışla
+18:10 | Kehf | Dua | Ashab-ı Kehf: katından rahmet ver
+7:126 | A'râf | Dua | Sabır yağdır, Müslüman olarak öldür
+12:101 | Yûsuf | Dua | Yusuf: Müslüman olarak can al
+2:127 | Bakara | Dua | Rabbimiz, bizden kabul buyur
+3:147 | Âl-i İmrân | Dua | Günahları bağışla, ayaklarımızı sabit kıl
+17:80 | İsrâ | Dua | Doğrulukla girdir, doğrulukla çıkar
+23:97-98 | Mü'minûn | Dua | Şeytanların vesvesesinden sana sığınırım
+71:28 | Nûh | Dua | Nuh: beni, anne babamı, müminleri bağışla
+
+### Namaz, ibadet, zikir, oruç
+2:183 | Bakara | İbadet | Oruç size farz kılındı
+2:152 | Bakara | Zikir | Beni anın, ben de sizi anayım
+2:45 | Bakara | Namaz | Sabır ve namazla yardım isteyin
+2:238 | Bakara | Namaz | Namazlara ve orta namaza devam
+4:103 | Nisâ | Namaz | Namaz vakitleri belirli bir farz
+11:114 | Hûd | Namaz | İyilikler kötülükleri giderir
+13:28 | Ra'd | Zikir | Kalpler Allah'ı anmakla huzur bulur
+20:14 | Tâhâ | Namaz | Beni anmak için namaz kıl
+29:45 | Ankebût | Namaz | Namaz kötülükten alıkoyar
+23:1-2 | Mü'minûn | Namaz | Namazda huşu duyan müminler kurtuldu
+33:41-42 | Ahzâb | Zikir | Allah'ı çokça anın, sabah akşam tesbih
+51:56 | Zâriyât | İbadet | İnsanlar ve cinler ibadet için yaratıldı
+62:9 | Cum'a | Namaz | Cuma namazına koşun
+17:79 | İsrâ | Namaz | Teheccüd, övülmüş makam
+87:1-3 | A'lâ | Zikir | Yüce Rabbinin adını tesbih et
+108:1-3 | Kevser | İbadet | Rabbin için namaz kıl, kurban kes
+107:4-5 | Mâûn | Namaz | Namazından gafil olanlara yazıklar olsun
+6:162-163 | En'âm | İbadet | Namazım, ibadetim, hayatım, ölümüm Allah için
+15:99 | Hicr | İbadet | Ölüm gelinceye kadar Rabbine ibadet et
+7:205 | A'râf | Zikir | Rabbini içinden, yalvararak an
+2:43 | Bakara | Namaz | Namazı kılın, zekâtı verin
+98:5 | Beyyine | İbadet | Dini Allah'a halis kılarak ibadet
+22:77 | Hac | Namaz | Rükû edin, secde edin, hayır yapın
+96:19 | Alak | Namaz | Secde et ve yaklaş
+97:1-3 | Kadr | İbadet | Kadir gecesi bin aydan hayırlı
+3:97 | Âl-i İmrân | İbadet | Gücü yetene hac farzdır
+63:9 | Münâfikûn | Zikir | Mal ve çocuk Allah'ı anmaktan alıkoymasın
+76:25-26 | İnsan | Zikir | Sabah akşam an, gece secde et
+
+### Sabır ve tevekkül
+2:153 | Bakara | Sabır | Allah sabredenlerle beraberdir
+2:155-156 | Bakara | Sabır | Musibette "Biz Allah'ınız, O'na döneceğiz"
+2:250 | Bakara | Sabır | Rabbimiz, üzerimize sabır yağdır
+3:200 | Âl-i İmrân | Sabır | Sabredin, sabırda yarışın
+3:173 | Âl-i İmrân | Tevekkül | Hasbünallah ve ni'mel vekil
+3:139 | Âl-i İmrân | Sabır | Gevşemeyin, üzülmeyin, üstün sizsiniz
+8:46 | Enfâl | Sabır | Çekişmeyin, sabredin
+9:51 | Tevbe | Tevekkül | Allah'ın yazdığından başkası isabet etmez
+9:129 | Tevbe | Tevekkül | Allah bana yeter, O'na tevekkül ettim
+11:115 | Hûd | Sabır | İyilik yapanın karşılığı zayi olmaz
+12:86 | Yûsuf | Sabır | Derdimi ve hüznümü Allah'a açarım
+16:127 | Nahl | Sabır | Senin sabrın ancak Allah'ın yardımıyla
+39:10 | Zümer | Sabır | Sabredenlere hesapsız mükâfat
+65:3 | Talâk | Tevekkül | Tevekkül edene Allah yeter
+94:5-6 | İnşirâh | Sabır | Zorlukla beraber kolaylık var
+29:2 | Ankebût | Sabır | "İman ettik" demekle bırakılmazsınız
+47:31 | Muhammed | Sabır | Sizi mutlaka imtihan edeceğiz
+103:1-3 | Asr | Sabır | Hakkı ve sabrı tavsiye edenler kurtuldu
+14:12 | İbrâhîm | Tevekkül | Neden Allah'a tevekkül etmeyelim
+25:58 | Furkân | Tevekkül | Ölümsüz diri olana tevekkül et
+33:3 | Ahzâb | Tevekkül | Vekil olarak Allah yeter
+64:11 | Teğâbün | Sabır | İzni olmadan musibet gelmez
+2:216 | Bakara | Tevekkül | Hoşlanmadığınız şey hayırlı olabilir
+20:46 | Tâhâ | Tevekkül | Korkmayın, ben sizinleyim, işitir görürüm
+70:5 | Meâric | Sabır | Güzel bir sabırla sabret
+40:44 | Mü'min | Tevekkül | İşimi Allah'a havale ediyorum
+26:62 | Şuarâ | Tevekkül | Rabbim benimle, bana yol gösterecek
+3:160 | Âl-i İmrân | Tevekkül | Allah yardım ederse yenen olmaz
+
+### Şükür ve nimetler
+14:7 | İbrâhîm | Şükür | Şükrederseniz nimetimi artırırım
+16:18 | Nahl | Nimet | Nimetleri saymakla bitiremezsiniz
+14:34 | İbrâhîm | Nimet | İstediğiniz her şeyi verdi
+55:13 | Rahmân | Nimet | Rabbinizin hangi nimetlerini yalanlarsınız
+31:12 | Lokmân | Şükür | Şükreden kendisi için şükreder
+2:172 | Bakara | Şükür | Temiz rızıktan yiyin, şükredin
+16:114 | Nahl | Şükür | Helal ve temiz rızka şükredin
+93:11 | Duhâ | Şükür | Rabbinin nimetini anlat
+4:147 | Nisâ | Şükür | Şükreden mümine Allah neden azap etsin
+76:3 | İnsan | Şükür | Ya şükreden ya nankör olur
+39:66 | Zümer | Şükür | Allah'a ibadet et, şükredenlerden ol
+7:10 | A'râf | Nimet | Yeryüzünde geçim verdik, ne az şükür
+23:78 | Mü'minûn | Nimet | Kulak, göz, gönül verdi
+16:78 | Nahl | Nimet | Hiçbir şey bilmezken doğdunuz
+67:15 | Mülk | Nimet | Yeryüzünü size boyun eğdirdi
+17:70 | İsrâ | Nimet | Âdemoğlunu şerefli kıldık
+95:4 | Tîn | Nimet | İnsanı en güzel biçimde yarattık
+2:29 | Bakara | Nimet | Yerdeki her şey sizin için yaratıldı
+31:20 | Lokmân | Nimet | Açık ve gizli nimetleri bolca verdi
+45:13 | Câsiye | Nimet | Göklerde ve yerdekiler emrinize verildi
+16:53 | Nahl | Nimet | Her nimet Allah'tandır
+106:3-4 | Kureyş | Nimet | Açlıktan doyurdu, korkudan emin kıldı
+102:8 | Tekâsür | Nimet | O gün nimetlerden sorulacaksınız
+16:10-11 | Nahl | Nimet | Yağmur, ekin, zeytin, hurma, üzüm
+2:22 | Bakara | Nimet | Yer döşek, gök bina, sudan rızık
+25:62 | Furkân | Şükür | Gece ve gündüz, şükretmek isteyene
+28:73 | Kasas | Nimet | Dinlenmek için gece, çalışmak için gündüz
+34:15 | Sebe' | Şükür | Rızkından yiyin, O'na şükredin
+80:24-26 | Abese | Nimet | İnsan yiyeceğine bir baksın
+
+### Ümit, tövbe, rahmet ve af
+39:53 | Zümer | Ümit | Rahmetimden ümit kesmeyin
+12:87 | Yûsuf | Ümit | Allah'ın rahmetinden ümit kesilmez
+15:56 | Hicr | Ümit | Rahmetten ancak sapkınlar ümit keser
+6:54 | En'âm | Rahmet | Rabbiniz rahmeti kendine yazdı
+4:110 | Nisâ | Tövbe | Bağışlanma dileyen Allah'ı bağışlayıcı bulur
+3:135 | Âl-i İmrân | Tövbe | Hata edince Allah'ı anıp af dileyenler
+2:222 | Bakara | Tövbe | Allah tövbe edenleri sever
+11:3 | Hûd | Tövbe | Bağışlanma dileyin, güzel yaşatır
+71:10-12 | Nûh | Tövbe | İstiğfar edin: yağmur, mal, evlat
+25:70 | Furkân | Tövbe | Kötülükleri iyiliklere çevirir
+20:82 | Tâhâ | Tövbe | Tövbe edeni çokça bağışlarım
+42:25 | Şûrâ | Tövbe | Tövbeyi kabul eden, kötülükleri affeden
+9:104 | Tevbe | Tövbe | Kullarının tövbesini kabul eden Allah
+8:33 | Enfâl | Af | İstiğfar edenlere azap edilmez
+93:3-5 | Duhâ | Ümit | Rabbin seni terk etmedi, razı olacaksın
+4:48 | Nisâ | Af | Şirk dışındaki günahları dilediğine bağışlar
+21:107 | Enbiyâ | Rahmet | Âlemlere rahmet olarak gönderildin
+15:49-50 | Hicr | Rahmet | Ben bağışlayıcı ve merhametliyim
+17:25 | İsrâ | Tövbe | Tövbe edenleri bağışlar
+3:31 | Âl-i İmrân | Rahmet | Bana uyun ki Allah sizi sevsin
+2:268 | Bakara | Ümit | Şeytan fakirlikle korkutur, Allah mağfiret vaat eder
+4:28 | Nisâ | Rahmet | Allah yükünüzü hafifletmek ister
+110:1-3 | Nasr | Tövbe | Hamd ile tesbih et, bağışlanma dile
+3:133 | Âl-i İmrân | Tövbe | Mağfirete ve geniş cennete koşun
+29:69 | Ankebût | Ümit | Bizim için çabalayanlara yollarımızı gösteririz
+2:218 | Bakara | Ümit | Allah'ın rahmetini umanlar
+7:56 | A'râf | Rahmet | Rahmet iyilik yapanlara yakındır
+40:3 | Mü'min | Af | Günahı bağışlayan, tövbeyi kabul eden
+
+### Ölüm, ahiret, hesap, cennet
+3:185 | Âl-i İmrân | Ölüm | Her nefis ölümü tadacak
+21:35 | Enbiyâ | Ölüm | Hayır ve şerle imtihan ederiz
+62:8 | Cum'a | Ölüm | Kaçtığınız ölüm size ulaşacak
+31:34 | Lokmân | Ölüm | Kimse nerede öleceğini bilmez
+99:7-8 | Zilzâl | Hesap | Zerre kadar hayır ve şer görülecek
+23:115 | Mü'minûn | Ahiret | Boşuna mı yaratıldığınızı sandınız
+2:281 | Bakara | Ahiret | Allah'a döndürüleceğiniz günden sakının
+29:64 | Ankebût | Ahiret | Asıl hayat ahiret yurdudur
+87:16-17 | A'lâ | Ahiret | Ahiret daha hayırlı ve kalıcı
+18:46 | Kehf | Ahiret | Kalıcı salih ameller daha hayırlı
+89:27-28 | Fecr | Ahiret | Ey huzura ermiş nefis, Rabbine dön
+17:14 | İsrâ | Hesap | Kitabını oku, hesap için sen yetersin
+36:65 | Yâsîn | Hesap | Ağızlar mühürlenir, eller konuşur
+50:18 | Kâf | Hesap | Her söz kaydediliyor
+84:7-9 | İnşikâk | Hesap | Kitabı sağdan verilene kolay hesap
+21:47 | Enbiyâ | Hesap | Hardal tanesi kadar amel tartılır
+26:88-89 | Şuarâ | Hesap | Mal ve evlat fayda vermez, selim kalp
+59:18 | Haşr | Ahiret | Yarın için ne hazırladığına bak
+23:99-100 | Mü'minûn | Ölüm | "Rabbim, beni geri döndür"
+63:10 | Münâfikûn | Ölüm | Ölüm gelmeden infak edin
+16:32 | Nahl | Ölüm | Canları güzelce alınanlara selam
+41:30 | Fussilet | Cennet | Dosdoğru olanlara: korkmayın, üzülmeyin
+9:72 | Tevbe | Cennet | En büyüğü Allah'ın rızası
+10:26 | Yûnus | Cennet | Güzel davranana daha güzeli ve fazlası
+13:23-24 | Ra'd | Cennet | Melekler: sabrınıza karşılık selam
+32:17 | Secde | Cennet | Saklanan göz aydınlığını kimse bilmez
+55:46 | Rahmân | Cennet | Rabbinden korkana iki cennet
+56:10-11 | Vâkıa | Cennet | Öne geçenler, Allah'a yakın olanlar
+98:8 | Beyyine | Cennet | Allah onlardan razı, onlar O'ndan razı
+
+## BÖLÜM B
+
+### Anne-baba, aile, evlilik, çocuk
+17:23 | İsra | Aile | Anne babaya iyilik, öf deme
+31:14 | Lokman | Aile | Annenin zahmeti, anne babaya şükür
+29:8 | Ankebut | Aile | Anne babaya iyilik, şirke itaat yok
+2:83 | Bakara | Aile | Anne baba, yakın, yetime iyilik, güzel söz
+30:21 | Rum | Aile | Eşler arası huzur, sevgi ve rahmet
+4:19 | Nisa | Aile | Kadınlarla güzellikle geçinin
+4:1 | Nisa | Aile | Tek nefisten yaratılış, akraba hakkı
+16:72 | Nahl | Aile | Eşler, çocuklar ve torunlar nimeti
+24:32 | Nur | Aile | Bekârları evlendirin, Allah zenginleştirir
+66:6 | Tahrim | Aile | Kendinizi ve ailenizi ateşten koruyun
+8:28 | Enfal | Aile | Mal ve çocuk bir sınavdır
+64:15 | Teğabün | Aile | Mallar ve çocuklar imtihandır
+17:31 | İsra | Aile | Çocukları fakirlik korkusuyla öldürmeyin
+4:35 | Nisa | Aile | Eşler arasına iki aileden hakem
+4:128 | Nisa | Aile | Eşler arasında barış daha hayırlıdır
+65:7 | Talak | Aile | Nafaka güce göre, zorluktan sonra kolaylık
+19:14 | Meryem | Aile | Yahya anne babasına iyi davranırdı
+19:32 | Meryem | Aile | İsa annesine iyi davranmakla emrolundu
+24:26 | Nur | Aile | İyiler iyilere, temizler temizlere yaraşır
+4:4 | Nisa | Aile | Kadınlara mehirlerini gönül hoşluğuyla verin
+25:54 | Furkan | Aile | İnsanı sudan yaratıp soy sop verdi
+42:49-50 | Şura | Aile | Dilediğine kız, dilediğine erkek çocuk
+16:58-59 | Nahl | Aile | Kız çocuğu müjdesine üzülen cahiliye
+81:8-9 | Tekvir | Aile | Diri gömülen kıza sorulacak hesap
+47:22 | Muhammed | Aile | Akrabalık bağlarını koparmayın
+
+### Güzel ahlak ve edep
+49:11 | Hucurat | Ahlak | Alay etmeyin, kötü lakap takmayın
+49:12 | Hucurat | Ahlak | Kötü zan, gizli kusur arama, gıybet
+49:13 | Hucurat | Ahlak | Üstünlük takvadadır, tanışasınız diye
+49:6 | Hucurat | Ahlak | Haberi araştırın, sonra pişman olmayın
+31:17 | Lokman | Ahlak | Namaz, iyiliği emret, sabret
+31:18 | Lokman | Ahlak | İnsanları küçümseme, böbürlenme
+31:19 | Lokman | Ahlak | Yürüyüşte ölçülü ol, sesini alçalt
+17:29 | İsra | Ahlak | Ne cimri ne savurgan ol
+17:32 | İsra | Ahlak | Zinaya yaklaşmayın
+17:36 | İsra | Ahlak | Bilmediğin şeyin ardına düşme
+17:37 | İsra | Ahlak | Yeryüzünde böbürlenerek yürüme
+17:53 | İsra | Ahlak | En güzel sözü söyleyin
+25:63 | Furkan | Ahlak | Tevazuyla yürü, cahile selam de
+25:67 | Furkan | Ahlak | Harcamada israf da cimrilik de yok
+25:72 | Furkan | Ahlak | Yalan şahitlik yok, boş sözden vakarla geç
+23:3 | Mü'minun | Ahlak | Boş şeylerden yüz çevirirler
+28:55 | Kasas | Ahlak | Boş söze karşı "size selam olsun"
+4:86 | Nisa | Ahlak | Selamı daha güzeliyle alın
+24:27 | Nur | Ahlak | İzin almadan başka eve girmeyin
+24:30 | Nur | Ahlak | Mümin erkekler gözlerini sakınsın
+3:104 | Âl-i İmran | Ahlak | İyiliğe çağıran, kötülükten alıkoyan topluluk
+68:4 | Kalem | Ahlak | Peygamberin yüce ahlakı
+33:21 | Ahzab | Ahlak | Resulullah en güzel örnektir
+2:44 | Bakara | Ahlak | Başkasına emredip kendini unutma
+7:31 | A'raf | Ahlak | Güzel giyinin, yiyin için, israf etmeyin
+
+### Adalet, dürüstlük, emanet, söz tutma
+4:58 | Nisa | Adalet | Emaneti ehline ver, adaletle hükmet
+4:135 | Nisa | Adalet | Kendi aleyhinize de olsa adil olun
+5:8 | Maide | Adalet | Kin sizi adaletsizliğe sürüklemesin
+16:90 | Nahl | Adalet | Adalet, iyilik, akrabaya yardım emri
+17:34 | İsra | Adalet | Yetim malına dokunma, sözünü tut
+17:35 | İsra | Adalet | Ölçüyü tam, teraziyi doğru tut
+23:8 | Mü'minun | Adalet | Emanetlerini ve sözlerini korurlar
+33:70-71 | Ahzab | Adalet | Doğru söz söyle, işlerin düzelir
+61:2-3 | Saf | Adalet | Yapmayacağınızı neden söylüyorsunuz
+9:119 | Tevbe | Adalet | Doğrularla beraber olun
+83:1-3 | Mutaffifin | Adalet | Ölçüde, tartıda eksik verenlere yazık
+55:7-9 | Rahman | Adalet | Mizanı koydu, tartıyı eksik tutmayın
+2:42 | Bakara | Adalet | Hakkı batılla karıştırma, gizleme
+4:29 | Nisa | Adalet | Malları haksızlıkla yemeyin, karşılıklı rıza
+8:27 | Enfal | Adalet | Emanete hıyanet etmeyin
+16:91 | Nahl | Adalet | Ahde vefa, yeminleri bozmayın
+70:32-33 | Mearic | Adalet | Emanete, söze, şahitliğe sadakat
+3:76 | Âl-i İmran | Adalet | Sözünü tutanı Allah sever
+13:20 | Ra'd | Adalet | Allah'a verilen sözü bozmazlar
+11:85 | Hud | Adalet | Ölçü tam olsun, insanların hakkını eksiltmeyin
+4:112 | Nisa | Adalet | Suçunu masuma atmak büyük iftiradır
+16:105 | Nahl | Adalet | Yalanı inanmayanlar uydurur
+7:29 | A'raf | Adalet | Rabbim adaleti emretti
+2:224 | Bakara | Adalet | Yeminleri iyiliğe engel yapmayın
+26:181-182 | Şuara | Adalet | Ölçüyü tam yapın, doğru teraziyle tartın
+
+### Merhamet, affetme, öfkeyi yenme, kardeşlik
+3:134 | Âl-i İmran | Merhamet | Öfkeyi yenmek, insanları affetmek
+3:159 | Âl-i İmran | Merhamet | Yumuşak davran, affet, danış
+24:22 | Nur | Merhamet | Affedin, Allah'ın bağışlamasını istemez misiniz
+42:40 | Şura | Merhamet | Affedip barışanın ödülü Allah'a ait
+42:43 | Şura | Merhamet | Sabredip bağışlamak azim işidir
+42:37 | Şura | Merhamet | Öfkelendiklerinde bile bağışlarlar
+41:34 | Fussilet | Merhamet | Kötülüğü iyilikle sav, düşman dost olur
+7:199 | A'raf | Merhamet | Affı tut, iyiliği emret
+49:10 | Hucurat | Merhamet | Müminler kardeştir, aralarını düzeltin
+49:9 | Hucurat | Merhamet | Küsen müminlerin arasını adaletle bulun
+3:103 | Âl-i İmran | Merhamet | Allah'ın ipine sarılın, kardeş oldunuz
+90:17 | Beled | Merhamet | Sabrı ve merhameti tavsiye edin
+9:128 | Tevbe | Merhamet | Size düşkün, şefkatli Peygamber
+15:85 | Hicr | Merhamet | Güzel bir şekilde hoş gör
+64:14 | Teğabün | Merhamet | Aile içinde affedin, örtün, bağışlayın
+16:126 | Nahl | Merhamet | Karşılık hakkı var, sabır daha hayırlı
+23:96 | Mü'minun | Merhamet | Kötülüğü en güzel şekilde sav
+28:54 | Kasas | Merhamet | Kötülüğü iyilikle savanlara çifte ödül
+45:14 | Casiye | Merhamet | İnananlar karşı tarafı bağışlasın
+3:105 | Âl-i İmran | Merhamet | Ayrılığa düşenler gibi olmayın
+4:114 | Nisa | Merhamet | Sadaka, iyilik ve barıştırmada hayır var
+60:8 | Mümtehine | Merhamet | Size düşman olmayanlara iyilik ve adalet
+43:89 | Zuhruf | Merhamet | Onlardan geç, "selam" de
+9:71 | Tevbe | Merhamet | Mümin erkek ve kadınlar birbirinin dostu
+4:149 | Nisa | Merhamet | İyiliği yapmak ya da kötülüğü affetmek
+
+### İlim, akıl, tefekkür, kâinattaki işaretler
+96:1-3 | Alak | İlim | Yaratan Rabbinin adıyla oku
+96:4-5 | Alak | İlim | Kalemle öğretti, bilinmeyeni öğretti
+39:9 | Zümer | İlim | Bilenlerle bilmeyenler bir olur mu
+58:11 | Mücadele | İlim | İlim sahipleri derecelerle yükseltilir
+35:28 | Fatır | İlim | Allah'tan hakkıyla âlimler korkar
+2:269 | Bakara | İlim | Hikmet verilene çok hayır verilmiştir
+30:20 | Rum | İlim | Topraktan yaratılış bir delildir
+30:23 | Rum | İlim | Uyku ve rızık arama birer delil
+88:17-19 | Gaşiye | İlim | Deveye, göğe, dağlara bakmazlar mı
+67:3 | Mülk | İlim | Yaratılışta kusur, çatlak bulamazsın
+21:30 | Enbiya | İlim | Gök ve yer bitişikti, canlılar sudandır
+51:20-21 | Zariyat | İlim | Yeryüzünde ve kendinizde deliller var
+51:47 | Zariyat | İlim | Göğü kurduk ve genişletmekteyiz
+36:40 | Yasin | İlim | Güneş, ay, gece kendi yörüngesinde
+39:18 | Zümer | İlim | Sözü dinleyip en güzeline uyanlar
+29:43 | Ankebut | İlim | Örnekleri ancak bilenler anlar
+8:22 | Enfal | İlim | Aklını kullanmayanlar en kötü canlılar
+22:46 | Hac | İlim | Gözler değil kalpler kör olur
+45:3 | Casiye | İlim | Göklerde ve yerde inananlara deliller
+50:6 | Kaf | İlim | Kusursuz süslenen göğe bakmazlar mı
+56:63-64 | Vakıa | İlim | Ektiğinizi siz mi bitiriyorsunuz
+67:19 | Mülk | İlim | Havadaki kuşları Rahman tutuyor
+31:27 | Lokman | İlim | Ağaçlar kalem, denizler mürekkep olsa
+16:43 | Nahl | İlim | Bilmiyorsanız bilenlere sorun
+17:85 | İsra | İlim | Size pek az ilim verilmiştir
+
+### Kul hakkı, komşu, yetim, yoksul, infak/sadaka
+4:36 | Nisa | Kul hakkı | Komşuya, yetime, yolcuya iyilik
+2:261 | Bakara | Kul hakkı | İnfak, yedi başak veren tane gibi
+2:262 | Bakara | Kul hakkı | Verip başa kakmayanların ödülü
+2:263 | Bakara | Kul hakkı | Güzel söz, eziyetli sadakadan iyidir
+2:274 | Bakara | Kul hakkı | Gece gündüz, gizli açık infak
+2:271 | Bakara | Kul hakkı | Sadakayı gizli vermek daha hayırlı
+3:92 | Âl-i İmran | Kul hakkı | Sevdiğinden vermedikçe iyiliğe eremezsin
+2:195 | Bakara | Kul hakkı | Allah yolunda harca, iyilik yap
+2:215 | Bakara | Kul hakkı | İnfak önce anne baba, yakın, yetim
+93:9-10 | Duha | Kul hakkı | Yetimi ezme, isteyeni azarlama
+107:1-3 | Maun | Kul hakkı | Yetimi itip yoksulu doyurmamak
+89:17-18 | Fecr | Kul hakkı | Yetime ikram, yoksulu doyurmaya teşvik
+76:8-9 | İnsan | Kul hakkı | Yoksula, yetime, esire karşılıksız yedirmek
+4:10 | Nisa | Kul hakkı | Yetim malını yiyen ateş yer
+4:2 | Nisa | Kul hakkı | Yetimlere mallarını eksiksiz verin
+17:26-27 | İsra | Kul hakkı | Akraba, yoksul hakkı; israf etme
+30:38 | Rum | Kul hakkı | Akrabaya, yoksula, yolcuya hakkını ver
+51:19 | Zariyat | Kul hakkı | Malda isteyenin ve yoksulun hakkı var
+64:16 | Teğabün | Kul hakkı | Harcayın, nefsin cimriliğinden korunun
+57:7 | Hadid | Kul hakkı | Emanet verilen maldan harcayın
+57:11 | Hadid | Kul hakkı | Allah'a güzel borç verene kat kat
+34:39 | Sebe | Kul hakkı | Harcadığınızın yerine Allah daha iyisini verir
+2:280 | Bakara | Kul hakkı | Darda olan borçluya süre ver
+2:276 | Bakara | Kul hakkı | Faiz eksiltir, sadaka bereketlendirir
+2:188 | Bakara | Kul hakkı | Haksız kazanç, rüşvet yasağı
+
+### Peygamber kıssalarından ibretler
+12:111 | Yusuf | Kıssa | Kıssalarda akıl sahiplerine ibret var
+12:53 | Yusuf | Kıssa | Nefis kötülüğü emreder
+12:90 | Yusuf | Kıssa | Sakınıp sabredenin ecri kaybolmaz
+12:92 | Yusuf | Kıssa | Yusuf'un affı: bugün kınama yok
+12:33 | Yusuf | Kıssa | Harama düşmektense zindan iyidir
+12:5 | Yusuf | Kıssa | Rüyanı kardeşlerine anlatma
+28:7 | Kasas | Kıssa | Musa'nın annesine: korkma, üzülme
+28:26 | Kasas | Kıssa | En iyi çalışan güçlü ve güvenilir olandır
+28:83 | Kasas | Kıssa | Ahiret yurdu böbürlenmeyenler içindir
+20:43-44 | Taha | Kıssa | Firavun'a bile yumuşak söz
+18:23-24 | Kehf | Kıssa | "Yarın yapacağım" deme, inşallah de
+18:65-66 | Kehf | Kıssa | Musa, Hızır'dan ilim öğrenmek ister
+18:67-68 | Kehf | Kıssa | Kavrayamadığın şeye sabır zordur
+18:39 | Kehf | Kıssa | Bahçe sahibi: "Maşallah" demeliydin
+18:13 | Kehf | Kıssa | İman eden gençlerin hidayeti artırıldı
+37:102 | Saffat | Kıssa | İbrahim ve İsmail'in teslimiyeti
+21:69 | Enbiya | Kıssa | Ey ateş, İbrahim'e serin ve esenlik ol
+16:120 | Nahl | Kıssa | İbrahim başlı başına örnek önderdi
+19:47 | Meryem | Kıssa | İbrahim'in babasına nazik cevabı
+31:16 | Lokman | Kıssa | Hardal tanesi kadar iş bile ortaya çıkar
+26:80 | Şuara | Kıssa | Hastalandığımda bana O şifa verir
+10:92 | Yunus | Kıssa | Firavun'un bedeni sonrakilere ibret
+28:56 | Kasas | Kıssa | Hidayet Allah'tandır, sevdiğini zorlayamazsın
+11:49 | Hud | Kıssa | Sabret, sonuç sakınanlarındır
+5:28 | Maide | Kıssa | Habil: sana elimi kaldırmam
+
+### Kur'an'ın kendisi hakkında
+17:9 | İsra | Kur'an | En doğru yola iletir
+17:82 | İsra | Kur'an | Müminlere şifa ve rahmet
+17:88 | İsra | Kur'an | Benzerini kimse getiremez
+2:2 | Bakara | Kur'an | Şüphe yok, sakınanlara yol gösterir
+4:82 | Nisa | Kur'an | Kur'an'ı düşünmezler mi, çelişki yok
+47:24 | Muhammed | Kur'an | Kur'an'ı düşünmezler mi, kalpler kilitli mi
+38:29 | Sad | Kur'an | Ayetleri düşünülsün diye mübarek kitap
+54:17 | Kamer | Kur'an | Öğüt için kolaylaştırdık
+15:9 | Hicr | Kur'an | Kur'an'ı biz indirdik, biz koruyacağız
+59:21 | Haşr | Kur'an | Dağa inseydi parça parça olurdu
+10:57 | Yunus | Kur'an | Öğüt ve kalplere şifa
+68:52 | Kalem | Kur'an | Kur'an âlemler için bir öğüttür
+73:4 | Müzzemmil | Kur'an | Kur'an'ı ağır ağır (tertil ile) oku
+7:204 | A'raf | Kur'an | Kur'an okununca susup dinleyin
+16:98 | Nahl | Kur'an | Okumadan önce şeytandan Allah'a sığın
+41:42 | Fussilet | Kur'an | Batıl ona hiçbir yönden giremez
+25:30 | Furkan | Kur'an | Peygamberin şikayeti: Kur'an terk edildi
+12:2 | Yusuf | Kur'an | Anlayasınız diye Arapça indirildi
+6:155 | En'am | Kur'an | Mübarek kitap, ona uyun
+17:106 | İsra | Kur'an | Ağır ağır okunsun diye bölüm bölüm indi
+56:77-79 | Vakıa | Kur'an | Değerli Kur'an, temizlerden başkası dokunmaz
+20:2 | Taha | Kur'an | Sıkıntı çekesin diye indirilmedi
+14:1 | İbrahim | Kur'an | Karanlıklardan aydınlığa çıkaran kitap
+3:138 | Âl-i İmran | Kur'an | İnsanlara açıklama, öğüt, rehber
+26:192-194 | Şuara | Kur'an | Cebrail'in kalbe indirdiği vahiy
