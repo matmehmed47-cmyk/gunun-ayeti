@@ -4,7 +4,7 @@
 import plistlib, sys, uuid
 
 SITE = 'https://matmehmed47-cmyk.github.io/gunun-ayeti/iphone/'
-FOTO = 'gunun-ayeti-foto.jpg'
+FOTO = 'gunun-ayeti-fotograf.jpg'  # ad değişti: eski (bozuk sürümden kalan) kayıt kullanılmaz
 ILCE = 'gunun-ayeti-ilce.txt'
 U = lambda: str(uuid.uuid4()).upper()
 
@@ -26,6 +26,7 @@ def eylem(kimlik, **p):
 ilce, dosya1, sec, kaydet, dosya2, boyut, kirp, ayet, bindir1, vakit, bindir2 = (U() for _ in range(11))
 grup = U()
 jpg = U()
+gen, yuk, carp, bol, yuvar = (U() for _ in range(5))
 idosya1, isor, ikaydet, idosya2 = (U() for _ in range(4)); igrup = U()
 u1, b1, s1, u2, k1, u3, b2, s2, u4, kodmetin = (U() for _ in range(10))
 eylemler = [
@@ -50,13 +51,20 @@ eylemler = [
     eylem('is.workflow.actions.gettext', UUID=ilce, WFTextActionText=metin([(idosya2, 'Dosya')])),
     eylem('is.workflow.actions.documentpicker.open', UUID=dosya1, WFGetFilePath=FOTO, WFFileErrorIfNotFound=False, WFShowFilePicker=False),
     eylem('is.workflow.actions.conditional', GroupingIdentifier=grup, WFControlFlowMode=0, WFCondition=101, WFInput={'Type': 'Variable', 'Variable': cikti(dosya1, 'Dosya')}),
-    eylem('is.workflow.actions.selectphoto', UUID=sec),
-    eylem('is.workflow.actions.image.convert', UUID=jpg, WFInput=cikti(sec, 'Fotoğraflar'), WFImageFormat='JPEG', WFImageCompressionQuality=0.9, WFImagePreserveMetadata=False),
+    eylem('is.workflow.actions.selectphoto', UUID=sec, WFPhotoPickerTypes=['Images']),
+    eylem('is.workflow.actions.image.convert', UUID=jpg, WFInput=cikti(sec, 'Fotoğraflar'), WFImageFormat='JPEG', WFImageCompressionQuality=0.92, WFImagePreserveMetadata=True),
     eylem('is.workflow.actions.documentpicker.save', UUID=kaydet, WFInput=cikti(jpg, 'Dönüştürülmüş Görüntü'), WFAskWhereToSave=False,
           WFFileDestinationPath=FOTO, WFSaveFileOverwrite=True),
     eylem('is.workflow.actions.conditional', GroupingIdentifier=grup, WFControlFlowMode=2),
     eylem('is.workflow.actions.documentpicker.open', UUID=dosya2, WFGetFilePath=FOTO, WFFileErrorIfNotFound=True, WFShowFilePicker=False),
-    eylem('is.workflow.actions.image.resize', UUID=boyut, WFImage=cikti(dosya2, 'Dosya'), WFImageResizeKey='Width', WFImageResizeWidth='', WFImageResizeHeight='2796'),  # boyuna göre: ekranı tam doldurur
+    # Oran korunarak boya göre ölçekle: yeni genişlik = genişlik × 2796 / yükseklik (yuvarlanır)
+    eylem('is.workflow.actions.properties.images', UUID=gen, WFInput=cikti(dosya2, 'Dosya'), WFContentItemPropertyName='Width'),
+    eylem('is.workflow.actions.properties.images', UUID=yuk, WFInput=cikti(dosya2, 'Dosya'), WFContentItemPropertyName='Height'),
+    eylem('is.workflow.actions.math', UUID=carp, WFInput=cikti(gen, 'Genişlik'), WFMathOperation='×', WFMathOperand='2796'),
+    eylem('is.workflow.actions.math', UUID=bol, WFInput=cikti(carp, 'Hesaplama Sonucu'), WFMathOperation='÷', WFMathOperand=cikti(yuk, 'Yükseklik')),
+    eylem('is.workflow.actions.round', UUID=yuvar, WFInput=cikti(bol, 'Hesaplama Sonucu'), WFRoundMode='Normal', WFRoundTo='Integer'),
+    eylem('is.workflow.actions.image.resize', UUID=boyut, WFImage=cikti(dosya2, 'Dosya'), WFImageResizeKey='Size',
+          WFImageResizeWidth=metin([(yuvar, 'Yuvarlanmış Sayı')]), WFImageResizeHeight='2796'),
     eylem('is.workflow.actions.image.crop', UUID=kirp, WFInput=cikti(boyut, 'Yeniden Boyutlandırılmış Görüntü'),
           WFImageCropPosition='Center', WFImageCropWidth='1290', WFImageCropHeight='2796'),
     eylem('is.workflow.actions.downloadurl', UUID=ayet, WFURL=SITE + 'bugun-alt.png'),
@@ -66,7 +74,8 @@ eylemler = [
     eylem('is.workflow.actions.overlayimageonimage', UUID=bindir2, WFInput=cikti(bindir1, 'Üst Üste Bindirilmiş Görüntü'), WFImage=cikti(vakit, 'URL İçeriği'),
           WFShouldShowImageEditor=False, WFImagePosition='Center', WFImageWidth='1290', WFImageHeight='2796'),
     eylem('is.workflow.actions.wallpaper.set', WFInput=cikti(bindir2, 'Üst Üste Bindirilmiş Görüntü'),
-          WFWallpaperLocation='Lock Screen', WFWallpaperShowPreview=False),
+          WFWallpaperLocation=['Lock Screen'], WFWallpaperShowPreview=False,
+          WFWallpaperSmartCrop=False, WFWallpaperLegibilityBlur=False, WFWallpaperPerspectiveZoom=False),
 ]
 kestirme = {
     'WFWorkflowName': 'Günün Ayeti',
