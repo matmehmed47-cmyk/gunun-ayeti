@@ -5,6 +5,7 @@ import plistlib, sys, uuid
 
 SITE = 'https://matmehmed47-cmyk.github.io/gunun-ayeti/iphone/'
 FOTO = 'gunun-ayeti-foto.jpg'
+ILCE = 'gunun-ayeti-ilce.txt'
 U = lambda: str(uuid.uuid4()).upper()
 
 def cikti(uid, ad):  # bir eylemin çıktısına başvuru
@@ -24,8 +25,18 @@ def eylem(kimlik, **p):
 
 ilce, dosya1, sec, kaydet, dosya2, boyut, kirp, ayet, bindir1, vakit, bindir2 = (U() for _ in range(11))
 grup = U()
+idosya1, isor, ikaydet, idosya2 = (U() for _ in range(4)); igrup = U()
 eylemler = [
-    eylem('is.workflow.actions.gettext', UUID=ilce, WFTextActionText='9206'),
+    # İlçe kodu: ilk çalışmada sorulur, Kestirmeler klasörüne kaydedilir
+    eylem('is.workflow.actions.documentpicker.open', UUID=idosya1, WFGetFilePath=ILCE, WFFileErrorIfNotFound=False, WFShowFilePicker=False),
+    eylem('is.workflow.actions.conditional', GroupingIdentifier=igrup, WFControlFlowMode=0, WFCondition=101, WFInput={'Type': 'Variable', 'Variable': cikti(idosya1, 'Dosya')}),
+    eylem('is.workflow.actions.ask', UUID=isor, WFAskActionPrompt='İlçe kodun nedir? Günün Ayeti sitesinde il ve ilçeni seçince yazar. (Ankara merkez: 9206)',
+          WFInputType='Number', WFAskActionDefaultAnswerNumber='9206'),
+    eylem('is.workflow.actions.documentpicker.save', UUID=ikaydet, WFInput=cikti(isor, 'Girilen Değer'), WFAskWhereToSave=False,
+          WFFileDestinationPath=ILCE, WFSaveFileOverwrite=True),
+    eylem('is.workflow.actions.conditional', GroupingIdentifier=igrup, WFControlFlowMode=2),
+    eylem('is.workflow.actions.documentpicker.open', UUID=idosya2, WFGetFilePath=ILCE, WFFileErrorIfNotFound=True, WFShowFilePicker=False),
+    eylem('is.workflow.actions.gettext', UUID=ilce, WFTextActionText=metin([(idosya2, 'Dosya')])),
     eylem('is.workflow.actions.documentpicker.open', UUID=dosya1, WFGetFilePath=FOTO, WFFileErrorIfNotFound=False, WFShowFilePicker=False),
     eylem('is.workflow.actions.conditional', GroupingIdentifier=grup, WFControlFlowMode=0, WFCondition=101, WFInput={'Type': 'Variable', 'Variable': cikti(dosya1, 'Dosya')}),
     eylem('is.workflow.actions.selectphoto', UUID=sec),
@@ -54,9 +65,7 @@ kestirme = {
     'WFWorkflowIcon': {'WFWorkflowIconStartColor': 431817727, 'WFWorkflowIconGlyphNumber': 59511},
     'WFWorkflowTypes': [],
     'WFWorkflowInputContentItemClasses': [],
-    'WFWorkflowImportQuestions': [{
-        'ActionIndex': 0, 'Category': 'Parameter', 'ParameterKey': 'WFTextActionText', 'DefaultValue': '9206',
-        'Text': 'İlçe kodun nedir? (Günün Ayeti uygulamasında "iPhone ilçe kodu" olarak yazar. Ankara merkez: 9206)'}],
+    'WFWorkflowImportQuestions': [],
 }
 plistlib.dump(kestirme, open(sys.argv[1], 'wb'), fmt=plistlib.FMT_BINARY)
 print('yazıldı', sys.argv[1], len(eylemler), 'eylem')
