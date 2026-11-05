@@ -331,12 +331,13 @@ const vt = () => new Promise((ok, no) => { const r = indexedDB.open('gunun-ayeti
 async function vtAl(k) { try { const d = await vt(); return await new Promise(ok => { const q = d.transaction('d').objectStore('d').get(k); q.onsuccess = () => ok(q.result || null); q.onerror = () => ok(null); }); } catch { return null; } }
 async function vtKoy(k, v) { try { const d = await vt(); await new Promise(ok => { const t = d.transaction('d', 'readwrite'); t.objectStore('d').put(v, k); t.oncomplete = ok; t.onerror = ok; }); } catch {} }
 
-let foto = null, yer = oku('ga-yer', 'alt'), onizlemeUrl = null;
+let foto = null, yer = (ANDROID && window.Android.yerOku) ? window.Android.yerOku() : oku('ga-yer', 'alt'), onizlemeUrl = null;
 
 /* ---- Namaz vakti (Diyanet). Veri: vakitler/<id>.json, GitHub her hafta yeniler ---- */
 const VAKIT_URL = 'https://matmehmed47-cmyk.github.io/gunun-ayeti/vakitler/';
 const VAKIT_AD = ['İmsak', 'Güneş', 'Öğle', 'İkindi', 'Akşam', 'Yatsı'];
 let vakit = oku('ga-vakit', null);
+if (!vakit && ANDROID && window.Android.vakitOku) { try { const s = window.Android.vakitOku(); if (s) { vakit = JSON.parse(s); yaz('ga-vakit', vakit); } } catch {} }
 const tarihAnahtar = d => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
 function siradakiVakit() {
   if (!vakit || !vakit.gunler) return null;
@@ -509,7 +510,24 @@ $('kilitKaydet').onclick = async () => {
   if (ONIZLEME) { $('kartResim').src = URL.createObjectURL(b); $('kartNot').textContent = 'Önizlemede kaydetme kapalı; kurulu uygulamada resim galeriye iner.'; $('perde').hidden = false; return; }
   kilitKaydet(b);
 };
-(async () => { foto = await vtAl('foto'); kilitOnizle(); })();
+(async () => {
+  foto = await vtAl('foto');
+  if (!foto && ANDROID && window.Android.fotoOku) {  // siteye geçince telefonda kayıtlı fotoğrafı geri al
+    try { const s = window.Android.fotoOku(); if (s) { foto = await (await fetch('data:image/jpeg;base64,' + s)).blob(); vtKoy('foto', foto); } } catch {}
+  }
+  kilitOnizle();
+})();
+/* Android: yeni APK var mı? (site/android-surum.json) */
+if (ANDROID && window.Android.surumKodu) {
+  fetch('https://matmehmed47-cmyk.github.io/gunun-ayeti/android-surum.json', { cache: 'no-cache' }).then(r => r.json()).then(s => {
+    if (s.kod > window.Android.surumKodu()) {
+      $('kurYazi').innerHTML = '<b>Yeni sürüm var.</b> Güncelle\'ye bas, inen dosyayı aç ve "Güncelle"yi seç. Ayarların silinmez.';
+      const d = $('kurDugme'); d.textContent = 'Güncelle'; d.hidden = false;
+      d.onclick = () => { location.href = 'https://github.com/matmehmed47-cmyk/gunun-ayeti/releases/download/android/gunun-ayeti.apk'; };
+      $('kur').hidden = false;
+    }
+  }).catch(() => {});
+}
 
 $('onizleme').hidden = !ONIZLEME;
 document.documentElement.style.setProperty('--boy', boy + 'rem');

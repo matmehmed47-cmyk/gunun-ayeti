@@ -13,6 +13,7 @@ import android.util.Base64
 import android.webkit.JavascriptInterface
 import android.webkit.ValueCallback
 import android.webkit.WebChromeClient
+import android.webkit.WebResourceError
 import android.webkit.WebResourceRequest
 import android.webkit.WebResourceResponse
 import android.webkit.WebView
@@ -22,8 +23,12 @@ import androidx.core.content.FileProvider
 import androidx.webkit.WebViewAssetLoader
 import java.io.File
 
-/** Web uygulamasını (assets/www) gösterir; kilit ekranı, paylaşma ve kaydetme için köprü sağlar. */
+/** Web uygulamasını gösterir: önce siteden (her zaman en yeni), internet yoksa telefondaki kopyadan (assets/www).
+ *  Kilit ekranı, paylaşma ve kaydetme için köprü sağlar. */
 class AnaEkran : Activity() {
+    private val SITE = "https://matmehmed47-cmyk.github.io/gunun-ayeti/"
+    private val YEREL = "https://appassets.androidplatform.net/assets/www/index.html"
+    private var yereleGecti = false
     private lateinit var web: WebView
     private var dosyaSecici: ValueCallback<Array<Uri>>? = null
 
@@ -43,8 +48,12 @@ class AnaEkran : Activity() {
             override fun shouldInterceptRequest(v: WebView, r: WebResourceRequest): WebResourceResponse? =
                 yukleyici.shouldInterceptRequest(r.url)
             override fun shouldOverrideUrlLoading(v: WebView, r: WebResourceRequest): Boolean {
-                if (r.url.host == "appassets.androidplatform.net") return false
+                val u = r.url.toString()
+                if (r.url.host == "appassets.androidplatform.net" || (u.startsWith(SITE) && !u.endsWith(".apk"))) return false
                 startActivity(Intent(Intent.ACTION_VIEW, r.url)); return true
+            }
+            override fun onReceivedError(v: WebView, r: WebResourceRequest, e: WebResourceError) {
+                if (r.isForMainFrame && !yereleGecti) { yereleGecti = true; v.loadUrl(YEREL) }
             }
         }
         web.webChromeClient = object : WebChromeClient() {
@@ -57,7 +66,7 @@ class AnaEkran : Activity() {
             }
         }
         if (savedInstanceState != null) web.restoreState(savedInstanceState)
-        else web.loadUrl("https://appassets.androidplatform.net/assets/www/index.html")
+        else web.loadUrl(SITE)
         Zamanlayici.kur(this) // açıksa yarın sabahı tekrar planla
         Thread { Vakit.gerekirseIndir(this); Vakit.alarmKur(this) }.start()
     }
@@ -81,6 +90,14 @@ class AnaEkran : Activity() {
 
     inner class Kopru {
         @JavascriptInterface fun var_mi(): Boolean = true
+        /** Telefonda kayıtlı ayarlar: site ile yerel kopya arasında geçişte kaybolmasın diye web bunları geri okur. */
+        @JavascriptInterface fun vakitOku(): String = try { File(filesDir, "vakit.json").readText() } catch (e: Exception) { "" }
+        @JavascriptInterface fun fotoOku(): String = try { Base64.encodeToString(File(filesDir, "foto.jpg").readBytes(), Base64.NO_WRAP) } catch (e: Exception) { "" }
+        @JavascriptInterface fun yerOku(): String = Ayar.yer(this@AnaEkran)
+        @JavascriptInterface fun surumKodu(): Long = try {
+            val pi = packageManager.getPackageInfo(packageName, 0)
+            if (Build.VERSION.SDK_INT >= 28) pi.longVersionCode else @Suppress("DEPRECATION") pi.versionCode.toLong()
+        } catch (e: Exception) { 0L }
 
         /** Kullanıcının fotoğrafı (base64 JPEG). Boş metin = fotoğrafı sil. */
         @JavascriptInterface fun fotoKaydet(b64: String) {

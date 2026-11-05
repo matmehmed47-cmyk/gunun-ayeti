@@ -9,6 +9,7 @@ on:
 
 permissions:
   contents: write
+  actions: write
 
 jobs:
   apk:
@@ -41,3 +42,12 @@ jobs:
         run: |
           gh release view android >/dev/null 2>&1 || gh release create android --title "Android uygulaması" --notes "Günün Ayeti Android uygulaması. Her sabah kilit ekranını kendiliğinden yeniler." --latest
           gh release upload android gunun-ayeti.apk --clobber
+      - name: Sürüm bilgisini yayınla (uygulamadaki Güncelle düğmesi için)
+        env: { GH_TOKEN: '${{ github.token }}' }
+        run: |
+          echo '{"kod": ${{ github.run_number }}}' > android-surum.json
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add android-surum.json
+          git diff --cached --quiet || { git commit -m "Android sürüm ${{ github.run_number }}"; git pull --rebase -q; git push; }
+          gh workflow run site.yml -R ${{ github.repository }}
