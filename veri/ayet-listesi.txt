@@ -1,6 +1,6 @@
 # Günün Ayeti - ayet listesi (400 kayıt)
 # Biçim: sure:ayet | Sure | Konu | Kısa içerik
-# BÖLÜM A (1-200): numaralar henüz kaynaktan DOĞRULANMADI (kontrol bekliyor)
+# BÖLÜM A (1-200): numaralar ve içerik kontrol ajanınca doğrulandı (5 Kasım 2026)
 # BÖLÜM B (201-400): numaralar alquran.cloud (tr.diyanet + en.sahih) ile doğrulandı
 # Sıralama (karışık / konulu) henüz belirlenmedi. Meal metni henüz eklenmedi.
 
@@ -45,7 +45,7 @@
 3:8 | Âl-i İmrân | Dua | Hidayetten sonra kalplerimizi kaydırma
 14:40-41 | İbrâhîm | Dua | Beni namaz kılan yap, anne babamı bağışla
 17:24 | İsrâ | Dua | Rabbim, anne babama merhamet et
-20:25-26 | Tâhâ | Dua | Göğsümü genişlet, işimi kolaylaştır
+20:25-28 | Tâhâ | Dua | Göğsümü genişlet, işimi kolaylaştır, dilimi çöz
 20:114 | Tâhâ | Dua | Rabbim, ilmimi artır
 21:87-88 | Enbiyâ | Dua | Yunus'un duası, kederden kurtuluş
 21:83 | Enbiyâ | Dua | Eyyub'un duası, merhametlilerin merhametlisi
@@ -166,10 +166,10 @@
 6:54 | En'âm | Rahmet | Rabbiniz rahmeti kendine yazdı
 4:110 | Nisâ | Tövbe | Bağışlanma dileyen Allah'ı bağışlayıcı bulur
 3:135 | Âl-i İmrân | Tövbe | Hata edince Allah'ı anıp af dileyenler
-2:222 | Bakara | Tövbe | Allah tövbe edenleri sever
+16:97 | Nahl | Ümit | Salih amel işleyene güzel bir hayat
 11:3 | Hûd | Tövbe | Bağışlanma dileyin, güzel yaşatır
 71:10-12 | Nûh | Tövbe | İstiğfar edin: yağmur, mal, evlat
-25:70 | Furkân | Tövbe | Kötülükleri iyiliklere çevirir
+94:7-8 | İnşirâh | Tevekkül | Boş kalınca yorul, Rabbine yönel
 20:82 | Tâhâ | Tövbe | Tövbe edeni çokça bağışlarım
 42:25 | Şûrâ | Tövbe | Tövbeyi kabul eden, kötülükleri affeden
 9:104 | Tevbe | Tövbe | Kullarının tövbesini kabul eden Allah
@@ -177,7 +177,7 @@
 93:3-5 | Duhâ | Ümit | Rabbin seni terk etmedi, razı olacaksın
 4:48 | Nisâ | Af | Şirk dışındaki günahları dilediğine bağışlar
 21:107 | Enbiyâ | Rahmet | Âlemlere rahmet olarak gönderildin
-15:49-50 | Hicr | Rahmet | Ben bağışlayıcı ve merhametliyim
+15:49 | Hicr | Rahmet | Ben bağışlayıcı ve merhametliyim
 17:25 | İsrâ | Tövbe | Tövbe edenleri bağışlar
 3:31 | Âl-i İmrân | Rahmet | Bana uyun ki Allah sizi sevsin
 2:268 | Bakara | Ümit | Şeytan fakirlikle korkutur, Allah mağfiret vaat eder
@@ -217,8 +217,8 @@
 13:23-24 | Ra'd | Cennet | Melekler: sabrınıza karşılık selam
 32:17 | Secde | Cennet | Saklanan göz aydınlığını kimse bilmez
 55:46 | Rahmân | Cennet | Rabbinden korkana iki cennet
-56:10-11 | Vâkıa | Cennet | Öne geçenler, Allah'a yakın olanlar
-98:8 | Beyyine | Cennet | Allah onlardan razı, onlar O'ndan razı
+56:10-12 | Vâkıa | Cennet | Öne geçenler, Allah'a yakın olanlar, Naîm cennetleri
+98:7-8 | Beyyine | Cennet | Allah onlardan razı, onlar O'ndan razı
 
 ## BÖLÜM B
 
@@ -315,18 +315,18 @@
 49:10 | Hucurat | Merhamet | Müminler kardeştir, aralarını düzeltin
 49:9 | Hucurat | Merhamet | Küsen müminlerin arasını adaletle bulun
 3:103 | Âl-i İmran | Merhamet | Allah'ın ipine sarılın, kardeş oldunuz
-90:17 | Beled | Merhamet | Sabrı ve merhameti tavsiye edin
+57:23 | Hadid | Merhamet | Kaybettiğine üzülme, verilene şımarma
 9:128 | Tevbe | Merhamet | Size düşkün, şefkatli Peygamber
 15:85 | Hicr | Merhamet | Güzel bir şekilde hoş gör
 64:14 | Teğabün | Merhamet | Aile içinde affedin, örtün, bağışlayın
 16:126 | Nahl | Merhamet | Karşılık hakkı var, sabır daha hayırlı
 23:96 | Mü'minun | Merhamet | Kötülüğü en güzel şekilde sav
-28:54 | Kasas | Merhamet | Kötülüğü iyilikle savanlara çifte ödül
+6:160 | En'am | Merhamet | İyiliğe on kat karşılık
 45:14 | Casiye | Merhamet | İnananlar karşı tarafı bağışlasın
 3:105 | Âl-i İmran | Merhamet | Ayrılığa düşenler gibi olmayın
 4:114 | Nisa | Merhamet | Sadaka, iyilik ve barıştırmada hayır var
 60:8 | Mümtehine | Merhamet | Size düşman olmayanlara iyilik ve adalet
-43:89 | Zuhruf | Merhamet | Onlardan geç, "selam" de
+7:55 | A'raf | Dua | Rabbinize yalvararak, gizlice dua edin
 9:71 | Tevbe | Merhamet | Mümin erkek ve kadınlar birbirinin dostu
 4:149 | Nisa | Merhamet | İyiliği yapmak ya da kötülüğü affetmek
 
@@ -436,4 +436,4 @@
 20:2 | Taha | Kur'an | Sıkıntı çekesin diye indirilmedi
 14:1 | İbrahim | Kur'an | Karanlıklardan aydınlığa çıkaran kitap
 3:138 | Âl-i İmran | Kur'an | İnsanlara açıklama, öğüt, rehber
-26:192-194 | Şuara | Kur'an | Cebrail'in kalbe indirdiği vahiy
+26:192-195 | Şuara | Kur'an | Cebrail'in kalbe indirdiği vahiy
