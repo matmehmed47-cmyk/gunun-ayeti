@@ -181,6 +181,13 @@ select.dugme { max-width: 100%; color: var(--fg); }
 const AYETLER = /*VERI*/[];
 const BASLANGIC = /*BASLANGIC*/"2026-11-01";
 const ONIZLEME = /*ONIZLEME*/true;
+const SAYFA_SURUM = /*SURUM*/0;
+/* Önbellekte eski sayfa kaldıysa: yeni sürüm varsa kendini hemen yenile (sürüm numaralı adresle, önbellek atlanır) */
+if (!ONIZLEME && SAYFA_SURUM) {
+  fetch('https://matmehmed47-cmyk.github.io/gunun-ayeti/surum.txt?r=' + Date.now(), { cache: 'no-store' })
+    .then(r => r.text()).then(s => { const y = parseInt(s, 10); if (y > SAYFA_SURUM && !location.search.includes('v=' + y)) location.replace('https://matmehmed47-cmyk.github.io/gunun-ayeti/?v=' + y); })
+    .catch(() => {});
+}
 
 const $ = id => document.getElementById(id);
 const ANDROID = !!(window.Android && window.Android.var_mi);

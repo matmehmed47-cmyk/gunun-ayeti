@@ -59,7 +59,8 @@ self.addEventListener('fetch', e => {{
 """)
 
 gecici = kok + '/_govde.html'
-subprocess.run([sys.executable, '-I', kok + '/kaynak/build.py', kok, gecici, bas, '0'], check=True)
+subprocess.run([sys.executable, '-I', kok + '/kaynak/build.py', kok, gecici, bas, '0', surum], check=True)
+open(kok + '/surum.txt', 'w').write(str(int(surum)))  # sayfa kendi sürümünü bununla karşılaştırır
 govde = open(gecici, encoding='utf-8').read(); os.remove(gecici)
 bas_html = """<!doctype html>
 <html lang="tr">
