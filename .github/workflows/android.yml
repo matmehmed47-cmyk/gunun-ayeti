@@ -1,0 +1,42 @@
+name: Android APK
+
+on:
+  push:
+    branches: [main]
+    paths: ['android/**', 'index.html', 'veri/sirali.json', '.github/workflows/android.yml']
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  apk:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with: { distribution: temurin, java-version: '17' }
+      - uses: gradle/actions/setup-gradle@v4
+        with: { gradle-version: '8.10.2' }
+      - name: Web uygulamasını içine koy
+        run: |
+          W=android/app/src/main/assets/www
+          mkdir -p $W android/app/src/main/res/mipmap-xxxhdpi
+          cp index.html $W/ && cp -r simge $W/ && cp veri/sirali.json $W/
+          python3 -c "import re,json;b=re.search(r'const BASLANGIC = \"([0-9-]+)\"',open('index.html',encoding='utf-8').read())[1];json.dump({'baslangic':b},open('$W/ayar.json','w'))"
+          cp simge/simge-192.png android/app/src/main/res/mipmap-xxxhdpi/ic_launcher.png
+      - name: APK üret
+        env:
+          IMZA_SIFRE: ${{ secrets.ANDROID_KEY_PASS }}
+          IMZA_DOSYA: ${{ runner.temp }}/imza.p12
+          SURUM_KODU: ${{ github.run_number }}
+          SURUM_ADI: '1.${{ github.run_number }}'
+        run: |
+          echo "${{ secrets.ANDROID_KEYSTORE }}" | base64 -d > "$IMZA_DOSYA"
+          gradle -p android assembleRelease --no-daemon --stacktrace
+          cp android/app/build/outputs/apk/release/app-release.apk gunun-ayeti.apk
+      - name: İndirme linkine koy
+        env: { GH_TOKEN: '${{ github.token }}' }
+        run: |
+          gh release view android >/dev/null 2>&1 || gh release create android --title "Android uygulaması" --notes "Günün Ayeti Android uygulaması. Her sabah kilit ekranını kendiliğinden yeniler." --latest
+          gh release upload android gunun-ayeti.apk --clobber

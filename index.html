@@ -13,7 +13,7 @@
 <link rel="apple-touch-icon" href="simge/apple-touch-icon.png">
 <style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}[hidden]{display:none!important}</style>
 <title>Günün Ayeti</title>
-<!-- sürüm 3 -->
+<!-- sürüm 4 -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Literata:ital,opsz,wght@0,7..72,400;0,7..72,600;1,7..72,400&family=Figtree:wght@400;500;600&display=swap">
@@ -88,6 +88,8 @@ button { font: inherit; cursor: pointer; }
 .yer { display: inline-flex; gap: 4px; }
 .kilit-not { grid-column: 1 / -1; color: var(--soluk); font-size: .85rem !important; }
 .kilit-not:empty { display: none; }
+.indir { grid-column: 1 / -1; display: grid; gap: 10px; border-top: 1px solid var(--cizgi); padding-top: 14px; }
+a.dugme { text-decoration: none; }
 @media (max-width: 360px) { .kilit { grid-template-columns: 1fr; } .kilit-on { width: 120px; } }
 .sekmeler { display: flex; gap: 4px; border-bottom: 1px solid var(--cizgi); }
 .sekme { background: none; border: 0; border-bottom: 2px solid transparent; color: var(--soluk); padding: 10px 12px; font-size: .95rem; margin-bottom: -1px; }
@@ -151,8 +153,19 @@ button { font: inherit; cursor: pointer; }
         <button class="dugme ana" id="kilitKoy">Kilit ekranıma koy</button>
         <button class="dugme" id="kilitKaydet">Galeriye kaydet</button>
       </div>
+      <div class="kilit-araclar" id="otoSatir" hidden>
+        <button class="dugme" id="oto" aria-pressed="false">Her sabah otomatik: Kapalı</button>
+      </div>
     </div>
     <p class="kilit-not" id="kilitNot"></p>
+    <div class="indir" id="indir">
+      <p><b>Her sabah kendiliğinden değişsin</b> ister misin? Telefonuna göre indir, bir kez kur:</p>
+      <div class="kilit-araclar">
+        <a class="dugme" id="indirAndroid" href="https://github.com/matmehmed47-cmyk/gunun-ayeti/releases/download/android/gunun-ayeti.apk">Android için indir</a>
+        <button class="dugme" id="indirIphone">iPhone için indir</button>
+      </div>
+      <p class="kilit-not" id="indirNot"></p>
+    </div>
   </section>
 
   <nav class="sekmeler" role="tablist">
@@ -176,6 +189,9 @@ const BASLANGIC = "2026-11-05";
 const ONIZLEME = false;
 
 const $ = id => document.getElementById(id);
+const ANDROID = !!(window.Android && window.Android.var_mi);
+const IPHONE_KESTIRME = ''; // iCloud kestirme linki hazır olunca buraya
+const b64 = b => new Promise(r => { const f = new FileReader(); f.onload = () => r(String(f.result).split(',')[1]); f.readAsDataURL(b); });
 const oku = (k, v) => { try { const x = localStorage.getItem(k); return x === null ? v : JSON.parse(x); } catch { return v; } };
 const yaz = (k, v) => { try { localStorage.setItem(k, JSON.stringify(v)); } catch {} };
 
@@ -282,6 +298,7 @@ async function kartCiz(a) {
 async function paylas() {
   const a = kayit(secili), c = await kartCiz(a);
   const blob = await new Promise(r => c.toBlob(r, 'image/png'));
+  if (ANDROID) { window.Android.paylas(await b64(blob), `${a.meal}\n— ${refYazi(a)}`); return; }
   const dosya = new File([blob], 'gunun-ayeti.png', { type: 'image/png' });
   if (!ONIZLEME && navigator.canShare && navigator.canShare({ files: [dosya] })) {
     try { await navigator.share({ files: [dosya], text: `${a.meal}\n— ${refYazi(a)}` }); return; } catch (e) { if (e.name === 'AbortError') return; }
@@ -316,7 +333,7 @@ if (!ONIZLEME) {
   addEventListener('beforeinstallprompt', e => { e.preventDefault(); istem = e; if (!kurulu) { $('kur').hidden = false; $('kurDugme').hidden = false; } });
   $('kurDugme').onclick = async () => { if (!istem) return; istem.prompt(); await istem.userChoice; istem = null; $('kur').hidden = true; };
   addEventListener('appinstalled', () => { $('kur').hidden = true; });
-  if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js').catch(() => {});
+  if (!ANDROID && 'serviceWorker' in navigator) navigator.serviceWorker.register('sw.js').catch(() => {});
 }
 
 /* ---- Kilit ekranı: kullanıcının fotoğrafı + günün ayeti. Fotoğraf yalnız bu cihazda (IndexedDB) ---- */
@@ -376,13 +393,45 @@ function kilitKaydet(b) {
     ? 'Resim kaydedildi. Fotoğraflar\'da aç → Paylaş → "Duvar Kağıdı Olarak Kullan" → kilit ekranı.'
     : 'Resim kaydedildi. Galeri\'de aç → ⋮ menü → "Duvar kağıdı olarak ayarla" → "Kilit ekranı".';
 }
+/* Android uygulamasına fotoğrafı küçültüp ver (en uzun kenar 2400 px) */
+async function fotoAndroidaVer(f) {
+  const im = await createImageBitmap(f), o = Math.min(1, 2400 / Math.max(im.width, im.height));
+  const c = document.createElement('canvas'); c.width = Math.round(im.width * o); c.height = Math.round(im.height * o);
+  c.getContext('2d').drawImage(im, 0, 0, c.width, c.height);
+  const b = await new Promise(r => c.toBlob(r, 'image/jpeg', 0.9));
+  window.Android.fotoKaydet(await b64(b));
+}
 $('foto').onchange = async e => {
   const f = e.target.files[0]; if (!f) return;
   foto = f; await vtKoy('foto', f); kilitOnizle();
+  if (ANDROID) { await fotoAndroidaVer(f); if (window.Android.otomatik()) window.Android.simdiUygula(); }
 };
-$('yerOrta').onclick = () => { yer = 'orta'; yaz('ga-yer', yer); kilitOnizle(); };
-$('yerAlt').onclick = () => { yer = 'alt'; yaz('ga-yer', yer); kilitOnizle(); };
+const yerSec = y => { yer = y; yaz('ga-yer', yer); if (ANDROID) window.Android.yerAyarla(y); kilitOnizle(); };
+$('yerOrta').onclick = () => yerSec('orta');
+$('yerAlt').onclick = () => yerSec('alt');
+function otoGoster() {
+  const a = window.Android.otomatik();
+  $('oto').setAttribute('aria-pressed', a); $('oto').textContent = 'Her sabah otomatik: ' + (a ? 'Açık ✓' : 'Kapalı');
+}
+if (ANDROID) {
+  $('indir').hidden = true; $('otoSatir').hidden = false; otoGoster();
+  $('oto').onclick = () => {
+    const ac = !window.Android.otomatik();
+    window.Android.otomatikAyarla(ac); otoGoster();
+    $('kilitNot').textContent = ac ? 'Tamam. Her sabah 07:00\'de bugünün ayeti fotoğrafının üstüne yazılıp kilit ekranına konacak.' : 'Otomatik kapatıldı.';
+    if (ac) window.Android.simdiUygula();
+  };
+}
+$('indirIphone').onclick = () => {
+  if (IPHONE_KESTIRME) { location.href = IPHONE_KESTIRME; return; }
+  $('indirNot').textContent = 'iPhone kurulumu hazırlanıyor. Şimdilik "Kilit ekranıma koy" düğmesiyle her sabah elle koyabilirsin.';
+};
 $('kilitKoy').onclick = async () => {
+  if (ANDROID) {
+    const s = window.Android.simdiUygula();
+    $('kilitNot').textContent = s === 'tamam' ? 'Kilit ekranına kondu ✓ Ekranı kapatıp açınca görürsün.' : 'Olmadı: ' + s;
+    return;
+  }
   const b = await kilitBlob(); if (!b) return;
   const f = new File([b], 'gunun-ayeti-kilit.jpg', { type: 'image/jpeg' });
   if (!ONIZLEME && navigator.canShare && navigator.canShare({ files: [f] })) {
@@ -396,6 +445,7 @@ $('kilitKoy').onclick = async () => {
 };
 $('kilitKaydet').onclick = async () => {
   const b = await kilitBlob(); if (!b) return;
+  if (ANDROID) { window.Android.kaydet(await b64(b), `gunun-ayeti-${new Date().toISOString().slice(0, 10)}.jpg`); return; }
   if (ONIZLEME) { $('kartResim').src = URL.createObjectURL(b); $('kartNot').textContent = 'Önizlemede kaydetme kapalı; kurulu uygulamada resim galeriye iner.'; $('perde').hidden = false; return; }
   kilitKaydet(b);
 };
