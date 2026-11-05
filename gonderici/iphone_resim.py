@@ -86,3 +86,18 @@ for ad in os.listdir(vk):
         tam.quantize(64, method=Image.Quantize.FASTOCTREE).save(os.path.join(ip, 'vakit', f"{v['id']}-{yer}.png"), optimize=True)
     sayi += 1
 print('vakit satırı', sayi, 'ilçe, verisi olmayan', eksik)
+
+# Kestirmenin il/ilçe seçimi için listeler: iller.txt, iller.json {İl: kısa ad}, ilce/<kısa>.txt, ilce/<kısa>.json {İlçe: kod}
+import unicodedata
+def kisa(s):
+    s = s.replace('ı', 'i').replace('İ', 'i').replace('ğ', 'g').replace('Ğ', 'g').replace('ş', 's').replace('Ş', 's').replace('ç', 'c').replace('Ç', 'c').replace('ö', 'o').replace('Ö', 'o').replace('ü', 'u').replace('Ü', 'u')
+    return ''.join(c for c in unicodedata.normalize('NFKD', s.lower()) if c.isalnum())
+il_listesi = json.load(open(os.path.join(kok, 'vakitler', 'iller.json'), encoding='utf-8'))
+os.makedirs(os.path.join(ip, 'ilce'), exist_ok=True)
+open(os.path.join(ip, 'iller.txt'), 'w', encoding='utf-8').write('\n'.join(i['ad'] for i in il_listesi))
+json.dump({i['ad']: kisa(i['ad']) for i in il_listesi}, open(os.path.join(ip, 'iller.json'), 'w', encoding='utf-8'), ensure_ascii=False)
+for i in il_listesi:
+    sec = [('Merkez', i['id'])] + [(c['ad'], c['id']) for c in i.get('ilceler', []) if c['id'] != i['id']]
+    open(os.path.join(ip, 'ilce', kisa(i['ad']) + '.txt'), 'w', encoding='utf-8').write('\n'.join(a for a, _ in sec))
+    json.dump(dict(sec), open(os.path.join(ip, 'ilce', kisa(i['ad']) + '.json'), 'w', encoding='utf-8'), ensure_ascii=False)
+print('il/ilçe listeleri', len(il_listesi))

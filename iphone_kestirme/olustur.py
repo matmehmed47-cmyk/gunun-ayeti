@@ -26,13 +26,23 @@ def eylem(kimlik, **p):
 ilce, dosya1, sec, kaydet, dosya2, boyut, kirp, ayet, bindir1, vakit, bindir2 = (U() for _ in range(11))
 grup = U()
 idosya1, isor, ikaydet, idosya2 = (U() for _ in range(4)); igrup = U()
+u1, b1, s1, u2, k1, u3, b2, s2, u4, kodmetin = (U() for _ in range(10))
 eylemler = [
     # İlçe kodu: ilk çalışmada sorulur, Kestirmeler klasörüne kaydedilir
     eylem('is.workflow.actions.documentpicker.open', UUID=idosya1, WFGetFilePath=ILCE, WFFileErrorIfNotFound=False, WFShowFilePicker=False),
     eylem('is.workflow.actions.conditional', GroupingIdentifier=igrup, WFControlFlowMode=0, WFCondition=101, WFInput={'Type': 'Variable', 'Variable': cikti(idosya1, 'Dosya')}),
-    eylem('is.workflow.actions.ask', UUID=isor, WFAskActionPrompt='İlçe kodun nedir? Günün Ayeti sitesinde il ve ilçeni seçince yazar. (Ankara merkez: 9206)',
-          WFInputType='Number', WFAskActionDefaultAnswerNumber='9206'),
-    eylem('is.workflow.actions.documentpicker.save', UUID=ikaydet, WFInput=cikti(isor, 'Girilen Değer'), WFAskWhereToSave=False,
+    eylem('is.workflow.actions.downloadurl', UUID=u1, WFURL=SITE + 'iller.txt'),
+    eylem('is.workflow.actions.text.split', UUID=b1, text=cikti(u1, 'URL İçeriği'), WFTextSeparator='New Lines'),
+    eylem('is.workflow.actions.choosefromlist', UUID=s1, WFInput=cikti(b1, 'Bölünmüş Metin'), WFChooseFromListActionPrompt='İlini seç (namaz vakitleri için)'),
+    eylem('is.workflow.actions.downloadurl', UUID=u2, WFURL=SITE + 'iller.json'),
+    eylem('is.workflow.actions.getvalueforkey', UUID=k1, WFInput=cikti(u2, 'URL İçeriği'), WFGetDictionaryValueType='Value', WFDictionaryKey=metin([(s1, 'Seçilen Öge')])),
+    eylem('is.workflow.actions.downloadurl', UUID=u3, WFURL=metin([SITE + 'ilce/', (k1, 'Sözlük Değeri'), '.txt'])),
+    eylem('is.workflow.actions.text.split', UUID=b2, text=cikti(u3, 'URL İçeriği'), WFTextSeparator='New Lines'),
+    eylem('is.workflow.actions.choosefromlist', UUID=s2, WFInput=cikti(b2, 'Bölünmüş Metin'), WFChooseFromListActionPrompt='İlçeni seç'),
+    eylem('is.workflow.actions.downloadurl', UUID=u4, WFURL=metin([SITE + 'ilce/', (k1, 'Sözlük Değeri'), '.json'])),
+    eylem('is.workflow.actions.getvalueforkey', UUID=isor, WFInput=cikti(u4, 'URL İçeriği'), WFGetDictionaryValueType='Value', WFDictionaryKey=metin([(s2, 'Seçilen Öge')])),
+    eylem('is.workflow.actions.gettext', UUID=kodmetin, WFTextActionText=metin([(isor, 'Sözlük Değeri')])),
+    eylem('is.workflow.actions.documentpicker.save', UUID=ikaydet, WFInput=cikti(kodmetin, 'Metin'), WFAskWhereToSave=False,
           WFFileDestinationPath=ILCE, WFSaveFileOverwrite=True),
     eylem('is.workflow.actions.conditional', GroupingIdentifier=igrup, WFControlFlowMode=2),
     eylem('is.workflow.actions.documentpicker.open', UUID=idosya2, WFGetFilePath=ILCE, WFFileErrorIfNotFound=True, WFShowFilePicker=False),
