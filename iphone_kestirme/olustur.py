@@ -32,14 +32,15 @@ u1, b1, s1, u2, k1, u3, b2, s2, u4, kodmetin = (U() for _ in range(10))
 
 # Gündüz elle açılınca menü (gece otomasyonda saat < 6 olduğu için sorulmaz)
 def menu_blogu():
-    tarih, saat, eg, mg = U(), U(), U(), U()
+    tarih, saat, sayi, eg, mg = U(), U(), U(), U(), U()
     u1, b1, s1, u2, k1, u3, b2, s2, u4, kod, km, sec, jpg = (U() for _ in range(13))
     S = ['🔄 Kilit ekranını yenile', '📍 İlçeyi değiştir', '🖼️ Fotoğrafı değiştir']
     return [
         eylem('is.workflow.actions.date', UUID=tarih, WFDateActionMode='Current Date'),
-        eylem('is.workflow.actions.format.date', UUID=saat, WFDate=cikti(tarih, 'Tarih'), WFDateFormatStyle='Custom', WFDateFormat='H'),
+        eylem('is.workflow.actions.format.date', UUID=saat, WFDate=cikti(tarih, 'Tarih'), WFDateFormatStyle='Custom', WFDateFormat='H', WFTimeFormatStyle='None'),
+        eylem('is.workflow.actions.detect.number', UUID=sayi, WFInput=cikti(saat, 'Biçimlendirilmiş Tarih')),
         eylem('is.workflow.actions.conditional', GroupingIdentifier=eg, WFControlFlowMode=0, WFCondition=3, WFNumberValue='6',
-              WFInput={'Type': 'Variable', 'Variable': cikti(saat, 'Biçimlendirilmiş Tarih')}),
+              WFInput={'Type': 'Variable', 'Variable': cikti(sayi, 'Sayılar')}),
         eylem('is.workflow.actions.choosefrommenu', GroupingIdentifier=mg, WFControlFlowMode=0, WFMenuPrompt='Günün Ayeti',
               WFMenuItems=[{'WFItemType': 0, 'WFValue': s} for s in S]),
         eylem('is.workflow.actions.choosefrommenu', GroupingIdentifier=mg, WFControlFlowMode=1, WFMenuItemAttributedTitle=S[0], WFMenuItemTitle=S[0]),
