@@ -64,6 +64,7 @@ for yer in ('orta', 'alt'):
     im.save(os.path.join(ip, f'bugun-{yer}.png'), optimize=True)
     satir_y[yer] = y
 open(os.path.join(ip, 'bugun.txt'), 'w', encoding='utf-8').write(f"{a['meal']}\n— {ref}\n")
+open(os.path.join(ip, 'tarih.txt'), 'w', encoding='utf-8').write(bugun.isoformat())  # kestirme 'bugün yenilendi mi' kontrolünü buna göre yapar
 print(bugun, 'gün', gun + 1, ref)
 
 # Her ilçe için vakit satırı: "05:51 · 07:16 · 12:37 · 15:23 · 17:49 · 19:09"

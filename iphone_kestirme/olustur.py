@@ -8,7 +8,7 @@
 # NOT: iPhone, dosya adını kestirme adı yapıyor → kestirmenin adı "Gunun-Ayeti". Site düğmeleri bu adla çağırır.
 import plistlib, sys, uuid
 
-SURUM = 2  # site/iphone-surum.txt bundan büyükse "yeni sürüm var" bildirimi
+SURUM = 3  # site/iphone-surum.txt bundan büyükse "yeni sürüm var" bildirimi
 SITE = 'https://matmehmed47-cmyk.github.io/gunun-ayeti/iphone/'
 KOK = 'https://matmehmed47-cmyk.github.io/gunun-ayeti/'
 FOTO, ILCE, SON = 'gunun-ayeti-fotograf.jpg', 'gunun-ayeti-ilce.txt', 'gunun-ayeti-son.txt'
@@ -67,12 +67,12 @@ eylemler = [
     eger(g_ilce, 99, degisken(GIRDI), WFConditionalActionString='ilce'), *il_ilce_sec(), bitir(g_ilce),
     eger(g_foto, 99, degisken(GIRDI), WFConditionalActionString='foto'), *foto_sec(), bitir(g_foto),
     # 2) Bugünün tarihi; otomasyonda (girdi yok) bugün zaten yenilendiyse çık
-    eylem('is.workflow.actions.date', UUID=tarih, WFDateActionMode='Current Date'),
-    eylem('is.workflow.actions.format.date', UUID=gun, WFDate=cikti(tarih, 'Tarih'), WFDateFormatStyle='Custom', WFDateFormat='yyyy-MM-dd', WFTimeFormatStyle='None'),
+    eylem('is.workflow.actions.downloadurl', UUID=tarih, WFURL=SITE + 'tarih.txt'),  # sitedeki resmin tarihi
+    eylem('is.workflow.actions.gettext', UUID=gun, WFTextActionText=metin([(tarih, 'URL İçeriği')])),
     eger(g_bos, 101, degisken(GIRDI)),
     dosya_al(son, SON),
     eylem('is.workflow.actions.gettext', UUID=sonm, WFTextActionText=metin([(son, 'Dosya')])),
-    eger(g_ayni, 4, degisken(cikti(sonm, 'Metin')), WFConditionalActionString=metin([(gun, 'Biçimlendirilmiş Tarih')])),
+    eger(g_ayni, 4, degisken(cikti(sonm, 'Metin')), WFConditionalActionString=metin([(gun, 'Metin')])),
     eylem('is.workflow.actions.exit'),
     bitir(g_ayni),
     bitir(g_bos),
@@ -104,7 +104,7 @@ eylemler = [
     eylem('is.workflow.actions.wallpaper.set', WFInput=cikti(b2, 'Üst Üste Bindirilmiş Görüntü'), WFWallpaperLocation=['Lock Screen'],
           WFWallpaperShowPreview=False, WFWallpaperSmartCrop=False, WFWallpaperLegibilityBlur=False, WFWallpaperPerspectiveZoom=False),
     # 8) Bugün yenilendi
-    eylem('is.workflow.actions.gettext', UUID=gunmetin, WFTextActionText=metin([(gun, 'Biçimlendirilmiş Tarih')])),
+    eylem('is.workflow.actions.gettext', UUID=gunmetin, WFTextActionText=metin([(gun, 'Metin')])),
     kaydet(cikti(gunmetin, 'Metin'), SON),
     # 9) Yeni kestirme sürümü var mı?
     eylem('is.workflow.actions.downloadurl', UUID=sur, WFURL=KOK + 'iphone-surum.txt'),
