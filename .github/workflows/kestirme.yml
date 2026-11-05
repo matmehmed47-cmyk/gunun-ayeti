@@ -1,0 +1,27 @@
+# iPhone kestirmesini GitHub'ın Mac'inde imzalar ve indirme linkine koyar.
+name: iPhone kestirmesi
+
+on:
+  push:
+    branches: [main]
+    paths: ['iphone_kestirme/**', '.github/workflows/kestirme.yml']
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  imzala:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Kestirmeyi üret ve imzala
+        run: |
+          python3 iphone_kestirme/olustur.py imzasiz.shortcut
+          shortcuts sign --mode anyone --input imzasiz.shortcut --output "Gunun-Ayeti.shortcut"
+          ls -la Gunun-Ayeti.shortcut
+      - name: İndirme linkine koy
+        env: { GH_TOKEN: '${{ github.token }}' }
+        run: |
+          gh release view iphone >/dev/null 2>&1 || gh release create iphone --title "iPhone kestirmesi" --notes "Günün Ayeti iPhone kestirmesi. Her gün kilit ekranına ayet ve namaz vakitlerini koyar." --latest=false
+          gh release upload iphone Gunun-Ayeti.shortcut --clobber
