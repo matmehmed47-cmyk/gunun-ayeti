@@ -2,6 +2,8 @@ package net.gununayeti
 
 import android.annotation.SuppressLint
 import android.app.Activity
+import android.app.StatusBarManager
+import android.graphics.drawable.Icon
 import android.app.WallpaperManager
 import android.content.ComponentName
 import android.content.ContentValues
@@ -60,7 +62,7 @@ class AnaEkran : Activity() {
                 startActivity(Intent(Intent.ACTION_VIEW, r.url)); return true
             }
             override fun onReceivedError(v: WebView, r: WebResourceRequest, e: WebResourceError) {
-                if (r.isForMainFrame && !yereleGecti) { yereleGecti = true; v.loadUrl(YEREL) }
+                if (r.isForMainFrame && !yereleGecti) { yereleGecti = true; v.loadUrl(if (intent?.getBooleanExtra("kible", false) == true) "$YEREL#kible" else YEREL) }
             }
         }
         web.webChromeClient = object : WebChromeClient() {
@@ -81,8 +83,9 @@ class AnaEkran : Activity() {
                 return true
             }
         }
-        if (savedInstanceState != null) web.restoreState(savedInstanceState)
-        else web.loadUrl(SITE)
+        val kible = intent?.getBooleanExtra("kible", false) == true
+        if (savedInstanceState != null && !kible) web.restoreState(savedInstanceState)
+        else web.loadUrl(if (kible) "$SITE#kible" else SITE)
         Zamanlayici.kur(this) // açıksa yarın sabahı tekrar planla
         Thread {
             Vakit.gerekirseIndir(this); Vakit.alarmKur(this)
@@ -98,6 +101,12 @@ class AnaEkran : Activity() {
             konumBekleyen?.let { (o, cb) -> cb.invoke(o, izin, false) }
             konumBekleyen = null
         }
+    }
+
+    /** Uygulama açıkken kıble kutucuğuna basılırsa pusulayı aç. */
+    override fun onNewIntent(i: Intent) {
+        super.onNewIntent(i); setIntent(i)
+        if (i.getBooleanExtra("kible", false)) web.evaluateJavascript("window.kibleAcDis ? kibleAcDis() : (location.hash = 'kible')", null)
     }
 
     override fun onSaveInstanceState(outState: Bundle) { super.onSaveInstanceState(outState); web.saveState(outState) }
@@ -174,6 +183,20 @@ class AnaEkran : Activity() {
             mesaj("Kilit ekranında artık kendi fotoğrafın var. Ana ekranı telefon ayarlarından değiştirebilirsin.")
             "tamam"
         } catch (e: Exception) { "hata: " + (e.message ?: e.javaClass.simpleName) }
+
+        /** Bildirim paneline Kıble kutucuğunu ekle (Android 13+ telefon kendisi sorar). */
+        @JavascriptInterface fun kutucukEkle(): Boolean {
+            if (Build.VERSION.SDK_INT < 33) return false
+            val sb = getSystemService(StatusBarManager::class.java)
+            runOnUiThread {
+                sb.requestAddTileService(ComponentName(this@AnaEkran, KibleKutucuk::class.java), "Kıble",
+                    Icon.createWithResource(this@AnaEkran, R.drawable.ic_kible), mainExecutor) { s ->
+                    if (s == StatusBarManager.TILE_ADD_REQUEST_RESULT_TILE_ADDED || s == StatusBarManager.TILE_ADD_REQUEST_RESULT_TILE_ALREADY_ADDED)
+                        mesaj("Kıble kutucuğu bildirim panelinde.")
+                }
+            }
+            return true
+        }
 
         @JavascriptInterface fun simdiUygula(): String = try {
             KilitCizici.uygula(this@AnaEkran); "tamam"

@@ -221,6 +221,7 @@ select.dugme { max-width: 100%; color: var(--fg); }
     <p class="kucuk" id="kibleNot">Pusula şaşarsa telefonu havada 8 çizerek birkaç kez salla. Metal eşyalardan ve mıknatıslı kılıftan uzak tut.</p>
     <div class="kible-araclar">
       <button class="dugme" id="kibleKonum">📍 Konumumu kullan</button>
+      <button class="dugme" id="kibleKutucuk" hidden>➕ Bildirim paneline ekle</button>
       <button class="dugme ana" id="kibleKapat">Kapat</button>
     </div>
   </div>
@@ -244,7 +245,7 @@ const SAYFA_SURUM = /*SURUM*/0;
 /* Önbellekte eski sayfa kaldıysa: yeni sürüm varsa kendini hemen yenile (sürüm numaralı adresle, önbellek atlanır) */
 if (!ONIZLEME && SAYFA_SURUM) {
   fetch('https://matmehmed47-cmyk.github.io/gunun-ayeti/surum.txt?r=' + Date.now(), { cache: 'no-store' })
-    .then(r => r.text()).then(s => { const y = parseInt(s, 10); if (y > SAYFA_SURUM && !location.search.includes('v=' + y)) location.replace('https://matmehmed47-cmyk.github.io/gunun-ayeti/?v=' + y); })
+    .then(r => r.text()).then(s => { const y = parseInt(s, 10); if (y > SAYFA_SURUM && !location.search.includes('v=' + y)) location.replace('https://matmehmed47-cmyk.github.io/gunun-ayeti/?v=' + y + location.hash); })
     .catch(() => {});
 }
 
@@ -778,5 +779,13 @@ $('kibleAc').onclick = async () => {
 };
 $('kibleKapat').onclick = () => { $('kiblePerde').hidden = true; yonDurdur(); };
 $('kibleKonum').onclick = gpsKullan;
+window.kibleAcDis = () => { if ($('kiblePerde').hidden) $('kibleAc').onclick(); };
+if (ANDROID && window.Android.kutucukEkle) {
+  $('kibleKutucuk').hidden = false;
+  $('kibleKutucuk').onclick = () => {
+    if (!window.Android.kutucukEkle()) $('kibleNot').textContent = 'Bildirim panelini aşağı çek → ⋮ ya da kalem simgesi → "Düzenle" → "Kıble" kutucuğunu yukarı sürükle.';
+  };
+}
+if (location.hash === '#kible') { history.replaceState(null, '', location.pathname + location.search); setTimeout(window.kibleAcDis, 300); }
 tarihGoster(); ayetGoster(bugunNo()); listeGoster();
 </script>

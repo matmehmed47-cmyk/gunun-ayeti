@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Kıble kutucuğu simgesi: pusula halkası ve kuzeyi gösteren iğne -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp" android:height="24dp" android:viewportWidth="24" android:viewportHeight="24">
+    <path android:fillColor="#FFFFFFFF"
+        android:pathData="M12,2A10,10 0,1 0,22 12A10,10 0,0 0,12 2ZM12,20A8,8 0,1 1,20 12A8,8 0,0 1,12 20Z" />
+    <path android:fillColor="#FFFFFFFF" android:pathData="M12,5L15,12L12,10.6L9,12Z" />
+    <path android:fillColor="#88FFFFFF" android:pathData="M12,19L9,12L12,13.4L15,12Z" />
+</vector>

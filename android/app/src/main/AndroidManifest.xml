@@ -16,6 +16,7 @@
         <activity
             android:name=".AnaEkran"
             android:exported="true"
+            android:launchMode="singleTask"
             android:configChanges="orientation|screenSize|keyboardHidden">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -29,6 +30,14 @@
             android:permission="android.permission.BIND_WALLPAPER">
             <intent-filter><action android:name="android.service.wallpaper.WallpaperService" /></intent-filter>
             <meta-data android:name="android.service.wallpaper" android:resource="@xml/canli_duvar" />
+        </service>
+        <service
+            android:name=".KibleKutucuk"
+            android:label="Kıble"
+            android:icon="@drawable/ic_kible"
+            android:exported="true"
+            android:permission="android.permission.BIND_QUICK_SETTINGS_TILE">
+            <intent-filter><action android:name="android.service.quicksettings.action.QS_TILE" /></intent-filter>
         </service>
         <receiver android:name=".VakitAlici" android:exported="false" />
         <receiver android:name=".AcilisAlici" android:exported="true">
