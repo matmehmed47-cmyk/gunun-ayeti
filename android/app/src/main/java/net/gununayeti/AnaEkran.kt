@@ -2,6 +2,8 @@ package net.gununayeti
 
 import android.annotation.SuppressLint
 import android.app.Activity
+import android.app.WallpaperManager
+import android.content.ComponentName
 import android.content.ContentValues
 import android.content.Intent
 import android.net.Uri
@@ -122,6 +124,34 @@ class AnaEkran : Activity() {
             Vakit.alarmKur(this@AnaEkran)
         }
         /** Hemen kilit ekranına uygular; sonucu metin döner. */
+        /** Canlı duvar kağıdı: açık mı (seçili ve telefonda gerçekten kurulu) */
+        @JavascriptInterface fun canliMi(): Boolean = Ayar.canli(this@AnaEkran) &&
+            WallpaperManager.getInstance(this@AnaEkran).wallpaperInfo?.packageName == packageName
+        /** Fotoğrafları indir, sonra telefonun "duvar kağıdı olarak ayarla" ekranını aç. */
+        @JavascriptInterface fun canliAc() {
+            Ayar.canliKoy(this@AnaEkran, true); Zamanlayici.kur(this@AnaEkran)
+            mesaj("Fotoğraflar hazırlanıyor, biraz bekle…")
+            Thread {
+                try { FotoHavuz.yenile(this@AnaEkran, true) } catch (_: Exception) {}
+                runOnUiThread {
+                    try {
+                        startActivity(Intent(WallpaperManager.ACTION_CHANGE_LIVE_WALLPAPER)
+                            .putExtra(WallpaperManager.EXTRA_LIVE_WALLPAPER_COMPONENT, ComponentName(this@AnaEkran, CanliDuvar::class.java)))
+                    } catch (e: Exception) {
+                        try { startActivity(Intent(WallpaperManager.ACTION_LIVE_WALLPAPER_CHOOSER)) } catch (_: Exception) { mesaj("Bu telefon canlı duvar kağıdını desteklemiyor.") }
+                    }
+                }
+            }.start()
+        }
+        /** Kendi fotoğrafına dön: canlıyı kapat, kilit ekranına sabit resmi koy. */
+        @JavascriptInterface fun canliKapat(): String = try {
+            Ayar.canliKoy(this@AnaEkran, false)
+            Ayar.otomatikKoy(this@AnaEkran, true); Zamanlayici.kur(this@AnaEkran); Vakit.alarmKur(this@AnaEkran)
+            KilitCizici.uygula(this@AnaEkran)
+            mesaj("Kilit ekranında artık kendi fotoğrafın var. Ana ekranı telefon ayarlarından değiştirebilirsin.")
+            "tamam"
+        } catch (e: Exception) { "hata: " + (e.message ?: e.javaClass.simpleName) }
+
         @JavascriptInterface fun simdiUygula(): String = try {
             KilitCizici.uygula(this@AnaEkran); "tamam"
         } catch (e: Exception) { "hata: " + (e.message ?: e.javaClass.simpleName) }

@@ -150,6 +150,11 @@ select.dugme { max-width: 100%; color: var(--fg); }
         <select id="sehir" class="dugme" aria-label="Namaz vakti için il"><option value="">Namaz vakti: il seç</option></select>
         <select id="ilce" class="dugme" aria-label="İlçe" hidden></select>
       </div>
+      <div class="kilit-araclar" id="canliSatir" hidden role="group" aria-label="Kilit ekranı türü">
+        <button class="dugme" id="kendiFoto" aria-pressed="true">🖼️ Kendi fotoğrafım</button>
+        <button class="dugme" id="canliDuvar" aria-pressed="false">🌄 Canlı duvar kağıtları</button>
+      </div>
+      <p class="kilit-not" id="canliNot" hidden>Her açılışta doğadan yeni bir fotoğraf gelir; ayet, esma ve vakit üstünde durur.</p>
       <div class="kilit-araclar" id="otoSatir" hidden>
         <button class="dugme" id="oto" aria-pressed="false">Her sabah otomatik: Kapalı</button>
       </div>
@@ -511,6 +516,18 @@ function otoGoster() {
 }
 if (ANDROID) {
   $('indir').hidden = true; $('otoSatir').hidden = false; otoGoster();
+  if (window.Android.canliAc) {
+    const canliGoster = () => {
+      const c = window.Android.canliMi();
+      $('canliSatir').hidden = false; $('canliNot').hidden = false;
+      $('kendiFoto').setAttribute('aria-pressed', !c); $('canliDuvar').setAttribute('aria-pressed', c);
+      $('canliDuvar').textContent = c ? '🌄 Canlı duvar kağıtları ✓' : '🌄 Canlı duvar kağıtları';
+    };
+    canliGoster();
+    document.addEventListener('visibilitychange', () => { if (!document.hidden) canliGoster(); });
+    $('canliDuvar').onclick = () => { $('canliNot').textContent = 'Fotoğraflar iniyor… Açılan ekranda "Duvar kağıdı olarak ayarla"ya bas, sorarsa "Ana ekran ve kilit ekranı"nı seç.'; window.Android.canliAc(); };
+    $('kendiFoto').onclick = () => { const r = window.Android.canliKapat(); canliGoster(); if (window.Android.otomatik) otoGoster(); $('canliNot').textContent = r === 'tamam' ? 'Kilit ekranında yine kendi fotoğrafın var.' : 'Olmadı: ' + r; };
+  }
   $('oto').onclick = () => {
     const ac = !window.Android.otomatik();
     window.Android.otomatikAyarla(ac); otoGoster();

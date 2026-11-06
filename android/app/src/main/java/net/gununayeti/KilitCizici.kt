@@ -31,6 +31,11 @@ object Ayar {
     fun otomatikKoy(c: Context, v: Boolean) = p(c).edit().putBoolean("otomatik", v).apply()
     fun yer(c: Context) = p(c).getString("yer", "alt") ?: "alt"
     fun yerKoy(c: Context, v: String) = p(c).edit().putString("yer", v).apply()
+    /** Canlı duvar kağıdı seçildi mi (seçiliyse sabit kilit resmi konmaz). */
+    fun canli(c: Context) = p(c).getBoolean("canli", false)
+    fun canliKoy(c: Context, v: Boolean) = p(c).edit().putBoolean("canli", v).apply()
+    fun canliSira(c: Context) = p(c).getInt("canliSira", 0)
+    fun canliSiraArtir(c: Context) = p(c).edit().putInt("canliSira", canliSira(c) + 1).apply()
 }
 
 /** Kullanıcının fotoğrafı + bugünün ayeti → kilit ekranı. Web sürümündeki kilitCiz() ile aynı düzen. */
@@ -69,18 +74,25 @@ object KilitCizici {
     fun ciz(c: Context): Bitmap {
         val (W, H) = ekranBoyu(c)
         val bmp = Bitmap.createBitmap(W, H, Bitmap.Config.ARGB_8888)
-        val cv = Canvas(bmp)
         val foto = File(c.filesDir, "foto.jpg")
         val im = if (foto.exists()) BitmapFactory.decodeFile(foto.path) else null
+        ciz(c, Canvas(bmp), W, H, im, true)
+        im?.recycle()
+        return bmp
+    }
+
+    /** Fotoğrafı tuvale yerleştirir; yazili ise ayet, esma ve vakti üstüne yazar (canlı duvar kağıdı da bunu kullanır). */
+    fun ciz(c: Context, cv: Canvas, W: Int, H: Int, im: Bitmap?, yazili: Boolean) {
         if (im != null) {
             val o = maxOf(W.toFloat() / im.width, H.toFloat() / im.height)
             val w = im.width * o; val h = im.height * o
+            cv.drawColor(Color.BLACK)
             cv.drawBitmap(im, null, RectF((W - w) / 2, (H - h) / 2, (W + w) / 2, (H + h) / 2), Paint(Paint.FILTER_BITMAP_FLAG))
-            im.recycle()
         } else {
             val p = Paint().apply { shader = LinearGradient(0f, 0f, 0f, H.toFloat(), Color.rgb(15, 42, 44), Color.rgb(22, 64, 63), Shader.TileMode.CLAMP) }
             cv.drawRect(Rect(0, 0, W, H), p)
         }
+        if (!yazili) return
         val gun = bugunku(c); val meal = gun.meal; val ref = gun.ref
         val gen = (W * 0.8f).toInt()
         val tp = TextPaint(Paint.ANTI_ALIAS_FLAG).apply {
@@ -123,10 +135,10 @@ object KilitCizici {
         cv.drawText(ref, W / 2f, sy, rp)
         if (esma != null) { sy += vp.textSize * 1.5f; while (ep.measureText(esma) > W * 0.9f && ep.textSize > 8f) ep.textSize *= 0.95f; cv.drawText(esma, W / 2f, sy, ep) }
         if (vakit != null) { sy += vp.textSize * 1.5f; cv.drawText(vakit, W / 2f, sy, vp) }
-        return bmp
     }
 
     fun uygula(c: Context) {
+        if (Ayar.canli(c)) return // canlı duvar kağıdı kendi çiziyor
         val bmp = ciz(c)
         val wm = WallpaperManager.getInstance(c)
         wm.setBitmap(bmp, null, true, WallpaperManager.FLAG_LOCK)
