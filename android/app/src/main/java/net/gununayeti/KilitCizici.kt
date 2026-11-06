@@ -35,7 +35,14 @@ object Ayar {
 
 /** Kullanıcının fotoğrafı + bugünün ayeti → kilit ekranı. Web sürümündeki kilitCiz() ile aynı düzen. */
 object KilitCizici {
-    private fun bugunkuAyet(c: Context): Pair<String, String> {
+    /** Bugün: (meal, ref, esma, ust etiketi, ramazan mı). Önce siteden gelen bilgi, yoksa uygulamanın içindeki liste. */
+    private data class Gun(val meal: String, val ref: String, val esma: String, val ust: String, val ramazan: Boolean)
+
+    private fun bugunku(c: Context): Gun {
+        Icerik.bugun(c)?.let { g ->
+            if (g.optString("meal").isNotEmpty())
+                return Gun(g.getString("meal"), g.optString("ref"), g.optString("esma"), g.optString("ust"), g.optBoolean("ramazan"))
+        }
         val ayar = JSONObject(c.assets.open("www/ayar.json").bufferedReader().readText())
         val liste = JSONArray(c.assets.open("www/sirali.json").bufferedReader().readText())
         val bas = LocalDate.parse(ayar.getString("baslangic"))
@@ -43,7 +50,7 @@ object KilitCizici {
         val gun = maxOf(0L, ChronoUnit.DAYS.between(bas, bugun)).toInt()
         val a = liste.getJSONObject(gun % liste.length())
         val ayetNo = a.getString("ref").substringAfter(':')
-        return a.getString("meal") to "${a.getString("sure")} Suresi, $ayetNo. ayet"
+        return Gun(a.getString("meal"), "${a.getString("sure")} Suresi, $ayetNo. ayet", "", "", false)
     }
 
     private fun ekranBoyu(c: Context): Pair<Int, Int> {
@@ -74,7 +81,7 @@ object KilitCizici {
             val p = Paint().apply { shader = LinearGradient(0f, 0f, 0f, H.toFloat(), Color.rgb(15, 42, 44), Color.rgb(22, 64, 63), Shader.TileMode.CLAMP) }
             cv.drawRect(Rect(0, 0, W, H), p)
         }
-        val (meal, ref) = bugunkuAyet(c)
+        val gun = bugunku(c); val meal = gun.meal; val ref = gun.ref
         val gen = (W * 0.8f).toInt()
         val tp = TextPaint(Paint.ANTI_ALIAS_FLAG).apply {
             color = Color.WHITE; typeface = Typeface.create(Typeface.SERIF, Typeface.BOLD)
@@ -94,9 +101,12 @@ object KilitCizici {
             typeface = Typeface.create(Typeface.SANS_SERIF, Typeface.BOLD)
             setShadowLayer(W * 0.012f, 0f, 0f, Color.argb(150, 0, 0, 0))
         }
-        val vakit = Vakit.siradaki(c)?.let { "${it.first} ${it.second}" }
+        val vakit = if (gun.ramazan) Vakit.ramazanSatiri(c) else Vakit.siradaki(c)?.let { "${it.first} ${it.second}" }
         val vp = TextPaint(rp).apply { textSize = rp.textSize * 0.92f; typeface = Typeface.create(Typeface.SANS_SERIF, Typeface.NORMAL) }
-        val blok = dz.height + rp.textSize * 2.2f + (if (vakit != null) vp.textSize * 1.5f else 0f)
+        val ep = TextPaint(vp).apply { color = Color.argb(235, 255, 255, 255); typeface = Typeface.create(Typeface.SERIF, Typeface.NORMAL) }
+        val esma = gun.esma.ifEmpty { null }; val ustYazi = gun.ust.ifEmpty { null }
+        val ustPay = if (ustYazi != null) rp.textSize * 1.8f else 0f
+        val blok = ustPay + dz.height + rp.textSize * 2.2f + (if (esma != null) vp.textSize * 1.5f else 0f) + (if (vakit != null) vp.textSize * 1.5f else 0f)
         val merkez = if (Ayar.yer(c) == "alt") H * 0.78f else H * 0.52f
         var ust = merkez - blok / 2; val pay = fs * 2.2f
         if (ust + blok > H * 0.86f) ust = H * 0.86f - blok
@@ -106,9 +116,13 @@ object KilitCizici {
                 floatArrayOf(0f, .22f, .78f, 1f), Shader.TileMode.CLAMP)
         }
         cv.drawRect(0f, ust - pay, W.toFloat(), ust + blok + pay, bant)
-        cv.save(); cv.translate((W - gen) / 2f, ust); dz.draw(cv); cv.restore()
-        cv.drawText(ref, W / 2f, ust + dz.height + rp.textSize * 1.6f, rp)
-        if (vakit != null) cv.drawText(vakit, W / 2f, ust + dz.height + rp.textSize * 1.6f + vp.textSize * 1.5f, vp)
+        if (ustYazi != null) cv.drawText(ustYazi, W / 2f, ust + rp.textSize, rp)
+        val my = ust + ustPay
+        cv.save(); cv.translate((W - gen) / 2f, my); dz.draw(cv); cv.restore()
+        var sy = my + dz.height + rp.textSize * 1.6f
+        cv.drawText(ref, W / 2f, sy, rp)
+        if (esma != null) { sy += vp.textSize * 1.5f; while (ep.measureText(esma) > W * 0.9f && ep.textSize > 8f) ep.textSize *= 0.95f; cv.drawText(esma, W / 2f, sy, ep) }
+        if (vakit != null) { sy += vp.textSize * 1.5f; cv.drawText(vakit, W / 2f, sy, vp) }
         return bmp
     }
 

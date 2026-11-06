@@ -68,7 +68,11 @@ class AnaEkran : Activity() {
         if (savedInstanceState != null) web.restoreState(savedInstanceState)
         else web.loadUrl(SITE)
         Zamanlayici.kur(this) // açıksa yarın sabahı tekrar planla
-        Thread { Vakit.gerekirseIndir(this); Vakit.alarmKur(this) }.start()
+        Thread {
+            Vakit.gerekirseIndir(this); Vakit.alarmKur(this)
+            // Kilit ekranı bilgisi yenilendiyse (ör. yeni esma satırı) ekranı hemen tazele
+            if (Icerik.gerekirseIndir(this) && Ayar.otomatik(this)) try { KilitCizici.uygula(this) } catch (_: Exception) {}
+        }.start()
     }
 
     override fun onSaveInstanceState(outState: Bundle) { super.onSaveInstanceState(outState); web.saveState(outState) }

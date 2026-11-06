@@ -8,12 +8,11 @@ from PIL import Image, ImageDraw, ImageFilter, ImageFont
 kok = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 font = sys.argv[1]
 cikti = sys.argv[2] if len(sys.argv) > 2 else kok
-bas = re.search(r'const BASLANGIC = "(\d{4})-(\d{2})-(\d{2})"', open(os.path.join(kok, 'index.html'), encoding='utf-8').read())
-ay = json.load(open(os.path.join(kok, 'veri', 'sirali.json'), encoding='utf-8'))
-bugun = datetime.now(timezone(timedelta(hours=3))).date()
-gun = max(0, (bugun - datetime(*map(int, bas.groups())).date()).days)
-a = ay[gun % len(ay)]
-ref = f"{a['sure']} Suresi, {a['ref'].split(':')[1]}. ayet"
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from kilit_veri import gun_verisi, bugun as _bugun
+bugun = _bugun()
+a = gun_verisi(bugun)  # meal, ref, esma, ust, ramazan
+ref = a['ref']
 W, H = 1290, 2796
 
 def sar(d, metin, f, gen):
@@ -36,7 +35,7 @@ def ciz(yer):
         fs = int(fs * 0.94)
     lh, rfs = fs * 1.45, int(fs * 0.72)
     vfs = int(rfs * 0.92)
-    blok = len(sat) * lh + rfs * 2.2 + vfs * 1.5  # vakit satırına da yer
+    blok = len(sat) * lh + rfs * 2.2 + vfs * 3.0  # esma ve vakit satırlarına da yer
     merkez = H * (0.78 if yer == 'alt' else 0.52)
     ust, pay = merkez - blok / 2, fs * 2.2
     if ust + blok > H * 0.86: ust = H * 0.86 - blok
@@ -52,10 +51,18 @@ def ciz(yer):
     for i, s in enumerate(sat):
         yd.text((W / 2, ust + fs + i * lh), s, font=f, fill='white', anchor='ms')
     yd.text((W / 2, ust + len(sat) * lh + rfs * 1.6), ref, font=rf, fill=(241, 214, 153, 255), anchor='ms')
+    ef = ImageFont.truetype(font, vfs)
+    efs = vfs
+    while True:
+        try: ef.set_variation_by_name('Regular')
+        except Exception: pass
+        if yd.textlength(a['esma'], font=ef) <= W * 0.9 or efs < 12: break
+        efs = int(efs * 0.95); ef = ImageFont.truetype(font, efs)
+    yd.text((W / 2, ust + len(sat) * lh + rfs * 1.6 + vfs * 1.5), a['esma'], font=ef, fill=(255, 255, 255, 235), anchor='ms')
     g = yazi.split()[3].filter(ImageFilter.GaussianBlur(fs * 0.3)).point(lambda v: int(v * .85))
     sh = Image.new('RGBA', (W, H), (0, 0, 0, 0)); sh.putalpha(g)
     im.alpha_composite(sh); im.alpha_composite(yazi)
-    return im, ust + len(sat) * lh + rfs * 1.6 + vfs * 1.5, vfs
+    return im, ust + len(sat) * lh + rfs * 1.6 + vfs * 3.0, vfs
 
 ip = os.path.join(cikti, 'iphone'); os.makedirs(os.path.join(ip, 'vakit'), exist_ok=True)
 satir_y = {}
@@ -63,9 +70,9 @@ for yer in ('orta', 'alt'):
     im, y, vfs = ciz(yer)
     im.save(os.path.join(ip, f'bugun-{yer}.png'), optimize=True)
     satir_y[yer] = y
-open(os.path.join(ip, 'bugun.txt'), 'w', encoding='utf-8').write(f"{a['meal']}\n— {ref}\n")
+open(os.path.join(ip, 'bugun.txt'), 'w', encoding='utf-8').write(f"{a['meal']}\n— {ref}\n{a['esma']}\n")
 open(os.path.join(ip, 'tarih.txt'), 'w', encoding='utf-8').write(bugun.isoformat())  # kestirme 'bugün yenilendi mi' kontrolünü buna göre yapar
-print(bugun, 'gün', gun + 1, ref)
+print(bugun, ref, '|', a['esma'])
 
 # Her ilçe için vakit satırı: "05:51 · 07:16 · 12:37 · 15:23 · 17:49 · 19:09"
 vf = ImageFont.truetype(font, vfs)

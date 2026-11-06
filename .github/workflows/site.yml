@@ -38,6 +38,7 @@ jobs:
           mkdir -p _site
           rsync -a --exclude .git --exclude .github --exclude android --exclude _site ./ _site/
           python3 gonderici/iphone_resim.py /tmp/literata.ttf _site
+          python3 gonderici/kilit_veri.py _site
       - uses: actions/upload-pages-artifact@v3
         with: { path: _site }
       - id: dagit

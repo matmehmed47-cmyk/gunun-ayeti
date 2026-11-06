@@ -15,6 +15,7 @@ import java.util.concurrent.TimeUnit
 class KilitIsci(c: Context, p: WorkerParameters) : Worker(c, p) {
     override fun doWork(): Result = try {
         Vakit.gerekirseIndir(applicationContext)
+        Icerik.gerekirseIndir(applicationContext)
         if (Ayar.otomatik(applicationContext)) KilitCizici.uygula(applicationContext)
         Vakit.alarmKur(applicationContext)
         Result.success()

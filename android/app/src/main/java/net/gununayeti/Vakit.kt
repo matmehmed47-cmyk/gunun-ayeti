@@ -59,6 +59,20 @@ object Vakit {
         return null
     }
 
+    /** Ramazan satırı: "İmsak 05:48 · İftar 17:42" (iftar geçtiyse ertesi günün). Veri yoksa null. */
+    fun ramazanSatiri(c: Context): String? {
+        val g = oku(c)?.optJSONObject("gunler") ?: return null
+        val simdi = LocalDateTime.now(TR)
+        for (ek in 0..1) {
+            val gun = simdi.toLocalDate().plusDays(ek.toLong())
+            val dz = g.optJSONArray(gun.toString()) ?: continue
+            if (dz.length() < 5) continue
+            if (ek == 0 && !gun.atTime(LocalTime.parse(dz.getString(4))).isAfter(simdi)) continue
+            return "İmsak ${dz.getString(0)} · İftar ${dz.getString(4)}"
+        }
+        return null
+    }
+
     /** Gösterilen vakit girdiğinde kilit ekranını yeniden çizmek için alarm kur. */
     fun alarmKur(c: Context) {
         val am = c.getSystemService(Context.ALARM_SERVICE) as AlarmManager
@@ -80,7 +94,7 @@ class VakitAlici : BroadcastReceiver() {
         val p = goAsync()
         Thread {
             try {
-                Vakit.gerekirseIndir(c)
+                Vakit.gerekirseIndir(c); Icerik.gerekirseIndir(c)
                 if (Ayar.otomatik(c)) KilitCizici.uygula(c)
             } catch (_: Exception) {
             } finally {
