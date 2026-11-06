@@ -93,6 +93,16 @@ select.dugme { max-width: 100%; color: var(--fg); }
 .es .ad { font-family: var(--f-ayet); font-weight: 600; }
 .es .an { font-size: .9rem; color: var(--soluk); }
 .es.bugun .ad::after { content: ' · Bugün'; color: var(--altin); font-family: inherit; font-size: .82rem; font-weight: 600; }
+.kible-ac { font-size: .9rem; padding: 6px 12px; }
+.kible-p { max-width: 24rem; text-align: center; justify-items: center; }
+.kible-p h2 { margin: 0; font-family: var(--f-ayet); font-size: 1.3rem; }
+.pusula { width: min(72vw, 280px); aspect-ratio: 1; position: relative; }
+.pusula svg { width: 100%; height: 100%; display: block; }
+.pusula .kadran { transition: transform .12s linear; transform-origin: 50% 50%; }
+.pusula.tamam circle.halka { stroke: #2e9e5b; stroke-width: 6; }
+.kible-buyuk { font-size: 1.15rem; font-weight: 600; color: var(--fg); }
+.kible-p .kucuk { font-size: .82rem; }
+.kible-araclar { display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; }
 .bos { color: var(--soluk); font-size: .92rem; padding: 18px 4px; line-height: 1.5; }
 
 .perde { position: fixed; inset: 0; background: rgb(0 0 0 / .55); display: grid; place-items: center; padding: max(16px, env(safe-area-inset-top, 0px)) max(16px, env(safe-area-inset-right, 0px)) max(16px, env(safe-area-inset-bottom, 0px)) max(16px, env(safe-area-inset-left, 0px)); z-index: 20; }
@@ -105,6 +115,7 @@ select.dugme { max-width: 100%; color: var(--fg); }
 <div class="sayfa">
   <header>
     <h1>Günün Ayeti</h1>
+    <button class="dugme kible-ac" id="kibleAc">🧭 Kıble</button>
     <div class="tarih" id="tarih"></div>
   </header>
   <div class="onizleme" id="onizleme">Önizleme: liste 1 Kasım'da başlamış gibi gösteriliyor, böylece "Önceki" sekmesi dolu görünüyor. Gerçek uygulamada 1. gün yayına girdiği gün olacak.</div>
@@ -181,6 +192,38 @@ select.dugme { max-width: 100%; color: var(--fg); }
     <button class="sekme" role="tab" id="t-esma" aria-selected="false">Esmâü'l-Hüsnâ</button>
   </nav>
   <div class="liste" id="liste" role="tabpanel"></div>
+</div>
+
+<div class="perde" id="kiblePerde" hidden>
+  <div class="pencere kible-p" role="dialog" aria-label="Kıble yönü">
+    <h2>Kıble</h2>
+    <div class="pusula" id="pusula">
+      <svg viewBox="0 0 200 200" aria-hidden="true">
+        <circle class="halka" cx="100" cy="100" r="94" fill="none" stroke="currentColor" stroke-opacity=".25" stroke-width="3"/>
+        <g class="kadran" id="kadran">
+          <text x="100" y="24" text-anchor="middle" font-size="16" font-weight="700" fill="#c0392b">K</text>
+          <text x="180" y="106" text-anchor="middle" font-size="13" fill="currentColor" opacity=".6">D</text>
+          <text x="100" y="188" text-anchor="middle" font-size="13" fill="currentColor" opacity=".6">G</text>
+          <text x="20" y="106" text-anchor="middle" font-size="13" fill="currentColor" opacity=".6">B</text>
+          <g id="kibleOk">
+            <line x1="100" y1="100" x2="100" y2="34" stroke="#c9a24e" stroke-width="6" stroke-linecap="round"/>
+            <rect x="88" y="16" width="24" height="24" rx="3" fill="#1d1d1b" stroke="#c9a24e" stroke-width="2.5"/>
+            <line x1="88" y1="23" x2="112" y2="23" stroke="#c9a24e" stroke-width="2"/>
+          </g>
+        </g>
+        <line x1="100" y1="2" x2="100" y2="22" stroke="#11706f" stroke-width="4" stroke-linecap="round"/>
+        <circle cx="100" cy="100" r="6" fill="#11706f"/>
+      </svg>
+    </div>
+    <div class="kible-buyuk" id="kibleDurum">Telefonu düz tut</div>
+    <p id="kibleBilgi"></p>
+    <p id="kibleSaatYazi"></p>
+    <p class="kucuk" id="kibleNot">Pusula şaşarsa telefonu havada 8 çizerek birkaç kez salla. Metal eşyalardan ve mıknatıslı kılıftan uzak tut.</p>
+    <div class="kible-araclar">
+      <button class="dugme" id="kibleKonum">📍 Konumumu kullan</button>
+      <button class="dugme ana" id="kibleKapat">Kapat</button>
+    </div>
+  </div>
 </div>
 
 <div class="perde" id="perde" hidden>
@@ -589,5 +632,151 @@ if (ANDROID && window.Android.surumKodu) {
 
 $('onizleme').hidden = !ONIZLEME;
 document.documentElement.style.setProperty('--boy', boy + 'rem');
+
+/* ===== Kıble ===== */
+const WMM=[[0,-29351.8,-1410.8,-2556.6,2951.1,1649.3,1361,-2404.1,1243.8,453.6,895,799.5,55.7,-281.1,12.1,-233.2,368.9,187.2,-138.7,-142,20.9,64.4,63.8,76.9,-115.7,-40.9,14.9,-60.7,79.5,-77,-8.8,59.3,15.8,2.5,-11.1,14.2,23.2,10.8,-17.5,2,-21.7,16.9,15,-16.8,0.9,4.6,7.8,3,-0.2,-2.5,-13.1,2.4,8.6,-8.7,-12.9,-1.3,-6.4,0.2,2,-1,-0.6,-0.9,1.5,0.9,-2.7,-3.9,2.9,-1.5,-2.5,2.4,-0.6,-0.1,-0.6,-0.1,1.1,-1,-0.2,2.6,-2,-0.2,0.3,1.2,-1.3,0.6,0.6,0.5,-0.1,-0.4,-0.2,-1.3,-0.7],[0,0,4545.4,0,-3133.6,-815.1,0,-56.6,237.5,-549.5,0,278.6,-133.9,212,-375.6,0,45.4,220.2,-122.9,43,106.1,0,-18.4,16.8,48.8,-59.8,10.9,72.7,0,-48.9,-14.4,-1,23.4,-7.4,-25.1,-2.3,0,7.1,-12.6,11.4,-9.7,12.7,0.7,-5.2,3.9,0,-24.8,12.2,8.3,-3.3,-5.2,7.2,-0.6,0.8,10,0,3.3,0,2.4,5.3,-9.1,0.4,-4.2,-3.8,0.9,-9.1,0,0,2.9,-0.6,0.2,0.5,-0.3,-1.2,-1.7,-2.9,-1.8,-2.3,0,-1.3,0.7,1,-1.4,0,0.6,-0.1,0.8,0.1,-1,0.1,0.2],[0,12,9.7,-11.6,-5.2,-8,-1.3,-4.2,0.4,-15.6,-1.6,-2.4,-6,5.6,-7,0.6,1.4,0,0.6,2.2,0.9,-0.2,-0.4,0.9,1.2,-0.9,0.3,0.9,0,-0.1,-0.1,0.5,-0.1,-0.8,-0.8,0.8,-0.1,0.2,0,0.5,-0.1,0.3,0.2,0,0.2,0,-0.1,0.1,0.3,-0.3,0,0.3,-0.1,0.1,-0.1,0.1,0,0.1,0.1,0,-0.3,0,-0.1,-0.1,0,0,0,0,0,0,0,-0.1,0,0,-0.1,-0.1,-0.1,-0.1,0,0,0,0,0,0,0.1,0,0,0,-0.1,0,-0.1],[0,0,-21.5,0,-27.7,-12.1,0,4,-0.3,-4.1,0,-1.1,4.1,1.6,-4.4,0,-0.5,2.2,0.4,1.7,1.9,0,0.3,-1.6,-0.4,0.9,0.7,0.9,0,0.6,0.5,-0.8,0,-1,0.6,-0.2,0,-0.2,0.5,-0.4,0.4,-0.5,-0.6,0.3,0.2,0,-0.3,0.3,-0.3,0.3,0.2,-0.1,-0.2,0.4,0.1,0,0,0,-0.2,0.1,-0.1,0.1,0,-0.1,0.2,0,0,0,0.1,0,0.1,0,0,0.1,0,0,0,0,0,0,0,-0.1,0.1,0,0,0,0,0,0,0,-0.1]];
+/* Manyetik sapma (derece, doğu +). WMM-2025; enlem/boylam derece, yükseklik km, yıl ondalıklı. */
+function manyetikSapma(lat, lon, hKm, yil) {
+  const [G, H, GD, HD] = WMM, N = 12, a = 6378.137, f = 1 / 298.257223563, e2 = f * (2 - f), re = 6371.2, dt = yil - 2025;
+  const fi = lat * Math.PI / 180, la = lon * Math.PI / 180;
+  const Rc = a / Math.sqrt(1 - e2 * Math.sin(fi) ** 2);
+  const p = (Rc + hKm) * Math.cos(fi), z = (Rc * (1 - e2) + hKm) * Math.sin(fi);
+  const r = Math.hypot(p, z), fs = Math.asin(z / r);
+  const ct = Math.sin(fs), st = Math.cos(fs);
+  const P = [], D = [], S = [];
+  for (let n = 0; n <= N; n++) { P.push([]); D.push([]); S.push([]); }
+  P[0][0] = 1; D[0][0] = 0; S[0][0] = 1;
+  for (let n = 1; n <= N; n++) {
+    S[n][0] = S[n - 1][0] * (2 * n - 1) / n;
+    for (let m = 1; m <= n; m++) S[n][m] = S[n][m - 1] * Math.sqrt((n - m + 1) * (m === 1 ? 2 : 1) / (n + m));
+    for (let m = 0; m <= n; m++) {
+      if (n === m) { P[n][m] = st * P[n - 1][m - 1]; D[n][m] = st * D[n - 1][m - 1] + ct * P[n - 1][m - 1]; }
+      else if (n === 1 || m === n - 1) { P[n][m] = ct * P[n - 1][m]; D[n][m] = ct * D[n - 1][m] - st * P[n - 1][m]; }
+      else { const K = ((n - 1) ** 2 - m * m) / ((2 * n - 1) * (2 * n - 3));
+        P[n][m] = ct * P[n - 1][m] - K * P[n - 2][m]; D[n][m] = ct * D[n - 1][m] - st * P[n - 1][m] - K * D[n - 2][m]; }
+    }
+  }
+  let Br = 0, Bt = 0, Bp = 0;
+  for (let n = 1; n <= N; n++) {
+    const ar = (re / r) ** (n + 2);
+    for (let m = 0; m <= n; m++) {
+      const i = n * (n + 1) / 2 + m, g = (G[i] + dt * GD[i]) * S[n][m], h = (H[i] + dt * HD[i]) * S[n][m];
+      const c = Math.cos(m * la), s = Math.sin(m * la);
+      Br += (n + 1) * ar * (g * c + h * s) * P[n][m];
+      Bt -= ar * (g * c + h * s) * D[n][m];
+      Bp += ar * m * (g * s - h * c) * P[n][m] / (st || 1e-9);
+    }
+  }
+  const X1 = -Bt, Y = Bp, Z1 = -Br, ps = fs - fi;
+  const X = X1 * Math.cos(ps) - Z1 * Math.sin(ps);
+  return Math.atan2(Y, X) * 180 / Math.PI;
+}
+/* Kâbe'ye gerçek (coğrafi kuzeye göre) yön, derece */
+const KABE = [21.4225, 39.8262];
+function kibleYonu(lat, lon) {
+  const r = Math.PI / 180, f1 = lat * r, f2 = KABE[0] * r, d = (KABE[1] - lon) * r;
+  return (Math.atan2(Math.sin(d), Math.cos(f1) * Math.tan(f2) - Math.sin(f1) * Math.cos(d)) / r + 360) % 360;
+}
+/* Güneşin yönü (derece, kuzeyden saat yönü) — NOAA yöntemi; t: Date */
+function gunesYonu(lat, lon, t) {
+  const r = Math.PI / 180, jd = t.getTime() / 864e5 + 2440587.5, T = (jd - 2451545) / 36525;
+  const L0 = (280.46646 + T * (36000.76983 + T * 0.0003032)) % 360, M = 357.52911 + T * (35999.05029 - 0.0001537 * T);
+  const e = 0.016708634 - T * (0.000042037 + 0.0000001267 * T);
+  const C = Math.sin(M * r) * (1.914602 - T * (0.004817 + 0.000014 * T)) + Math.sin(2 * M * r) * (0.019993 - 0.000101 * T) + Math.sin(3 * M * r) * 0.000289;
+  const om = 125.04 - 1934.136 * T, lam = L0 + C - 0.00569 - 0.00478 * Math.sin(om * r);
+  const eps0 = 23 + (26 + (21.448 - T * (46.815 + T * (0.00059 - T * 0.001813))) / 60) / 60, eps = eps0 + 0.00256 * Math.cos(om * r);
+  const dek = Math.asin(Math.sin(eps * r) * Math.sin(lam * r));
+  const y = Math.tan(eps * r / 2) ** 2;
+  const eq = 4 / r * (y * Math.sin(2 * L0 * r) - 2 * e * Math.sin(M * r) + 4 * e * y * Math.sin(M * r) * Math.cos(2 * L0 * r) - 0.5 * y * y * Math.sin(4 * L0 * r) - 1.25 * e * e * Math.sin(2 * M * r));
+  const dakUTC = t.getUTCHours() * 60 + t.getUTCMinutes() + t.getUTCSeconds() / 60;
+  const ha = ((dakUTC + eq + 4 * lon) / 4 - 180) * r;
+  const fi = lat * r;
+  const z = Math.acos(Math.sin(fi) * Math.sin(dek) + Math.cos(fi) * Math.cos(dek) * Math.cos(ha));
+  let az = Math.acos((Math.sin(fi) * Math.cos(z) - Math.sin(dek)) / (Math.cos(fi) * Math.sin(z))) / r;
+  return ha > 0 ? (az + 180) % 360 : (540 - az) % 360;
+}
+/* Güneşin kıble yönünde olduğu an (gün içinde, güneş ufkun üstündeyken). Yoksa null. */
+function kibleSaati(lat, lon, gun /* Date, o günün 00:00'ı yerel */) {
+  const hedef = kibleYonu(lat, lon); let onceki = null;
+  for (let dk = 0; dk <= 1440; dk += 1) {
+    const t = new Date(gun.getTime() + dk * 6e4), a = gunesYonu(lat, lon, t);
+    const fark = ((a - hedef + 540) % 360) - 180;
+    if (onceki !== null && onceki < 0 && fark >= 0 && Math.abs(fark) < 20) {
+      const kesir = -onceki / (fark - onceki);  // iki dakika arasında tam an
+      return new Date(Math.round((t.getTime() - 6e4 + kesir * 6e4) / 6e4) * 6e4);
+    }
+    onceki = fark;
+  }
+  return null;
+}
+let kibleAci = null, kibleKaynak = '', yonDinleyici = null, sonYon = null, titredi = false, yonGeldi = false;
+const kibleSaatYaz = d => d ? d.toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' }) : null;
+function kibleGoster() {
+  if (kibleAci == null) {
+    $('kibleBilgi').textContent = 'Konumunu bulmak için "Konumumu kullan"a bas ya da aşağıdan namaz vakti için il seç.';
+    $('kibleSaatYazi').textContent = ''; return;
+  }
+  $('kibleBilgi').textContent = `Kıble, kuzeyden saat yönünde ${Math.round(kibleAci)}° · ${kibleKaynak}`;
+  if (!yonGeldi) $('kibleDurum').textContent = 'Pusula bekleniyor…';
+}
+async function kibleKonumSec() {
+  // 1) Seçili ilçe: Diyanet'in açısı ve kıble saati
+  if (vakit && vakit.id && (vakit.aci == null || !vakit.kible)) { try { await vakitIndir(vakit.id); } catch {} }
+  if (vakit && vakit.aci != null) {
+    kibleAci = vakit.aci; kibleKaynak = vakit.ad || '';
+    const s = vakit.kible && vakit.kible[tarihAnahtar(new Date())];
+    $('kibleSaatYazi').textContent = s ? `☀️ Bugün ${s}'de güneş tam kıble yönünde: o an güneşe dönen kıbleye dönmüş olur.` : '';
+  }
+  kibleGoster();
+}
+function gpsKullan() {
+  if (!navigator.geolocation) { $('kibleBilgi').textContent = 'Bu cihaz konum vermiyor.'; return; }
+  $('kibleBilgi').textContent = 'Konum alınıyor…';
+  navigator.geolocation.getCurrentPosition(p => {
+    const { latitude: la, longitude: lo } = p.coords, n = new Date();
+    const yil = n.getFullYear() + (n - new Date(n.getFullYear(), 0, 1)) / 31557600000;
+    kibleAci = (kibleYonu(la, lo) - manyetikSapma(la, lo, 0, yil) + 360) % 360; kibleKaynak = 'bulunduğun yer';
+    const g = new Date(); g.setHours(0, 0, 0, 0); const ks = kibleSaatYaz(kibleSaati(la, lo, g));
+    $('kibleSaatYazi').textContent = ks ? `☀️ Bugün ${ks}'de güneş tam kıble yönünde: o an güneşe dönen kıbleye dönmüş olur.` : '';
+    kibleGoster(); yonCiz();
+  }, () => { $('kibleBilgi').textContent = 'Konum izni verilmedi. İl seçerek de kullanabilirsin.'; }, { enableHighAccuracy: false, timeout: 15000, maximumAge: 600000 });
+}
+function yonCiz() {
+  if (sonYon == null) return;
+  $('kadran').style.transform = `rotate(${-sonYon}deg)`;
+  if (kibleAci == null) return;
+  $('kibleOk').setAttribute('transform', `rotate(${kibleAci} 100 100)`);
+  const fark = Math.abs(((kibleAci - sonYon + 540) % 360) - 180), tamam = fark <= 4;
+  $('pusula').classList.toggle('tamam', tamam);
+  $('kibleDurum').textContent = tamam ? '✓ Kıbleye döndün' : (((kibleAci - sonYon + 360) % 360) < 180 ? 'Sağa dön ↻' : 'Sola dön ↺');
+  if (tamam && !titredi) { titredi = true; try { navigator.vibrate && navigator.vibrate(80); } catch {} }
+  if (fark > 10) titredi = false;
+}
+function yonBaslat() {
+  const isle = e => {
+    let y = null;
+    if (typeof e.webkitCompassHeading === 'number') y = e.webkitCompassHeading;
+    else if (e.absolute && typeof e.alpha === 'number') y = (360 - e.alpha) % 360;
+    if (y == null) return;
+    const ekran = (screen.orientation && screen.orientation.angle) || 0;
+    sonYon = (y + ekran) % 360; yonGeldi = true; yonCiz();
+  };
+  yonDinleyici = isle;
+  if ('ondeviceorientationabsolute' in window) window.addEventListener('deviceorientationabsolute', isle);
+  else window.addEventListener('deviceorientation', isle);
+  setTimeout(() => { if (!yonGeldi && !$('kiblePerde').hidden) $('kibleDurum').textContent = 'Bu cihazda pusula bulunamadı'; }, 2500);
+}
+function yonDurdur() {
+  if (!yonDinleyici) return;
+  window.removeEventListener('deviceorientationabsolute', yonDinleyici); window.removeEventListener('deviceorientation', yonDinleyici); yonDinleyici = null;
+}
+$('kibleAc').onclick = async () => {
+  $('kiblePerde').hidden = false; yonGeldi = false; titredi = false; sonYon = null;
+  $('kibleOk').setAttribute('transform', 'rotate(0 100 100)'); $('kadran').style.transform = '';
+  try { if (typeof DeviceOrientationEvent !== 'undefined' && DeviceOrientationEvent.requestPermission) await DeviceOrientationEvent.requestPermission(); } catch {}
+  yonBaslat(); kibleGoster(); kibleKonumSec();
+};
+$('kibleKapat').onclick = () => { $('kiblePerde').hidden = true; yonDurdur(); };
+$('kibleKonum').onclick = gpsKullan;
 tarihGoster(); ayetGoster(bugunNo()); listeGoster();
 </script>

@@ -12,6 +12,9 @@ import android.os.Bundle
 import android.os.Environment
 import android.provider.MediaStore
 import android.util.Base64
+import android.Manifest
+import android.content.pm.PackageManager
+import android.webkit.GeolocationPermissions
 import android.webkit.JavascriptInterface
 import android.webkit.ValueCallback
 import android.webkit.WebChromeClient
@@ -33,6 +36,7 @@ class AnaEkran : Activity() {
     private var yereleGecti = false
     private lateinit var web: WebView
     private var dosyaSecici: ValueCallback<Array<Uri>>? = null
+    private var konumBekleyen: Pair<String, GeolocationPermissions.Callback>? = null
 
     @SuppressLint("SetJavaScriptEnabled")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -45,6 +49,7 @@ class AnaEkran : Activity() {
         web.settings.javaScriptEnabled = true
         web.settings.domStorageEnabled = true
         web.settings.databaseEnabled = true
+        web.settings.setGeolocationEnabled(true)
         web.addJavascriptInterface(Kopru(), "Android")
         web.webViewClient = object : WebViewClient() {
             override fun shouldInterceptRequest(v: WebView, r: WebResourceRequest): WebResourceResponse? =
@@ -59,6 +64,15 @@ class AnaEkran : Activity() {
             }
         }
         web.webChromeClient = object : WebChromeClient() {
+            // Kıble için konum: önce Android izni, sonra sayfaya ver
+            override fun onGeolocationPermissionsShowPrompt(origin: String, cb: GeolocationPermissions.Callback) {
+                if (checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+                    cb.invoke(origin, true, false)
+                } else {
+                    konumBekleyen = origin to cb
+                    requestPermissions(arrayOf(Manifest.permission.ACCESS_COARSE_LOCATION), 8)
+                }
+            }
             override fun onShowFileChooser(v: WebView, cb: ValueCallback<Array<Uri>>, p: FileChooserParams): Boolean {
                 dosyaSecici?.onReceiveValue(null)
                 dosyaSecici = cb
@@ -75,6 +89,15 @@ class AnaEkran : Activity() {
             // Kilit ekranı bilgisi yenilendiyse (ör. yeni esma satırı) ekranı hemen tazele
             if (Icerik.gerekirseIndir(this) && Ayar.otomatik(this)) try { KilitCizici.uygula(this) } catch (_: Exception) {}
         }.start()
+    }
+
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        if (requestCode == 8) {
+            val izin = grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED
+            konumBekleyen?.let { (o, cb) -> cb.invoke(o, izin, false) }
+            konumBekleyen = null
+        }
     }
 
     override fun onSaveInstanceState(outState: Bundle) { super.onSaveInstanceState(outState); web.saveState(outState) }

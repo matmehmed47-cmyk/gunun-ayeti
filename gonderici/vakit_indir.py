@@ -24,6 +24,8 @@ def baslik(s):  # ANKARA -> Ankara, İZMİR -> İzmir, AĞRI -> Ağrı; 'KEMER (
     return ' '.join(k[:1].replace('i', 'İ').replace('ı', 'I').upper() + k[1:] for k in s.split())
 
 liste, hatali, toplam = [], [], 0
+_ka = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'veri', 'kible_aci.json')
+KIBLE_ACI = json.load(open(_ka)) if os.path.exists(_ka) else {}
 def kaydet(id_, il_adi, ilce_adi):
     global toplam
     toplam += 1
@@ -32,12 +34,18 @@ def kaydet(id_, il_adi, ilce_adi):
     except Exception:
         hatali.append(ilce_adi); return
     yol = os.path.join(cikti, f'{id_}.json')
-    eski = json.load(open(yol, encoding='utf-8'))['gunler'] if os.path.exists(yol) else {}
+    onceki = json.load(open(yol, encoding='utf-8')) if os.path.exists(yol) else {}
+    eski = onceki.get('gunler', {}); kible = onceki.get('kible', {})
     for g in ham:
         gun, ay, yil = g['MiladiTarihKisa'].split('.')
         eski[f'{yil}-{ay}-{gun}'] = [g['Imsak'], g['Gunes'], g['Ogle'], g['Ikindi'], g['Aksam'], g['Yatsi']]
+        if g.get('KibleSaati'): kible[f'{yil}-{ay}-{gun}'] = g['KibleSaati']  # güneşin kıble yönünde olduğu an
     gunler = {k: v for k, v in sorted(eski.items()) if k >= (bugun - timedelta(days=1)).isoformat()}
-    json.dump({'id': id_, 'il': baslik(il_adi), 'ad': baslik(ilce_adi), 'gunler': gunler}, open(yol, 'w', encoding='utf-8'), ensure_ascii=False, separators=(',', ':'))
+    sinir = (bugun - timedelta(days=1)).isoformat()
+    veri = {'id': id_, 'il': baslik(il_adi), 'ad': baslik(ilce_adi), 'gunler': gunler,
+            'kible': {k: v for k, v in sorted(kible.items()) if k >= sinir}}
+    if id_ in KIBLE_ACI: veri['aci'] = KIBLE_ACI[id_]  # Diyanet'in kıble açısı (pusulaya göre)
+    json.dump(veri, open(yol, 'w', encoding='utf-8'), ensure_ascii=False, separators=(',', ':'))
     time.sleep(0.25)
 
 TAKMA = {'Doğubeyazıt': 'Doğubayazıt', 'Karadeniz Ereğli': 'Ereğli', 'Ordu': 'Altınordu'}
