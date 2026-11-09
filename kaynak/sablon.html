@@ -42,6 +42,19 @@ h1 { font-family: var(--f-ayet); font-weight: 600; font-size: 1.6rem; margin: 0;
 .tarih b { color: var(--fg); font-weight: 600; }
 .onizleme { font-size: .8rem; color: var(--altin); border: 1px dashed var(--altin); border-radius: 8px; padding: 8px 12px; line-height: 1.45; }
 
+/* Namaz vakitleri kartı */
+.vakit-kart { background: var(--kart); border: 1px solid var(--cizgi); border-radius: 14px; padding: 14px 16px; display: grid; gap: 8px; }
+.vk-ust { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; flex-wrap: wrap; }
+.vk-ust b { font-size: 1rem; }
+.vk-kalan { color: var(--turkuaz); font-weight: 600; font-size: .92rem; }
+.vk-satir { display: grid; grid-template-columns: 4.6rem 3.4rem 1fr; align-items: center; gap: 6px; padding: 5px 0; border-top: 1px solid var(--cizgi); }
+.vk-satir.sira { color: var(--turkuaz); font-weight: 700; }
+.vk-saat { font-variant-numeric: tabular-nums; font-size: 1.05rem; }
+.vk-ezan { display: flex; gap: 6px; justify-content: flex-end; align-items: center; flex-wrap: wrap; }
+.vk-ezan .dugme { padding: 5px 9px; font-size: .95rem; min-width: 40px; }
+.vk-ses { grid-column: 1 / -1; font-size: .78rem; color: var(--soluk); font-weight: 400; margin-top: -2px; display: flex; gap: 8px; align-items: center; }
+.vk-ses button { background: none; border: 0; color: var(--soluk); font-size: .8rem; text-decoration: underline; cursor: pointer; padding: 0; }
+.vk-not { margin: 0; font-size: .85rem; color: var(--soluk); }
 .ayet { background: var(--kart); border: 1px solid var(--cizgi); border-radius: 14px; padding: 28px 24px 20px; display: grid; gap: 18px; }
 .ust { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
 .gun { font-size: .78rem; letter-spacing: .08em; text-transform: uppercase; color: var(--soluk); font-variant-numeric: tabular-nums; }
@@ -122,6 +135,12 @@ select.dugme { max-width: 100%; color: var(--fg); }
     <button class="dugme kible-ac" id="kibleAc">🧭 Kıble</button>
     <div class="tarih" id="tarih"></div>
   </header>
+  <section class="vakit-kart" id="vakitKart" hidden aria-label="Namaz vakitleri">
+    <div class="vk-ust"><b id="vkBaslik">Namaz vakitleri</b><span class="vk-kalan" id="vkKalan"></span></div>
+    <div id="vkListe"></div>
+    <p class="vk-not" id="vkNot"></p>
+    <input type="file" id="ezanDosya" accept="audio/*" hidden>
+  </section>
   <div class="onizleme" id="onizleme">Önizleme: liste 1 Kasım'da başlamış gibi gösteriliyor, böylece "Önceki" sekmesi dolu görünüyor. Gerçek uygulamada 1. gün yayına girdiği gün olacak.</div>
 
   <article class="ayet" aria-live="polite">
@@ -452,7 +471,73 @@ async function vakitIndir(id) {
   if (!r.ok) throw new Error(r.status);
   const v = await r.json(); vakit = v; yaz('ga-vakit', v);
   if (ANDROID) window.Android.vakitKaydet(JSON.stringify(v));
+  vakitKartCiz();
 }
+
+/* ---- Namaz vakitleri kartı + ezan (ezan sesi sadece Android uygulamasında çalar) ---- */
+const EZANLI = [0, 2, 3, 4, 5]; // Güneş (1) hariç
+const EZAN_VAR = ANDROID && !!window.Android.ezanDurum;
+let ezanSecilen = -1;
+function siradakiDetay() {
+  if (!vakit || !vakit.gunler) return null;
+  const n = new Date();
+  for (let ek = 0; ek < 2; ek++) {
+    const g = new Date(n); g.setDate(g.getDate() + ek);
+    const dz = vakit.gunler[tarihAnahtar(g)]; if (!dz) continue;
+    for (let i = 0; i < 6; i++) { const [s, d] = dz[i].split(':').map(Number), t = new Date(g); t.setHours(s, d, 0, 0); if (t > n) return { i, t, bugun: ek === 0 }; }
+  }
+  return null;
+}
+function kalanYazi(ms) { const dk = Math.max(0, Math.ceil(ms / 60000)), sa = Math.floor(dk / 60); return sa ? `${sa} sa ${dk % 60} dk` : `${dk} dk`; }
+function vakitKartCiz() {
+  const kart = $('vakitKart'); if (!kart) return;
+  const bugun = vakit && vakit.gunler && vakit.gunler[tarihAnahtar(new Date())];
+  if (!bugun) {
+    kart.hidden = false; $('vkBaslik').textContent = 'Namaz vakitleri'; $('vkKalan').textContent = '';
+    $('vkListe').replaceChildren(); $('vkNot').innerHTML = 'Vakitleri görmek için aşağıdaki <b>Kilit ekranı</b> bölümünden şehrini seç.';
+    return;
+  }
+  const sd = siradakiDetay(), d = EZAN_VAR ? JSON.parse(window.Android.ezanDurum()) : null;
+  $('vkBaslik').textContent = 'Namaz vakitleri · ' + (vakit.ad || vakit.il || '');
+  const YONELME = ["İmsak'a", "Güneş'e", "Öğle'ye", "İkindi'ye", "Akşam'a", "Yatsı'ya"];
+  $('vkKalan').textContent = sd ? `${YONELME[sd.i]} ${kalanYazi(sd.t - new Date())}` : '';
+  const liste = [];
+  for (let i = 0; i < 6; i++) {
+    const sat = document.createElement('div'); sat.className = 'vk-satir' + (sd && sd.bugun && sd.i === i ? ' sira' : '');
+    sat.innerHTML = `<span>${VAKIT_AD[i]}</span><span class="vk-saat">${bugun[i]}</span><span class="vk-ezan"></span>`;
+    const yer = sat.querySelector('.vk-ezan');
+    if (d && EZANLI.includes(i)) {
+      const acik = d.acik[i];
+      const zil = document.createElement('button'); zil.className = 'dugme'; zil.textContent = acik ? '🔔' : '🔕';
+      zil.setAttribute('aria-pressed', acik); zil.setAttribute('aria-label', `${VAKIT_AD[i]} ezanı ${acik ? 'açık' : 'kapalı'}`);
+      zil.onclick = () => { window.Android.ezanAyarla(i, !acik); vakitKartCiz(); };
+      const ses = document.createElement('button'); ses.className = 'dugme'; ses.textContent = '🎵'; ses.setAttribute('aria-label', `${VAKIT_AD[i]} için ses seç`);
+      ses.onclick = () => { ezanSecilen = i; $('ezanDosya').value = ''; $('ezanDosya').click(); };
+      const dene = document.createElement('button'); dene.className = 'dugme'; dene.textContent = '▶️'; dene.setAttribute('aria-label', `${VAKIT_AD[i]} sesini dene`);
+      dene.onclick = () => window.Android.ezanDene(i);
+      yer.append(zil, ses, dene);
+      const alt = document.createElement('div'); alt.className = 'vk-ses';
+      if (d.ad[i]) { alt.append(document.createTextNode('🎵 ' + d.ad[i].replace(/\.[^.]+$/, '').slice(0, 40))); const sil = document.createElement('button'); sil.textContent = 'kaldır'; sil.onclick = () => { window.Android.ezanSesSil(i); vakitKartCiz(); }; alt.append(sil); }
+      else alt.textContent = 'Ses seçilmedi: kısa uyarı sesi çalar';
+      sat.append(alt);
+    }
+    liste.push(sat);
+  }
+  $('vkListe').replaceChildren(...liste);
+  if (d) $('vkNot').textContent = d.siradaki ? `Sıradaki ezan: ${d.siradaki} 🔔 · Telefon sessizdeyse sadece titrer.` : 'Ezan duymak istediğin vakitlerin 🔕 düğmesine bas.';
+  else $('vkNot').textContent = ANDROID ? 'Ezan için uygulamayı güncelle (Güncelle düğmesi).' : 'Ezan sesi Android uygulamasında çalar.';
+  kart.hidden = false;
+}
+$('ezanDosya').onchange = async () => {
+  const f = $('ezanDosya').files[0], i = ezanSecilen; if (!f || i < 0 || !EZAN_VAR) return;
+  if (f.size > 25 * 1048576) { $('vkNot').textContent = 'Bu dosya çok büyük (25 MB üstü). Daha kısa bir ezan kaydı seç.'; return; }
+  $('vkNot').textContent = 'Ses kaydediliyor…';
+  const tamam = window.Android.ezanSesKaydet(i, await b64(f), f.name);
+  vakitKartCiz();
+  $('vkNot').textContent = tamam ? `${VAKIT_AD[i]} için "${f.name}" seçildi. ▶️ ile dinleyebilirsin.` : 'Ses kaydedilemedi, başka bir dosya dene.';
+};
+setInterval(vakitKartCiz, 30000);
+document.addEventListener('visibilitychange', () => { if (!document.hidden) vakitKartCiz(); });
 let iller = [];
 function ilceDoldur(il, secili) {
   const c = $('ilce'); c.replaceChildren();
@@ -483,7 +568,7 @@ async function sehirKur() {
   s.onchange = async () => {
     if (!s.value || s.value === 'yok') {
       $('ilce').hidden = true;
-      vakit = null; yaz('ga-vakit', null); if (ANDROID) window.Android.vakitKaydet('');
+      vakit = null; yaz('ga-vakit', null); if (ANDROID) window.Android.vakitKaydet(''); vakitKartCiz();
       $('kilitNot').textContent = 'Namaz vakti kilit ekranında gösterilmeyecek.'; kilitOnizle(); return;
     }
     const il = iller[+s.value]; ilceDoldur(il); vakitSec(il.id);
@@ -494,6 +579,7 @@ async function sehirKur() {
   if (vakit && !(vakit.gunler || {})[tarihAnahtar(ileri)]) vakitIndir(vakit.id).then(kilitOnizle).catch(() => {});
 }
 sehirKur();
+vakitKartCiz();
 
 async function kilitCiz(a) {
   const dpr = Math.min(devicePixelRatio || 2, 3);

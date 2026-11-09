@@ -98,7 +98,7 @@ class VakitAlici : BroadcastReceiver() {
                 if (Ayar.otomatik(c)) KilitCizici.uygula(c)
             } catch (_: Exception) {
             } finally {
-                Vakit.alarmKur(c); p.finish()
+                Vakit.alarmKur(c); try { Ezan.kur(c) } catch (_: Exception) {}; p.finish()
             }
         }.start()
     }
@@ -107,6 +107,6 @@ class VakitAlici : BroadcastReceiver() {
 /** Telefon yeniden başlayınca alarmlar silinir; yeniden kur. */
 class AcilisAlici : BroadcastReceiver() {
     override fun onReceive(c: Context, i: Intent) {
-        Zamanlayici.kur(c); Vakit.alarmKur(c)
+        Zamanlayici.kur(c); Vakit.alarmKur(c); try { Ezan.kur(c) } catch (_: Exception) {}
     }
 }

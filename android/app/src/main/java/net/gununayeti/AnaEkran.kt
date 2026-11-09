@@ -78,8 +78,10 @@ class AnaEkran : Activity() {
             override fun onShowFileChooser(v: WebView, cb: ValueCallback<Array<Uri>>, p: FileChooserParams): Boolean {
                 dosyaSecici?.onReceiveValue(null)
                 dosyaSecici = cb
-                val i = Intent(Intent.ACTION_GET_CONTENT).setType("image/*").addCategory(Intent.CATEGORY_OPENABLE)
-                startActivityForResult(Intent.createChooser(i, "Fotoğraf seç"), 7)
+                // Sayfa ne istiyorsa onu aç: fotoğraf ya da ezan sesi
+                val ses = p.acceptTypes.any { it.startsWith("audio") }
+                val i = Intent(Intent.ACTION_GET_CONTENT).setType(if (ses) "audio/*" else "image/*").addCategory(Intent.CATEGORY_OPENABLE)
+                startActivityForResult(Intent.createChooser(i, if (ses) "Ezan sesi seç" else "Fotoğraf seç"), 7)
                 return true
             }
         }
@@ -88,7 +90,7 @@ class AnaEkran : Activity() {
         else web.loadUrl(if (kible) "$SITE#kible" else SITE)
         Zamanlayici.kur(this) // açıksa yarın sabahı tekrar planla
         Thread {
-            Vakit.gerekirseIndir(this); Vakit.alarmKur(this)
+            Vakit.gerekirseIndir(this); Vakit.alarmKur(this); try { Ezan.kur(this) } catch (_: Exception) {}
             // Kilit ekranı bilgisi yenilendiyse (ör. yeni esma satırı) ekranı hemen tazele
             if (Icerik.gerekirseIndir(this) && Ayar.otomatik(this)) try { KilitCizici.uygula(this) } catch (_: Exception) {}
         }.start()
@@ -124,6 +126,23 @@ class AnaEkran : Activity() {
     @Deprecated("Activity API")
     override fun onBackPressed() { if (web.canGoBack()) web.goBack() else super.onBackPressed() }
 
+    /** Ezan için gereken izinler: bildirim (Durdur düğmesi) ve pil kısıtlamasını kaldırma (bir kez sorulur). */
+    private fun ezanIzinleri() = runOnUiThread {
+        if (Build.VERSION.SDK_INT >= 33 && checkSelfPermission(Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED)
+            requestPermissions(arrayOf(Manifest.permission.POST_NOTIFICATIONS), 9)
+        val pm = getSystemService(POWER_SERVICE) as android.os.PowerManager
+        val ayar = getSharedPreferences("ezan", MODE_PRIVATE)
+        if (!pm.isIgnoringBatteryOptimizations(packageName) && !ayar.getBoolean("pilSoruldu", false)) {
+            ayar.edit().putBoolean("pilSoruldu", true).apply()
+            try {
+                @SuppressLint("BatteryLife")
+                val i = Intent(android.provider.Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS, Uri.parse("package:$packageName"))
+                startActivity(i)
+                mesaj("Ezanın vaktinde çalması için \"İzin ver\" de.")
+            } catch (_: Exception) {}
+        }
+    }
+
     private fun mesaj(s: String) = runOnUiThread { Toast.makeText(this, s, Toast.LENGTH_LONG).show() }
 
     inner class Kopru {
@@ -146,9 +165,17 @@ class AnaEkran : Activity() {
         @JavascriptInterface fun yerAyarla(yer: String) = Ayar.yerKoy(this@AnaEkran, yer)
         @JavascriptInterface fun boyutOku(): Int = Ayar.boyut(this@AnaEkran)
         @JavascriptInterface fun boyutAyarla(i: Int) = Ayar.boyutKoy(this@AnaEkran, i)
+        // ---- Ezan ----
+        @JavascriptInterface fun ezanDurum(): String = Ezan.durum(this@AnaEkran)
+        @JavascriptInterface fun ezanAyarla(i: Int, acik: Boolean) { Ezan.acikKoy(this@AnaEkran, i, acik); if (acik) ezanIzinleri() }
+        @JavascriptInterface fun ezanSesKaydet(i: Int, b64: String, ad: String): Boolean = try {
+            Ezan.sesKaydet(this@AnaEkran, i, Base64.decode(b64, Base64.DEFAULT), ad); true } catch (e: Exception) { false }
+        @JavascriptInterface fun ezanSesSil(i: Int) = Ezan.sesSil(this@AnaEkran, i)
+        @JavascriptInterface fun ezanDene(i: Int) { ezanIzinleri(); try { Ezan.cal(this@AnaEkran, i, true) } catch (_: Exception) { mesaj("Ses çalınamadı.") } }
+        @JavascriptInterface fun ezanDurdur() { try { startService(Intent(this@AnaEkran, EzanServisi::class.java).setAction("DURDUR")) } catch (_: Exception) {} }
         /** Şehrin vakit verisi (vakitler/<id>.json içeriği). Boş = şehir kaldırıldı. */
         @JavascriptInterface fun vakitKaydet(json: String) {
-            Vakit.kaydet(this@AnaEkran, json); Vakit.alarmKur(this@AnaEkran)
+            Vakit.kaydet(this@AnaEkran, json); Vakit.alarmKur(this@AnaEkran); try { Ezan.kur(this@AnaEkran) } catch (_: Exception) {}
             if (Ayar.otomatik(this@AnaEkran)) try { KilitCizici.uygula(this@AnaEkran) } catch (_: Exception) {}
         }
         @JavascriptInterface fun otomatik(): Boolean = Ayar.otomatik(this@AnaEkran)
