@@ -13,7 +13,7 @@
 <link rel="apple-touch-icon" href="simge/apple-touch-icon.png">
 <style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}[hidden]{display:none!important}</style>
 <title>Günün Ayeti</title>
-<!-- sürüm 27 -->
+<!-- sürüm 28 -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Literata:ital,opsz,wght@0,7..72,400;0,7..72,600;1,7..72,400&family=Figtree:wght@400;500;600&display=swap">
@@ -225,7 +225,6 @@ select.dugme { max-width: 100%; color: var(--fg); }
       <div class="kilit-araclar" id="iphoneAyar" hidden>
         <button class="dugme" id="ipIlce">📍 İlçemi değiştir</button>
         <button class="dugme" id="ipFoto">🖼️ Fotoğrafımı değiştir</button>
-        <button class="dugme" id="ipBoyut">🔠 Yazı büyüklüğü</button>
         <button class="dugme" id="ipYenile">🔄 Şimdi yenile</button>
       </div>
     </div>
@@ -286,7 +285,7 @@ const ESMALAR = [["Allah", "Bütün övgülere lâyık olan"], ["er-Rahmân", "B
 const esmaYazi = i => { const e = ESMALAR[((i % ESMALAR.length) + ESMALAR.length) % ESMALAR.length]; return e ? `${e[0]} · ${e[1]}` : ''; };
 const BASLANGIC = "2026-11-05";
 const ONIZLEME = false;
-const SAYFA_SURUM = 27;
+const SAYFA_SURUM = 28;
 /* Önbellekte eski sayfa kaldıysa: yeni sürüm varsa kendini hemen yenile (sürüm numaralı adresle, önbellek atlanır) */
 if (!ONIZLEME && SAYFA_SURUM) {
   fetch('https://matmehmed47-cmyk.github.io/gunun-ayeti/surum.txt?r=' + Date.now(), { cache: 'no-store' })
@@ -727,7 +726,6 @@ function iphoneNot() {
 $('indirIphone').onclick = () => { iphoneNot(); location.href = IPHONE_KESTIRME; };
 $('ipIlce').onclick = () => { location.href = KESTIRME('ilce'); };
 $('ipFoto').onclick = () => { location.href = KESTIRME('foto'); };
-$('ipBoyut').onclick = () => { location.href = KESTIRME('boyut'); };
 $('ipYenile').onclick = () => { location.href = KESTIRME('yenile'); };
 if (IOS) iphoneNot();
 $('kilitKoy').onclick = async () => {
