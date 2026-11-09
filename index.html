@@ -13,7 +13,7 @@
 <link rel="apple-touch-icon" href="simge/apple-touch-icon.png">
 <style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}[hidden]{display:none!important}</style>
 <title>Günün Ayeti</title>
-<!-- sürüm 24 -->
+<!-- sürüm 25 -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Literata:ital,opsz,wght@0,7..72,400;0,7..72,600;1,7..72,400&family=Figtree:wght@400;500;600&display=swap">
@@ -70,6 +70,10 @@ button { font: inherit; cursor: pointer; }
 .dugme:focus-visible, .sekme:focus-visible, .satir:focus-visible { outline: 2px solid var(--turkuaz); outline-offset: 2px; }
 .dugme.ana { background: var(--turkuaz); border-color: var(--turkuaz); color: var(--kart); }
 .dugme[aria-pressed="true"] { color: var(--turkuaz); border-color: var(--turkuaz); }
+.boyut { align-items: center; }
+.boyut #boyutAz, .boyut #boyutCok { min-width: 56px; font-weight: 700; font-size: 18px; }
+.boyut .boyut-ad { flex: 1; text-align: center; }
+.boyut .dugme:disabled { opacity: .4; }
 .dugme[aria-pressed="true"] .kalp { fill: currentColor; }
 .boyut { margin-left: auto; display: inline-flex; gap: 4px; }
 .boyut .dugme { padding: 9px 12px; }
@@ -169,6 +173,11 @@ select.dugme { max-width: 100%; color: var(--fg); }
           <button class="dugme" id="yerAlt" aria-pressed="false">Alt</button>
         </span>
       </div>
+      <div class="kilit-araclar boyut" role="group" aria-label="Yazı büyüklüğü">
+        <button class="dugme" id="boyutAz" aria-label="Yazıyı küçült">A−</button>
+        <span class="boyut-ad">Yazı: <b id="boyutAd">Normal</b></span>
+        <button class="dugme" id="boyutCok" aria-label="Yazıyı büyüt">A+</button>
+      </div>
       <div class="kilit-araclar">
         <button class="dugme ana" id="kilitKoy">Kilit ekranıma koy</button>
         <button class="dugme" id="kilitKaydet">Galeriye kaydet</button>
@@ -257,7 +266,7 @@ const ESMALAR = [["Allah", "Bütün övgülere lâyık olan"], ["er-Rahmân", "B
 const esmaYazi = i => { const e = ESMALAR[((i % ESMALAR.length) + ESMALAR.length) % ESMALAR.length]; return e ? `${e[0]} · ${e[1]}` : ''; };
 const BASLANGIC = "2026-11-05";
 const ONIZLEME = false;
-const SAYFA_SURUM = 24;
+const SAYFA_SURUM = 25;
 /* Önbellekte eski sayfa kaldıysa: yeni sürüm varsa kendini hemen yenile (sürüm numaralı adresle, önbellek atlanır) */
 if (!ONIZLEME && SAYFA_SURUM) {
   fetch('https://matmehmed47-cmyk.github.io/gunun-ayeti/surum.txt?r=' + Date.now(), { cache: 'no-store' })
@@ -431,6 +440,9 @@ async function vtAl(k) { try { const d = await vt(); return await new Promise(ok
 async function vtKoy(k, v) { try { const d = await vt(); await new Promise(ok => { const t = d.transaction('d', 'readwrite'); t.objectStore('d').put(v, k); t.oncomplete = ok; t.onerror = ok; }); } catch {} }
 
 let foto = null, yer = (ANDROID && window.Android.yerOku) ? window.Android.yerOku() : oku('ga-yer', 'alt'), onizlemeUrl = null;
+/* Yazı büyüklüğü: sadece yazılar ve altlarındaki bant büyür; fotoğraf ve yerleşim aynı kalır. */
+const BOYUTLAR = [1, 1.25, 1.5, 1.75, 2], BOYUT_ADLARI = ['Normal', 'Büyük', 'Çok büyük', 'En büyük', 'Dev'];
+let boyut = Math.max(0, Math.min(4, Number((ANDROID && window.Android.boyutOku) ? window.Android.boyutOku() : oku('ga-boyut', 0)) || 0));
 
 /* ---- Namaz vakti (Diyanet). Veri: vakitler/<id>.json, GitHub her hafta yeniler ---- */
 const VAKIT_URL = 'https://matmehmed47-cmyk.github.io/gunun-ayeti/vakitler/';
@@ -515,15 +527,25 @@ async function kilitCiz(a) {
     x.fillStyle = g; x.fillRect(0, 0, W, H);
   }
   try { await document.fonts.load(`600 ${Math.round(W * .044)}px Literata`); } catch {}
-  const gen = W * 0.8;
-  let fs = W * 0.044, sat;
-  for (; fs > W * 0.028; fs *= 0.94) { x.font = `600 ${fs}px Literata, Georgia, serif`; sat = satirlaraBol(x, a.meal, gen); if (sat.length * fs * 1.45 < H * 0.22) break; }
+  const gen = W * 0.8, k = BOYUTLAR[boyut] || 1;
+  // Uzun ayette yazı küçülür ama seçilen boyutun çok altına inmez; gerekirse blok daha çok yer kaplar.
+  let fs = W * 0.044 * k, sat;
+  const taban = W * 0.044 * k * (k > 1 ? 0.75 : 0.636), sinir = H * Math.min(0.5, 0.22 * k);
+  for (;; fs *= 0.94) {
+    x.font = `600 ${fs}px Literata, Georgia, serif`; sat = satirlaraBol(x, a.meal, gen); const yuk = sat.length * fs * 1.45;
+    if (yuk < sinir || (fs <= taban && yuk + fs * 4 < H * 0.66) || fs < W * 0.02) break;
+  }
   const sv = siradakiVakit(), vakitYazi = sv ? `${sv[0]} ${sv[1]}` : '';
   const es = esmaYazi(bugunNo());
-  const lh = fs * 1.45, rfs = fs * 0.72, vfs = rfs * 0.92, blok = sat.length * lh + rfs * 2.2 + (es ? vfs * 1.5 : 0) + (sv ? vfs * 1.5 : 0);
+  const lh = fs * 1.45, rfs = fs * 0.72, vfs = rfs * 0.92;
+  // Esma sığmıyorsa küçültmek yerine iki satıra böl: ad / anlam
+  let esSat = es ? [es] : [];
+  if (es) { x.font = `400 ${vfs}px Literata, Georgia, serif`; if (x.measureText(es).width > W * 0.9 / 0.85 && es.includes(' · ')) esSat = es.split(' · '); }
+  const blok = sat.length * lh + rfs * 2.2 + esSat.length * vfs * 1.5 + (sv ? vfs * 1.5 : 0);
   const merkez = yer === 'alt' ? H * 0.78 : H * 0.52;
   let ust = merkez - blok / 2; const pay = fs * 2.2;
   if (ust + blok > H * 0.86) ust = H * 0.86 - blok;
+  if (ust < H * 0.2) ust = H * 0.2; // saatin olduğu üst bölgeye çıkmasın
   const g = x.createLinearGradient(0, ust - pay, 0, ust + blok + pay);
   g.addColorStop(0, 'rgba(0,0,0,0)'); g.addColorStop(.22, 'rgba(0,0,0,.68)'); g.addColorStop(.78, 'rgba(0,0,0,.68)'); g.addColorStop(1, 'rgba(0,0,0,0)');
   x.fillStyle = g; x.fillRect(0, ust - pay, W, blok + 2 * pay);
@@ -534,8 +556,10 @@ async function kilitCiz(a) {
   x.fillStyle = '#f1d699'; x.font = `600 ${rfs}px Figtree, sans-serif`;
   x.fillText(refYazi(a), W / 2, ust + sat.length * lh + rfs * 1.6);
   let sy = ust + sat.length * lh + rfs * 1.6;
-  if (es) { sy += vfs * 1.5; x.fillStyle = 'rgba(255,255,255,.92)'; let efs = vfs; x.font = `400 ${efs}px Literata, Georgia, serif`; while (x.measureText(es).width > W * 0.9 && efs > 8) { efs *= 0.95; x.font = `400 ${efs}px Literata, Georgia, serif`; } x.fillText(es, W / 2, sy); x.fillStyle = '#f1d699'; }
-  if (sv) { sy += vfs * 1.5; x.font = `400 ${vfs}px Figtree, sans-serif`; x.fillText(vakitYazi, W / 2, sy); }
+  x.fillStyle = 'rgba(255,255,255,.92)';
+  for (const e of esSat) { sy += vfs * 1.5; let efs = vfs; x.font = `400 ${efs}px Literata, Georgia, serif`; while (x.measureText(e).width > W * 0.9 && efs > 8) { efs *= 0.95; x.font = `400 ${efs}px Literata, Georgia, serif`; } x.fillText(e, W / 2, sy); }
+  x.fillStyle = '#f1d699';
+  if (sv) { sy += vfs * 1.5; let v = vfs; x.font = `400 ${v}px Figtree, sans-serif`; while (x.measureText(vakitYazi).width > W * 0.9 && v > 8) { v *= 0.95; x.font = `400 ${v}px Figtree, sans-serif`; } x.fillText(vakitYazi, W / 2, sy); }
   return c;
 }
 const kilitBlob = async () => { const c = await kilitCiz(kayit(bugunNo())); return new Promise(r => c.toBlob(r, 'image/jpeg', 0.92)); };
@@ -546,6 +570,7 @@ async function kilitOnizle() {
   onizlemeUrl = URL.createObjectURL(b); $('kilitOn').src = onizlemeUrl;
   $('kilitDurum').textContent = foto ? 'Fotoğrafın kayıtlı. Her sabah "Kilit ekranıma koy"a bas, bugünün ayeti fotoğrafının üstüne yazılsın.' : 'Kendi fotoğrafını seç. Ayet, fotoğrafının üstüne yazılır; fotoğrafın aynen kalır.';
   $('yerOrta').setAttribute('aria-pressed', yer === 'orta'); $('yerAlt').setAttribute('aria-pressed', yer === 'alt');
+  $('boyutAd').textContent = BOYUT_ADLARI[boyut]; $('boyutAz').disabled = boyut === 0; $('boyutCok').disabled = boyut === BOYUTLAR.length - 1;
 }
 function kilitKaydet(b) {
   const a = document.createElement('a'); a.href = URL.createObjectURL(b); a.download = `gunun-ayeti-${new Date().toISOString().slice(0, 10)}.jpg`;
@@ -570,6 +595,17 @@ $('foto').onchange = async e => {
 const yerSec = y => { yer = y; yaz('ga-yer', yer); if (ANDROID) window.Android.yerAyarla(y); kilitOnizle(); };
 $('yerOrta').onclick = () => yerSec('orta');
 $('yerAlt').onclick = () => yerSec('alt');
+let boyutZaman = null;
+const boyutSec = d => {
+  boyut = Math.max(0, Math.min(BOYUTLAR.length - 1, boyut + d)); yaz('ga-boyut', boyut); kilitOnizle();
+  if (ANDROID && window.Android.boyutAyarla) {
+    window.Android.boyutAyarla(boyut);
+    clearTimeout(boyutZaman); // art arda basınca bir kez uygula
+    boyutZaman = setTimeout(() => { if (window.Android.otomatik() && window.Android.simdiUygula) window.Android.simdiUygula(); }, 1200);
+  }
+};
+$('boyutAz').onclick = () => boyutSec(-1);
+$('boyutCok').onclick = () => boyutSec(1);
 function otoGoster() {
   const a = window.Android.otomatik();
   $('oto').setAttribute('aria-pressed', a); $('oto').textContent = 'Her sabah otomatik: ' + (a ? 'Açık ✓' : 'Kapalı');

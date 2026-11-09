@@ -144,6 +144,8 @@ class AnaEkran : Activity() {
             f.writeBytes(Base64.decode(b64, Base64.DEFAULT))
         }
         @JavascriptInterface fun yerAyarla(yer: String) = Ayar.yerKoy(this@AnaEkran, yer)
+        @JavascriptInterface fun boyutOku(): Int = Ayar.boyut(this@AnaEkran)
+        @JavascriptInterface fun boyutAyarla(i: Int) = Ayar.boyutKoy(this@AnaEkran, i)
         /** Şehrin vakit verisi (vakitler/<id>.json içeriği). Boş = şehir kaldırıldı. */
         @JavascriptInterface fun vakitKaydet(json: String) {
             Vakit.kaydet(this@AnaEkran, json); Vakit.alarmKur(this@AnaEkran)
