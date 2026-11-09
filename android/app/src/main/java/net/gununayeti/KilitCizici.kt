@@ -117,7 +117,8 @@ object KilitCizici {
             fs *= 0.94f
         }
         val rp = TextPaint(Paint.ANTI_ALIAS_FLAG).apply {
-            color = Color.rgb(241, 214, 153); textSize = fs * 0.72f; textAlign = Paint.Align.CENTER
+            // Küçük satırlar (sure, esma, vakit) uzun ayette bile seçilen boyutta kalsın
+            color = Color.rgb(241, 214, 153); textSize = if (k > 1f) maxOf(fs * 0.72f, W * 0.044f * k * 0.72f * 0.9f) else fs * 0.72f; textAlign = Paint.Align.CENTER
             typeface = Typeface.create(Typeface.SANS_SERIF, Typeface.BOLD)
             setShadowLayer(W * 0.012f, 0f, 0f, Color.argb(150, 0, 0, 0))
         }
