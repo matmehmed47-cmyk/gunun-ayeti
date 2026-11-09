@@ -1,0 +1,11 @@
+{
+ "_aciklama": "Uygulama açılırken çıkan güncelleme ekranı bunu okur. 'zorunlu': bu sürümden eski olanlarda 'Daha sonra' gösterilmez. 'notlar': sürüm koduna göre yenilikler.",
+ "zorunlu": 0,
+ "notlar": {
+  "25": ["Güncelleme artık uygulama açılırken gösteriliyor"],
+  "24": ["Büyük yazıda vakit ve esma satırları da büyüyor"],
+  "23": ["Namaz vakitleri en üstte, sıradaki vakte kalan süre", "Her vakit için kısa ezan: aç/kapa, kendi sesini seç, dene", "Telefon sessizdeyse sadece titreşim"],
+  "22": ["Kilit ekranında yazı büyüklüğü: Normal'den Dev'e 5 seviye"],
+  "21": ["Bildirim paneline 🧭 Kıble kutucuğu"]
+ }
+}

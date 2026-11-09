@@ -13,7 +13,7 @@
 <link rel="apple-touch-icon" href="simge/apple-touch-icon.png">
 <style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}[hidden]{display:none!important}</style>
 <title>Günün Ayeti</title>
-<!-- sürüm 28 -->
+<!-- sürüm 29 -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Literata:ital,opsz,wght@0,7..72,400;0,7..72,600;1,7..72,400&family=Figtree:wght@400;500;600&display=swap">
@@ -57,6 +57,14 @@ h1 { font-family: var(--f-ayet); font-weight: 600; font-size: 1.6rem; margin: 0;
 .onizleme { font-size: .8rem; color: var(--altin); border: 1px dashed var(--altin); border-radius: 8px; padding: 8px 12px; line-height: 1.45; }
 
 /* Namaz vakitleri kartı */
+.guncel { position: fixed; inset: 0; z-index: 50; background: var(--bg); display: grid; place-items: center; padding: max(24px, env(safe-area-inset-top, 0px)) 20px max(24px, env(safe-area-inset-bottom, 0px)); overflow: auto; }
+.guncel > div { max-width: 26rem; width: 100%; display: grid; gap: 14px; text-align: center; }
+.guncel .simge { font-size: 3rem; line-height: 1; }
+.guncel h2 { margin: 0; font-family: var(--f-ayet); font-size: 1.6rem; }
+.guncel ul { text-align: left; margin: 0; padding: 14px 16px 14px 34px; background: var(--kart); border: 1px solid var(--cizgi); border-radius: 12px; line-height: 1.5; }
+.guncel .dugme.ana { font-size: 1.1rem; padding: 14px; }
+.guncel .sonra { background: none; border: 0; color: var(--soluk); text-decoration: underline; font-size: .95rem; cursor: pointer; padding: 8px; }
+.guncel .yardim { font-size: .88rem; color: var(--soluk); line-height: 1.5; text-align: left; }
 .vakit-kart { background: var(--kart); border: 1px solid var(--cizgi); border-radius: 14px; padding: 14px 16px; display: grid; gap: 8px; }
 .vk-ust { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; flex-wrap: wrap; }
 .vk-ust b { font-size: 1rem; }
@@ -143,6 +151,18 @@ select.dugme { max-width: 100%; color: var(--fg); }
 @media (prefers-reduced-motion: no-preference) { .metin { transition: font-size .15s ease; } }
 </style>
 
+<div class="guncel" id="guncel" hidden role="dialog" aria-modal="true" aria-labelledby="guncelBaslik">
+  <div>
+    <div class="simge">🎉</div>
+    <h2 id="guncelBaslik">Yeni sürüm var</h2>
+    <ul id="guncelListe"></ul>
+    <button class="dugme ana" id="guncelDugme">Şimdi güncelle</button>
+    <p class="yardim" id="guncelAdim" hidden>İndirme bitince bildirimdeki ya da İndirilenler'deki <b>gunun-ayeti.apk</b> dosyasına dokun → <b>Güncelle</b>. Ayarların silinmez.</p>
+    <button class="sonra" id="guncelSonra">Daha sonra</button>
+    <details class="yardim"><summary>Kurulum olmadı mı?</summary>
+      "Uygulama yüklenmedi" derse: telefonda yer aç, dosyayı yeniden indir. Yine olmazsa eski uygulamayı silip yeniden kur (bu durumda fotoğrafını ve ayarlarını yeniden seçmen gerekir).</details>
+  </div>
+</div>
 </head>
 <body>
 <div class="sayfa">
@@ -285,7 +305,7 @@ const ESMALAR = [["Allah", "Bütün övgülere lâyık olan"], ["er-Rahmân", "B
 const esmaYazi = i => { const e = ESMALAR[((i % ESMALAR.length) + ESMALAR.length) % ESMALAR.length]; return e ? `${e[0]} · ${e[1]}` : ''; };
 const BASLANGIC = "2026-11-05";
 const ONIZLEME = false;
-const SAYFA_SURUM = 28;
+const SAYFA_SURUM = 29;
 /* Önbellekte eski sayfa kaldıysa: yeni sürüm varsa kendini hemen yenile (sürüm numaralı adresle, önbellek atlanır) */
 if (!ONIZLEME && SAYFA_SURUM) {
   fetch('https://matmehmed47-cmyk.github.io/gunun-ayeti/surum.txt?r=' + Date.now(), { cache: 'no-store' })
@@ -759,14 +779,20 @@ $('kilitKaydet').onclick = async () => {
   kilitOnizle();
 })();
 /* Android: yeni APK var mı? (site/android-surum.json) */
+/* Uygulama açılırken tam ekran güncelleme sayfası (yenilikler listesiyle). 'zorunlu' sürümden eskiyse "Daha sonra" yok. */
 if (ANDROID && window.Android.surumKodu) {
-  fetch('https://matmehmed47-cmyk.github.io/gunun-ayeti/android-surum.json', { cache: 'no-cache' }).then(r => r.json()).then(s => {
-    if (s.kod > window.Android.surumKodu()) {
-      $('kurYazi').innerHTML = '<b>Yeni sürüm var.</b> Güncelle\'ye bas, inen dosyayı aç ve "Güncelle"yi seç. Ayarların silinmez.';
-      const d = $('kurDugme'); d.textContent = 'Güncelle'; d.hidden = false;
-      d.onclick = () => { location.href = 'https://github.com/matmehmed47-cmyk/gunun-ayeti/releases/download/android/gunun-ayeti.apk'; };
-      $('kur').hidden = false;
-    }
+  const KOK = 'https://matmehmed47-cmyk.github.io/gunun-ayeti/', APK = 'https://github.com/matmehmed47-cmyk/gunun-ayeti/releases/download/android/gunun-ayeti.apk';
+  Promise.all([fetch(KOK + 'android-surum.json', { cache: 'no-cache' }).then(r => r.json()),
+               fetch(KOK + 'android-yenilikler.json', { cache: 'no-cache' }).then(r => r.json()).catch(() => ({}))]).then(([s, y]) => {
+    const benim = window.Android.surumKodu(); if (!(s.kod > benim)) return;
+    const notlar = Object.entries(y.notlar || {}).filter(([k]) => +k > benim).sort((a, b) => b[0] - a[0]).flatMap(([, n]) => n).slice(0, 7);
+    $('guncelListe').replaceChildren(...(notlar.length ? notlar : ['Hata düzeltmeleri ve iyileştirmeler']).map(t => { const li = document.createElement('li'); li.textContent = t; return li; }));
+    $('guncelBaslik').textContent = 'Yeni sürüm var (' + s.kod + ')';
+    const zorunlu = benim < (+y.zorunlu || 0);
+    $('guncelSonra').hidden = zorunlu;
+    $('guncelDugme').onclick = () => { $('guncelAdim').hidden = false; $('guncelDugme').textContent = 'Tekrar indir'; location.href = APK; };
+    $('guncelSonra').onclick = () => { $('guncel').hidden = true; };
+    $('guncel').hidden = false;
   }).catch(() => {});
 }
 
