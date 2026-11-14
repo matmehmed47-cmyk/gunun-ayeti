@@ -11,16 +11,18 @@ ZEMIN, ALTIN = (15, 42, 44), (201, 162, 78)
 def simge(boyut, guvenli=1.0):
     k = 4  # pürüzsüz kenar için büyük çiz, sonra küçült
     S = boyut * k
+    # hilal: büyük altın daire eksi kaydırılmış daire, maske olarak çizilir
+    m = Image.new('L', (S, S), 0)
+    d = ImageDraw.Draw(m)
+    c = S / 2
+    R = S * 0.30 * guvenli
+    d.ellipse([c - R, c - R, c + R, c + R], fill=255)
+    r2 = R * 0.80
+    ox = R * 0.38
+    d.ellipse([c + ox - r2, c - r2, c + ox + r2, c + r2], fill=0)
+    m = m.rotate(25, resample=Image.BICUBIC, center=(c, c))  # hafif yatık
     im = Image.new('RGB', (S, S), ZEMIN)
-    d = ImageDraw.Draw(im)
-    c, r = S / 2, S * 0.27 * guvenli
-    import math
-    def kare(aci):
-        pts = [(c + r * math.cos(aci + i * math.pi / 2), c + r * math.sin(aci + i * math.pi / 2)) for i in range(4)]
-        d.line(pts + [pts[0]], fill=ALTIN, width=int(S * 0.035 * guvenli), joint='curve')
-    kare(math.pi / 4); kare(0)
-    rr = S * 0.06 * guvenli
-    d.ellipse([c - rr, c - rr, c + rr, c + rr], fill=ALTIN)
+    im.paste(Image.new('RGB', (S, S), ALTIN), (0, 0), m)
     return im.resize((boyut, boyut), Image.LANCZOS)
 
 simge(192).save(kok + '/simge/simge-192.png')
